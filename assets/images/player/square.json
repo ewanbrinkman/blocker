@@ -1,0 +1,75 @@
+{
+    "@imagePath": "sprites.png",
+    "SubTexture": [
+       {
+          "@name": "elephant.png",
+          "@x": "0",
+          "@y": "0",
+          "@width": "396",
+          "@height": "314"
+       },
+       {
+          "@name": "giraffe.png",
+          "@x": "0",
+          "@y": "879",
+          "@width": "354",
+          "@height": "342"
+       },
+       {
+          "@name": "hippo.png",
+          "@x": "0",
+          "@y": "1502",
+          "@width": "304",
+          "@height": "315"
+       },
+       {
+          "@name": "monkey.png",
+          "@x": "0",
+          "@y": "316",
+          "@width": "364",
+          "@height": "256"
+       },
+       {
+          "@name": "panda.png",
+          "@x": "0",
+          "@y": "574",
+          "@width": "364",
+          "@height": "303"
+       },
+       {
+          "@name": "parrot.png",
+          "@x": "306",
+          "@y": "1760",
+          "@width": "256",
+          "@height": "256"
+       },
+       {
+          "@name": "penguin.png",
+          "@x": "306",
+          "@y": "1502",
+          "@width": "256",
+          "@height": "256"
+       },
+       {
+          "@name": "pig.png",
+          "@x": "0",
+          "@y": "1223",
+          "@width": "331",
+          "@height": "277"
+       },
+       {
+          "@name": "rabbit.png",
+          "@x": "366",
+          "@y": "316",
+          "@width": "256",
+          "@height": "386"
+       },
+       {
+          "@name": "snake.png",
+          "@x": "356",
+          "@y": "879",
+          "@width": "256",
+          "@height": "306"
+       }
+    ]
+ }
