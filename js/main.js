@@ -8,7 +8,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 500 },
-            debug: true,
+            debug: false,
         }
     },
     scene: {
@@ -38,6 +38,23 @@ let text;
 let playerScale;
 let playerType = 'rabbit'
 
+function adjustPlayerBody() {
+    // Change the player's hitbox size.
+    player.body.setSize(256, 256)
+    // Adjust the hitbox location to overlap with the square body section of
+    // the animal.
+    switch (playerType) {
+        case 'rabbit': {
+            player.body.setOffset(0, 130)
+            break;
+        }
+        case 'pig': {
+            player.body.setOffset(37, 21)
+            break;
+        }
+    }
+}
+
 function preload() {
     // To extrude a tileset using tile-extruder on the command line:
     // tile-extruder --tileWidth 70 --tileHeight 70 --spacing 2 --input ./tiles.png --output ./tiles-extruded.png
@@ -66,19 +83,19 @@ function create() {
     this.physics.world.bounds.height = map.heightInPixels;
 
     // Create the player sprite.
-    let playerAtlasTexture = this.textures.get('players');
-    let playerFrames = playerAtlasTexture.getFrameNames();
-    player = this.physics.add.sprite(200, 200, 'players', playerFrames[8]);
-    // player = this.physics.add.sprite(200, 200, 'player');
+    // let playerAtlasTexture = this.textures.get('players');
+    // let playerFrames = playerAtlasTexture.getFrameNames();
+    // player = this.physics.add.sprite(200, 200, 'players', playerFrames[8]);
+    player = this.physics.add.sprite(200, 200, 'players', playerType);
+    // Change the player body size.
+    adjustPlayerBody();
+    // Change the player size.
     playerScale = 0.25;
+    player.setScale(playerScale);
+    // The player will bounce a bit.
     player.setBounce(0.2);
     // Don't go out of the map.
     player.setCollideWorldBounds(true);
-    // Change player collision detection box.
-    player.body.setSize(256, 256)
-    player.body.setOffset(0, 130)
-    // Change the player size.
-    player.setScale(playerScale);
 
     this.physics.add.collider(blockLayer, player);
 
