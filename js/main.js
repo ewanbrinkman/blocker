@@ -8,7 +8,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 500 },
-            debug: false,
+            debug: true,
         }
     },
     scene: {
@@ -66,6 +66,7 @@ function create() {
     player.setCollideWorldBounds(true);
     // Change player size.
     player.setScale(0.25);
+    player.body.setSize(player.width, player.height)
     // console.log(player.body)
     // player.body.setSize(player.width, player.height)
 
