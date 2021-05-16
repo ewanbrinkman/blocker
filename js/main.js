@@ -32,10 +32,12 @@ let blockLayer, coinLayer;
 let text;
 
 function preload() {
+    // To extrude a tileset.
+    // tile-extruder --tileWidth 70 --tileHeight 70 --spacing 2 --input ./tiles.png --output ./tiles-extruded.png
     // Load maps made with Tiled in JSON format.
-    this.load.tilemapTiledJSON('map', 'assets/images/maps/map3.json');
+    this.load.tilemapTiledJSON('map', 'assets/images/maps/map.json');
     // Tiles in spritesheet.
-    this.load.spritesheet('tiles', 'assets/images/spritesheets/tiles3.png', {frameWidth: 70, frameHeight: 70, margin: 0, spacing: 2});
+    this.load.spritesheet('tiles', 'assets/images/spritesheets/tiles.png', {frameWidth: 70, frameHeight: 70, margin: 1, spacing: 4});
     // Player animations.
     // this.load.atlas('player', 'assets/images/player/player.png', 'assets/images/player/player.json');
     // Player images.
@@ -47,7 +49,7 @@ function create() {
     // Load the map.
     map = this.make.tilemap({key: 'map'});
     // Tiles for the block layer.
-    const blockTiles = map.addTilesetImage('tiles3', 'tiles', 70, 70, 0, 2);
+    const blockTiles = map.addTilesetImage('tiles', 'tiles', 70, 70, 1, 4);
     // Create the block layer.
     blockLayer = map.createLayer('Blocks', blockTiles, 0, 0);
     // The player will collide with this layer.
@@ -98,12 +100,12 @@ function update(time, delta) {
         player.body.setVelocityX(-200);
         // player.anims.play('walk', true);
         // Flip the sprite to the left.
-        player.flipX = true;
+        // player.flipX = true;
     } else if (cursors.right.isDown) {
         player.body.setVelocityX(200);
         // player.anims.play('walk', true);
         // Make sure the sprite is facing its original right.
-        player.flipX = false;
+        // player.flipX = false;
     } else {
         player.body.setVelocityX(0);
         // player.anims.play('idle', true);
