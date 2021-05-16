@@ -8,7 +8,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 500 },
-            debug: false,
+            debug: true,
         }
     },
     scene: {
@@ -36,18 +36,18 @@ let cursors;
 let blockLayer, coinLayer;
 let text;
 let playerScale;
+let playerType = 'rabbit'
 
 function preload() {
-    // To extrude a tileset.
+    // To extrude a tileset using tile-extruder on the command line:
     // tile-extruder --tileWidth 70 --tileHeight 70 --spacing 2 --input ./tiles.png --output ./tiles-extruded.png
+    // To load into tiled, use a margin of 1px (1px plus the original 0px) and a spacing of 4px (2px plus the original 2px).
     // Load maps made with Tiled in JSON format.
     this.load.tilemapTiledJSON('map', 'assets/images/maps/map.json');
     // Tiles in spritesheet.
     this.load.spritesheet('tiles', 'assets/images/spritesheets/tiles.png', {frameWidth: 70, frameHeight: 70, margin: 1, spacing: 4});
-    // Player animations.
-    // this.load.atlas('player', 'assets/images/player/player.png', 'assets/images/player/player.json');
     // Player images.
-    this.load.image('player', 'assets/images/player/rabbit.png')
+    this.load.atlasXML('players', 'assets/images/player/players.png', 'assets/images/player/players.xml')
     // this.load.atlas('player', 'assets/images/player/square.png', 'assets/images/player/square.xml')
 }
 
@@ -66,7 +66,10 @@ function create() {
     this.physics.world.bounds.height = map.heightInPixels;
 
     // Create the player sprite.
-    player = this.physics.add.sprite(200, 200, 'player');
+    let playerAtlasTexture = this.textures.get('players');
+    let playerFrames = playerAtlasTexture.getFrameNames();
+    player = this.physics.add.sprite(200, 200, 'players', playerFrames[8]);
+    // player = this.physics.add.sprite(200, 200, 'player');
     playerScale = 0.25;
     player.setBounce(0.2);
     // Don't go out of the map.
@@ -76,9 +79,6 @@ function create() {
     player.body.setOffset(0, 130)
     // Change the player size.
     player.setScale(playerScale);
-    console.log(player.body.width, player.body.height)
-    // console.log(player.body)
-    // player.body.setSize(player.width, player.height)
 
     this.physics.add.collider(blockLayer, player);
 
