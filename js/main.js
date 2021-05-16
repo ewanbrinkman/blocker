@@ -8,7 +8,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 500 },
-            debug: true,
+            debug: false,
         }
     },
     scene: {
@@ -25,11 +25,17 @@ const config = {
 
 const game = new Phaser.Game(config);
 
+window.addEventListener('resize', () => {
+    rect = game.scale.parent.getBoundingClientRect();
+    game.scale.resize(rect.width, rect.height);
+});
+
 let map;
 let player;
 let cursors;
 let blockLayer, coinLayer;
 let text;
+let playerScale;
 
 function preload() {
     // To extrude a tileset.
@@ -61,18 +67,32 @@ function create() {
 
     // Create the player sprite.
     player = this.physics.add.sprite(200, 200, 'player');
+    playerScale = 0.25;
     player.setBounce(0.2);
     // Don't go out of the map.
     player.setCollideWorldBounds(true);
-    // Change player size.
-    player.setScale(0.25);
-    player.body.setSize(player.width, player.height)
+    // Change player collision detection box.
+    player.body.setSize(256, 256)
+    player.body.setOffset(0, 130)
+    // Change the player size.
+    player.setScale(playerScale);
+    console.log(player.body.width, player.body.height)
     // console.log(player.body)
     // player.body.setSize(player.width, player.height)
 
     this.physics.add.collider(blockLayer, player);
 
+    // Get the cursor keys for player movement.
     cursors = this.input.keyboard.createCursorKeys();
+
+    // The F key can be used to toggle fullscreen.
+    this.input.keyboard.on('keydown-F', () => {
+        if (this.scale.isFullscreen) {
+            this.scale.stopFullscreen();
+        } else {
+            this.scale.startFullscreen();
+        }
+    });
 
     // Set bounds so the camera won't go outside the game world.
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -94,6 +114,16 @@ function create() {
     //     frames: [{key: 'player', frame: 'p1_stand'}],
     //     frameRate: 10
     // });
+
+    // Draw world boundary.
+    let graphics;
+    let strokeWidth = 10;
+    graphics = this.add.graphics();
+    graphics.lineStyle(strokeWidth, 0xffff00, 1);
+
+    // 32px radius at the corners.
+    graphics.strokeRect(0 - strokeWidth / 2, 0 - strokeWidth / 2,
+        map.widthInPixels + strokeWidth, map.heightInPixels + strokeWidth);
 }
 
 function update(time, delta) {
