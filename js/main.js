@@ -1,5 +1,29 @@
 const parent = document.getElementById('game').getBoundingClientRect();
 
+// Settings
+let map;
+let player;
+let cursors;
+let blockLayer, coinLayer;
+let text;
+const gravity = 1000;
+// Start position.
+const startX = 70;
+// const startY = 0;
+const startY = 1085;
+// Player properties.
+let playerType = 'rabbit'
+let playerScale = 0.25;
+const playerBounce = 0;
+// const playerJumpVel = 5000;
+const playerJumpVel = 570;
+// const playerJumpVel = 450;
+const playerMaxVelX = 250;
+const playerMaxVelY = 1000;
+const playerAcc = 1000;
+const playerDragX = 1500;
+const playerDragY = 10;
+
 const config = {
     type: Phaser.AUTO,
     width: parent.width,
@@ -7,7 +31,7 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 500 },
+            gravity: { y: gravity },
             debug: false,
         }
     },
@@ -30,27 +54,39 @@ window.addEventListener('resize', () => {
     game.scale.resize(rect.width, rect.height);
 });
 
-let map;
-let player;
-let cursors;
-let blockLayer, coinLayer;
-let text;
-let playerScale;
-let playerType = 'rabbit'
-
-function adjustPlayerBody() {
-    // Change the player's hitbox size.
-    player.body.setSize(256, 256)
-    // Adjust the hitbox location to overlap with the square body section of
-    // the animal.
+function centerOfAnimalSquare(x, y) {
+    // Given an x and y position, move the coordinates so that the
+    // center is at the middle of the animal square, not the middle of
+    // the image.
     switch (playerType) {
+        case 'hippo': {
+            return [x, y - (34 - 24) / 2 * playerScale] // 34 px top, 24 px bottom.
+        }
+        case 'monkey': {
+            return [x, y] // The center of the image is also the centre of the square.
+        }
         case 'rabbit': {
-            player.body.setOffset(0, 130)
-            break;
+            return [x, y - 130 / 2 * playerScale]; //  130 px top.
         }
         case 'pig': {
-            player.body.setOffset(37, 21)
-            break;
+            return [x, y - 21 / 2 * playerScale]; // 21 px top.
+        }
+    }
+}
+
+function getAnimalBodyOffset() {
+    switch (playerType) {
+        case 'hippo': {
+            return [23, 34]
+        }
+        case 'monkey': {
+            return [54, 0]
+        }
+        case 'rabbit': {
+            return [0, 130];
+        }
+        case 'pig': {
+            return [37, 21];
         }
     }
 }
@@ -60,7 +96,7 @@ function preload() {
     // tile-extruder --tileWidth 70 --tileHeight 70 --spacing 2 --input ./tiles.png --output ./tiles-extruded.png
     // To load into tiled, use a margin of 1px (1px plus the original 0px) and a spacing of 4px (2px plus the original 2px).
     // Load maps made with Tiled in JSON format.
-    this.load.tilemapTiledJSON('map', 'assets/images/maps/map.json');
+    this.load.tilemapTiledJSON('map', 'assets/images/maps/map2.json');
     // Tiles in spritesheet.
     this.load.spritesheet('tiles', 'assets/images/spritesheets/tiles.png', {frameWidth: 70, frameHeight: 70, margin: 1, spacing: 4});
     // Player images.
@@ -79,24 +115,41 @@ function create() {
     blockLayer.setCollisionByExclusion([-1]);
 
     // Set the boundaries of the game world.
+    // this.physics.world.bounds.width = map.widthInPixels;
+    // this.physics.world.bounds.height = map.heightInPixels;
+
+    this.physics.world.bounds.x = 0;
+    this.physics.world.bounds.y = 0;
     this.physics.world.bounds.width = map.widthInPixels;
     this.physics.world.bounds.height = map.heightInPixels;
+
+    this.physics.world.setBoundsCollision(true, true, false, false);
 
     // Create the player sprite.
     // let playerAtlasTexture = this.textures.get('players');
     // let playerFrames = playerAtlasTexture.getFrameNames();
     // player = this.physics.add.sprite(200, 200, 'players', playerFrames[8]);
-    player = this.physics.add.sprite(200, 200, 'players', playerType);
-    // Change the player body size.
-    adjustPlayerBody();
+
+    // Create the player sprite.
+    let [x, y] = centerOfAnimalSquare(startX, startY)
+    player = this.physics.add.sprite(x, y, 'players', playerType);
+
+    player.body.setDrag(playerDragX, playerDragY);
+    player.body.setMaxVelocity(playerMaxVelX, playerMaxVelY);
+    player.setBounce(playerBounce);
+    
+    // Change the player's hitbox (body) size.
+    player.body.setSize(256, 256)
+    // Adjust the hitbox location to overlap with the square body section of
+    // the animal.
+    const [ bodyOffsetX, bodyOffsetY ] = getAnimalBodyOffset();
+    player.body.setOffset(bodyOffsetX, bodyOffsetY);
     // Change the player size.
-    playerScale = 0.25;
     player.setScale(playerScale);
-    // The player will bounce a bit.
-    player.setBounce(0.2);
+
     // Don't go out of the map.
     player.setCollideWorldBounds(true);
-
+    // Collide with the blocks of the map.
     this.physics.add.collider(blockLayer, player);
 
     // Get the cursor keys for player movement.
@@ -145,20 +198,26 @@ function create() {
 
 function update(time, delta) {
     if (cursors.left.isDown) {
-        player.body.setVelocityX(-200);
+        player.body.setAccelerationX(-playerAcc);
         // player.anims.play('walk', true);
         // Flip the sprite to the left.
         // player.flipX = true;
     } else if (cursors.right.isDown) {
-        player.body.setVelocityX(200);
+        player.body.setAccelerationX(playerAcc);
         // player.anims.play('walk', true);
         // Make sure the sprite is facing its original right.
         // player.flipX = false;
     } else {
-        player.body.setVelocityX(0);
+        player.body.setAccelerationX(0);
         // player.anims.play('idle', true);
     }
     if ((cursors.space.isDown || cursors.up.isDown) && player.body.onFloor()) {
-        player.body.setVelocityY(-500);
+        player.body.setVelocityY(-playerJumpVel);
     } 
+
+    if (player.body.y > map.heightInPixels) {
+        player.body.x = startX;
+        player.body.y = startY;
+        player.body.setVelocity(0, 0);
+    }
 }
