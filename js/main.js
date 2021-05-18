@@ -1,6 +1,6 @@
 const parent = document.getElementById('game').getBoundingClientRect();
 
-// Settings
+let moveX, moveY;
 let map;
 let player;
 let cursors;
@@ -14,12 +14,13 @@ const startY = 1085;
 // Player properties.
 let playerType = 'rabbit'
 let playerScale = 0.25;
+// let playerScale = 0.25;
 const playerBounce = 0;
 // const playerJumpVel = 5000;
 const playerJumpVel = 570;
 // const playerJumpVel = 450;
 const playerMaxVelX = 250;
-const playerMaxVelY = 1000;
+const playerMaxVelY = 750;
 const playerAcc = 1000;
 const playerDragX = 1500;
 const playerDragY = 10;
@@ -118,8 +119,8 @@ function create() {
     // this.physics.world.bounds.width = map.widthInPixels;
     // this.physics.world.bounds.height = map.heightInPixels;
 
-    this.physics.world.bounds.x = 0;
-    this.physics.world.bounds.y = 0;
+    // this.physics.world.bounds.x = 0;
+    // this.physics.world.bounds.y = 0;
     this.physics.world.bounds.width = map.widthInPixels;
     this.physics.world.bounds.height = map.heightInPixels;
 
@@ -164,6 +165,25 @@ function create() {
         }
     });
 
+    this.input.on('pointerdown', function(pointer, pos){
+        if (pointer.downY > this.game.scale.height / 2) {
+            if (pointer.downX > this.game.scale.width / 2) {
+                moveX = 'right';
+            } else {
+                moveX = 'left';
+            }
+        }
+
+        if (pointer.downY < this.game.scale.height / 2) {
+            moveY = 'up';
+        }
+    }, this);
+
+    this.input.on('pointerup', function(){
+        moveX = false;
+        moveY = false;
+    }, this);
+
     // Set bounds so the camera won't go outside the game world.
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     // Make the camera follow the player.
@@ -197,12 +217,12 @@ function create() {
 }
 
 function update(time, delta) {
-    if (cursors.left.isDown) {
+    if (cursors.left.isDown || moveX === 'left') {
         player.body.setAccelerationX(-playerAcc);
         // player.anims.play('walk', true);
         // Flip the sprite to the left.
         // player.flipX = true;
-    } else if (cursors.right.isDown) {
+    } else if (cursors.right.isDown || moveX === 'right') {
         player.body.setAccelerationX(playerAcc);
         // player.anims.play('walk', true);
         // Make sure the sprite is facing its original right.
@@ -211,7 +231,7 @@ function update(time, delta) {
         player.body.setAccelerationX(0);
         // player.anims.play('idle', true);
     }
-    if ((cursors.space.isDown || cursors.up.isDown) && player.body.onFloor()) {
+    if ((cursors.space.isDown || cursors.up.isDown || moveY === 'up') && player.body.onFloor()) {
         player.body.setVelocityY(-playerJumpVel);
     } 
 
