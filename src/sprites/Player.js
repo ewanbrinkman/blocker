@@ -38,7 +38,8 @@ function getBodyOffset(playerType) {
 export default class Player extends Phaser.GameObjects.Sprite {
     constructor(config) {
         // Adjust position, since when first creating the sprite it is
-        // the center of the image.
+        // the center of the image. The player should spawn so that the
+        // center of its square is the given coordinate.
         let [ squareCenterStartX, squareCenterStartY ] = getSquareCenter(
             config.x, config.y, config.playerType, config.playerScale);
 
@@ -51,20 +52,17 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // Start position.
         this.startX = config.x
         this.startY = config.y
-
-        console.log('start_pos', config.x, config.y)
         
         // Add the player to the scene.
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
-        // Player properties.
+        // Player config settings.
         this.playerType = config.playerType;
         this.playerScale = config.playerScale;
-        // How fast the player moves.
+        // Player movement settings.
         this.playerAcc = 1000;
         this.playerJumpVel = 560;
-        // Set max velocity.
         this.playerMaxVelX = 250;
         this.playerMaxVelY = 750;
         // Friction when moving.
@@ -78,8 +76,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.body.setMaxVelocity(this.playerMaxVelX, this.playerMaxVelY);
         this.body.setBounce(this.playerBounce);
         
-        // Change the player's hitbox (body) size.
-        this.body.setSize(256, 256)
+        // Change the player's hitbox size.
+        this.body.setSize(256, 256);
         // Adjust the hitbox location to overlap with the square body section of
         // the animal.
         const [ bodyOffsetX, bodyOffsetY ] = getBodyOffset(this.playerType);
@@ -91,8 +89,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.body.setCollideWorldBounds(true);
         // Collide with the blocks of the map.
         this.scene.physics.add.collider(this.scene.blockLayer, this);
-
-        console.log(this.body.center);
     }
 
     update(cursors, time, delta) {
