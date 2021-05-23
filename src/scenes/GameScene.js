@@ -3,11 +3,12 @@ import Player from '../sprites/Player.js';
 import { SCENE_KEYS } from '../constants.js';
 
 // Start position.
-const startX = 70;
-const startY = 1085;
+// const startX = 70;
+// const startY = 1085;
+const startX = 140;
+const startY = 140;
 // Player properties.
 let playerType = 'rabbit';
-let playerScale = 0.25;
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -57,7 +58,6 @@ export default class GameScene extends Phaser.Scene {
             texture: 'players',
             frame: playerType,
             playerType: playerType,
-            playerScale: playerScale
         });
 
         // Set bounds so the camera won't go outside the game world.
