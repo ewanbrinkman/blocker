@@ -3,7 +3,7 @@ export const SCENE_KEYS = {
 }
 
 export const DEFAULT_PLAYER = {
-    scale: 1, // 0.25
+    scale: 0.5, // 0.5
     acceleration: 1000,
     jumpVelocity: 560,
     maxVelocity: {

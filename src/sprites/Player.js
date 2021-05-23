@@ -1,9 +1,10 @@
 import { DEFAULT_PLAYER } from '../constants.js';
 
-function squareCenterOffset(top, bottom, scale) {
-    // The argument "top" is the amount of pixels above the square.
-    // The argument "bottom" is the amount of pixels below the square.
-    return (top - bottom) / 2 * scale
+function squareCenterOffset(side1, side2, scale) {
+    // The argument "side1" is the amount of pixels on one side of the
+    // square. The argument "side2" is the amount of pixels on the
+    // opposite side of the square.
+    return (side1 - side2) / 2 * scale
 }
 
 function getSquareCenter(x, y, playerType, scale) {
@@ -12,35 +13,43 @@ function getSquareCenter(x, y, playerType, scale) {
     // the image. Since the animals are symmetrical on the right and
     // left side, only the y position needs to change.
     switch (playerType) {
-        case 'hippo': {
-            return [x, y - squareCenterOffset(34, 24, scale)]; // 34 px top, 24 px bottom.
+        case 'chicken': {
+            return [x, y - squareCenterOffset(17, 0, scale)];
+        }
+        case 'horse': {
+            return [x, y - squareCenterOffset(15, 0, scale)];
         }
         case 'monkey': {
-            return [x, y]; // The center of the image is also the centre of the square.
-        }
-        case 'pig': {
-            return [x, y - squareCenterOffset(21, 0, scale)]; // 21 px top.
+            return [x, y];
         }
         case 'rabbit': {
-            return [x, y - squareCenterOffset(130, 0, scale)]; // 130 px top.
+            return [x, y - squareCenterOffset(48, 0, scale)];
         }
+        // case 'rabbit': {
+        //     return [x, y - squareCenterOffset(130, 0, scale)];
+        // }
     }
 }
 
 function getBodyOffset(playerType) {
     switch (playerType) {
-        case 'hippo': {
-            return [23, 34];
+        // The x and y distance to get to the top left of the square
+        // from the top left of the image.
+        case 'chicken': {
+            return [0, 17];
+        }
+        case 'horse': {
+            return [0, 15];
         }
         case 'monkey': {
-            return [54, 0];
-        }
-        case 'pig': {
-            return [37, 21];
+            return [23, 0];
         }
         case 'rabbit': {
-            return [0, 130];
+            return [0, 48];
         }
+        // case 'rabbit': {
+        //     return [0, 130];
+        // }
     }
 }
 
@@ -84,7 +93,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         
         // Change the player's hitbox size.
         this.scale = DEFAULT_PLAYER.scale;
-        this.body.setSize(256, 256);
+        this.body.setSize(128, 128);
         // Adjust the hitbox location to overlap with the square body section of
         // the animal.
 
