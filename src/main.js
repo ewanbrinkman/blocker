@@ -13,7 +13,7 @@ const config = {
             gravity: {
                 y: 1000
             },
-            debug: false,
+            debug: true,
         }
     },
     scene: [

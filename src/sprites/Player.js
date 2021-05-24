@@ -53,14 +53,24 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.maxVelocity = DEFAULT_PLAYER.maxVelocity;
         this.wallJumpVelocity = DEFAULT_PLAYER.wallJumpVelocity;
         this.wallSlide = DEFAULT_PLAYER.wallSlide;
-        // Friction when moving.
+
+        // Friction when moving. The maximum player velocity is the
+        // acceleration divded by the friction constant. For example,
+        // if the maximum acceleration is 1000 and the friction
+        // constant is 2, then the maximum velocity is 1000 / 2 which
+        // is 500.
+        this.friction = DEFAULT_PLAYER.friction;
+        // Friction when stopping.
         this.drag = DEFAULT_PLAYER.drag;
         // How much the player should bounce on impacts.
         this.bounce = DEFAULT_PLAYER.bounce;
         
-        // Set the player properties.
+        // How fast the player will slow down.
         this.body.setDrag(this.drag.x, this.drag.y);
+        // Make sure the player doesn't go too fast, or else they could
+        // clip through blocks.
         this.body.setMaxVelocity(this.maxVelocity.x, this.maxVelocity.y);
+        // How much the player will bounce on collisions.
         this.body.setBounce(this.bounce);
         
         // Change the player's hitbox size.
@@ -86,11 +96,14 @@ export default class Player extends Phaser.GameObjects.Sprite {
         if (this.body.onWall() && this.body.velocity.y > 0) {
             this.body.velocity.y *= this.wallSlide;
         }
-
+        
+        // Friction increases as the player's velocity increases.
+        // Multiply the velocity be a negative number to make friction
+        // go in the opposite direction of movement.
         if (cursors.left.isDown) {
-            this.body.setAccelerationX(-this.acceleration);
+            this.body.setAccelerationX(-this.acceleration + this.body.velocity.x * -this.friction);
         } else if (cursors.right.isDown) {
-            this.body.setAccelerationX(this.acceleration);
+            this.body.setAccelerationX(this.acceleration + this.body.velocity.x * -this.friction);
         } else {
             this.body.setAccelerationX(0);
         }
@@ -100,6 +113,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
                 // Jump on the ground.
                 this.body.setVelocityY(-this.jumpVelocity);
             }
+        }
+
+        if (cursors.down.isDown) {
+            this.body.setVelocityX(900);
         }
 
         // console.log(Phaser.Input.Keyboard.JustDown(cursors.up));
@@ -115,7 +132,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
         if (this.body.y > this.scene.map.heightInPixels) {
             this.respawn();
         }
-        // console.log(this.body.blocked.right);
     }
 
     teleport(x, y) {

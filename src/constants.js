@@ -7,14 +7,15 @@ export const DEFAULT_PLAYER = {
     acceleration: 1000,
     jumpVelocity: 560,
     wallJumpVelocity: {
-        x: 10000,
+        x: 1000,
         y: 560
     },
     wallSlide: 0.9,
     maxVelocity: {
-        x: 250,
+        x: 1000,
         y: 750
     },
+    friction: 4,
     drag: {
         x: 1500,
         y: 10
