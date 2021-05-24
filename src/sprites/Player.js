@@ -1,4 +1,4 @@
-import { DEFAULT_PLAYER } from '../constants.js';
+import { DEFAULT_PLAYER, PLAYER_SQUARE } from '../constants.js';
 
 function squareCenterOffset(side1, side2, scale) {
     // The argument "side1" is the amount of pixels on one side of the
@@ -7,50 +7,20 @@ function squareCenterOffset(side1, side2, scale) {
     return (side1 - side2) / 2 * scale
 }
 
-function getSquareCenter(x, y, playerType, scale) {
+function getSquareCenter(x, y, type, scale) {
     // Given an x and y position, move the coordinates so that the
     // center is at the middle of the animal square, not the middle of
     // the image. Since the animals are symmetrical on the right and
     // left side, only the y position needs to change.
-    switch (playerType) {
-        case 'chicken': {
-            return [x, y - squareCenterOffset(17, 0, scale)];
-        }
-        case 'horse': {
-            return [x, y - squareCenterOffset(15, 0, scale)];
-        }
-        case 'monkey': {
-            return [x, y];
-        }
-        case 'rabbit': {
-            return [x, y - squareCenterOffset(48, 0, scale)];
-        }
-        // case 'rabbit': {
-        //     return [x, y - squareCenterOffset(130, 0, scale)];
-        // }
-    }
+    return [x - squareCenterOffset(PLAYER_SQUARE[type].left, PLAYER_SQUARE[type].right, scale),
+            y - squareCenterOffset(PLAYER_SQUARE[type].top, PLAYER_SQUARE[type].bottom, scale)];
 }
 
 function getBodyOffset(playerType) {
-    switch (playerType) {
-        // The x and y distance to get to the top left of the square
-        // from the top left of the image.
-        case 'chicken': {
-            return [0, 17];
-        }
-        case 'horse': {
-            return [0, 15];
-        }
-        case 'monkey': {
-            return [23, 0];
-        }
-        case 'rabbit': {
-            return [0, 48];
-        }
-        // case 'rabbit': {
-        //     return [0, 130];
-        // }
-    }
+    // The x and y distance to get to the top left of the square
+    // from the top left of the image.
+    return [PLAYER_SQUARE[playerType].left,
+            PLAYER_SQUARE[playerType].top];
 }
 
 export default class Player extends Phaser.GameObjects.Sprite {
@@ -93,7 +63,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         
         // Change the player's hitbox size.
         this.scale = DEFAULT_PLAYER.scale;
-        this.body.setSize(128, 128);
+        this.body.setSize(PLAYER_SQUARE.size, PLAYER_SQUARE.size);
         // Adjust the hitbox location to overlap with the square body section of
         // the animal.
 

@@ -4,12 +4,11 @@ import { SCENE_KEYS } from '../constants.js';
 
 // Start position.
 const startX = 70;
-const startY = 900;
-// const startY = 1085;
+const startY = 1085;
 // const startX = 140;
 // const startY = 140;
 // Player properties.
-let playerType = 'rabbit';
+let playerType = 'pig';
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -28,7 +27,7 @@ export default class GameScene extends Phaser.Scene {
         this.load.spritesheet('tiles', 'assets/images/spritesheets/tiles.png', {frameWidth: 70, frameHeight: 70, margin: 1, spacing: 4});
         // Player images.
         // this.load.atlasXML('players', 'assets/images/player/players.png', 'assets/images/player/players.xml')
-        this.load.atlas('players', 'assets/images/player/spritesheet.png', 'assets/images/player/sprites.json')
+        this.load.atlas('players', 'assets/images/player/spritesheet.png', 'assets/images/player/spritesheet.json')
     }
 
     create() {
