@@ -7,13 +7,13 @@ function squareCenterOffset(side1, side2, scale) {
     return (side1 - side2) / 2 * scale
 }
 
-function getSquareCenter(x, y, type, scale) {
+function getSquareCenter(x, y, playerType, scale) {
     // Given an x and y position, move the coordinates so that the
     // center is at the middle of the animal square, not the middle of
     // the image. Since the animals are symmetrical on the right and
     // left side, only the y position needs to change.
-    return [x - squareCenterOffset(PLAYER_SQUARE[type].left, PLAYER_SQUARE[type].right, scale),
-            y - squareCenterOffset(PLAYER_SQUARE[type].top, PLAYER_SQUARE[type].bottom, scale)];
+    return [x - squareCenterOffset(PLAYER_SQUARE[playerType].left, PLAYER_SQUARE[playerType].right, scale),
+            y - squareCenterOffset(PLAYER_SQUARE[playerType].top, PLAYER_SQUARE[playerType].bottom, scale)];
 }
 
 function getBodyOffset(playerType) {
@@ -51,6 +51,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.acceleration = DEFAULT_PLAYER.acceleration;
         this.jumpVelocity = DEFAULT_PLAYER.jumpVelocity;
         this.maxVelocity = DEFAULT_PLAYER.maxVelocity;
+        this.wallJumpVelocity = DEFAULT_PLAYER.wallJumpVelocity;
+        this.wallSlide = DEFAULT_PLAYER.wallSlide;
         // Friction when moving.
         this.drag = DEFAULT_PLAYER.drag;
         // How much the player should bounce on impacts.
@@ -79,6 +81,12 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     update(cursors, time, delta) {
+        // If the player is moving into a wall (moving left or right)
+        // and moving down, make them slide slower down the wall.
+        if (this.body.onWall() && this.body.velocity.y > 0) {
+            this.body.velocity.y *= this.wallSlide;
+        }
+
         if (cursors.left.isDown) {
             this.body.setAccelerationX(-this.acceleration);
         } else if (cursors.right.isDown) {
@@ -87,13 +95,27 @@ export default class Player extends Phaser.GameObjects.Sprite {
             this.body.setAccelerationX(0);
         }
 
-        if ((cursors.space.isDown || cursors.up.isDown) && this.body.onFloor()) {
-            this.body.setVelocityY(-this.jumpVelocity);
-        } 
+        if (cursors.space.isDown || cursors.up.isDown) {
+            if (this.body.onFloor()) {
+                // Jump on the ground.
+                this.body.setVelocityY(-this.jumpVelocity);
+            }
+        }
+
+        // console.log(Phaser.Input.Keyboard.JustDown(cursors.up));
+
+        // Wall jump, set the x velocity in the correct direction.
+        // if (this.body.blocked.right) {
+        //     this.body.setVelocityX(-this.wallJumpVelocity.x);
+        // } else if (this.body.blocked.left) {
+        //     this.body.setVelocityX(this.wallJumpVelocity.x);
+        // }
+        // this.body.setVelocityY(-this.wallJumpVelocity.y)
     
         if (this.body.y > this.scene.map.heightInPixels) {
             this.respawn();
         }
+        // console.log(this.body.blocked.right);
     }
 
     teleport(x, y) {

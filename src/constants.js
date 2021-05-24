@@ -6,6 +6,11 @@ export const DEFAULT_PLAYER = {
     scale: 0.25,
     acceleration: 1000,
     jumpVelocity: 560,
+    wallJumpVelocity: {
+        x: 10000,
+        y: 560
+    },
+    wallSlide: 0.9,
     maxVelocity: {
         x: 250,
         y: 750
