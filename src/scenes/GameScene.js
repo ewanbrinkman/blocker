@@ -70,6 +70,22 @@ export default class GameScene extends Phaser.Scene {
         // Get the cursor keys for player movement.
         this.cursors = this.input.keyboard.createCursorKeys();
 
+        // // Test for keydown events.
+        // this.input.keyboard.on('keydown', (event) => {
+        //     if (event.code === 'Space' || event.code === 'ArrowUp') {
+        //         this.player.wallJump();
+        //     }
+            
+        //     if (event.code === 'KeyF') {
+        //         // The F key can be used to toggle fullscreen.
+        //         if (this.scale.isFullscreen) {
+        //             this.scale.stopFullscreen();
+        //         } else {
+        //             this.scale.startFullscreen();
+        //         }
+        //     }
+        // });
+
         // The F key can be used to toggle fullscreen.
         this.input.keyboard.on('keydown-F', () => {
             if (this.scale.isFullscreen) {

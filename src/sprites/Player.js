@@ -90,6 +90,18 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.scene.physics.add.collider(this.scene.blockLayer, this);
     }
 
+    wallJump() {
+        if (!this.body.onFloor() && this.body.onWall()) {
+            // Wall jump, set the x velocity in the correct direction.
+            if (this.body.blocked.right) {
+                this.body.setVelocityX(-this.wallJumpVelocity.x);
+            } else if (this.body.blocked.left) {
+                this.body.setVelocityX(this.wallJumpVelocity.x);
+            }
+            this.body.setVelocityY(-this.wallJumpVelocity.y)
+        }
+    }
+
     update(cursors, time, delta) {
         // If the player is moving into a wall (moving left or right)
         // and moving down, make them slide slower down the wall.
@@ -110,7 +122,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
         if (cursors.space.isDown || cursors.up.isDown) {
             if (this.body.onFloor()) {
-                // Jump on the ground.
+                // Jump off the ground.
                 this.body.setVelocityY(-this.jumpVelocity);
             }
         }
@@ -119,15 +131,9 @@ export default class Player extends Phaser.GameObjects.Sprite {
             this.body.setVelocityX(900);
         }
 
-        // console.log(Phaser.Input.Keyboard.JustDown(cursors.up));
-
-        // Wall jump, set the x velocity in the correct direction.
-        // if (this.body.blocked.right) {
-        //     this.body.setVelocityX(-this.wallJumpVelocity.x);
-        // } else if (this.body.blocked.left) {
-        //     this.body.setVelocityX(this.wallJumpVelocity.x);
-        // }
-        // this.body.setVelocityY(-this.wallJumpVelocity.y)
+        if (Phaser.Input.Keyboard.JustDown(cursors.up) || Phaser.Input.Keyboard.JustDown(cursors.space)) {
+            this.wallJump()
+        }
     
         if (this.body.y > this.scene.map.heightInPixels) {
             this.respawn();
