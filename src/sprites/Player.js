@@ -1,4 +1,4 @@
-import { DEFAULT_PLAYER, PLAYER_SQUARE } from '../constants.js';
+import { DEFAULT_PLAYER, PLAYER_SQUARE, FRICTION_PARTICLES } from '../constants.js';
 
 function squareCenterOffset(side1, side2, scale) {
     // The argument "side1" is the amount of pixels on one side of the
@@ -64,6 +64,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.drag = DEFAULT_PLAYER.drag;
         // How much the player should bounce on impacts.
         this.bounce = DEFAULT_PLAYER.bounce;
+
+        this.topVelocity = {
+            x: this.acceleration / this.friction
+        }
         
         // How fast the player will slow down.
         this.body.setDrag(this.drag.x, this.drag.y);
@@ -88,6 +92,19 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.body.setCollideWorldBounds(true);
         // Collide with the blocks of the map.
         this.scene.physics.add.collider(this.scene.blockLayer, this);
+
+        // Create the friction particle emitter.
+        this.frictionParticlesEmitter = this.scene.frictionParticles.createEmitter({
+            speed: 100,
+            scale: { start: 0.13, end: 0},
+            blendMode: 'NORMAL',
+            follow: this, // Follow the player.
+            frequency: 70, // The amount of ms between particles.
+            on: false,
+            followOffset: {
+                y: this.displayHeight / 2 - PLAYER_SQUARE[this.playerType].bottom * this.scale
+            } // Make the particles appear at the bottom of the player image.
+        });
     }
 
     wallJump() {
@@ -103,12 +120,28 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     update(cursors, time, delta) {
+        // Friction particles when moving on the ground.
+        if (this.body.onFloor() && Math.abs(this.body.velocity.x) > this.topVelocity.x * FRICTION_PARTICLES.startAtRelativeVelocity) {
+            this.frictionParticlesEmitter.on = true;
+            // Set direction based on player verlocity direction.
+            if (this.body.velocity.x > 0) {
+                this.frictionParticlesEmitter.setAngle({ min: 160, max: 200 })
+            } else {
+                this.frictionParticlesEmitter.setAngle({ min: -20, max: 20 })
+            }
+        } else {
+            this.frictionParticlesEmitter.on = false;
+        }
+
         // If the player is moving into a wall (moving left or right)
         // and moving down, make them slide slower down the wall.
         if (this.body.onWall() && this.body.velocity.y > 0) {
             this.body.velocity.y *= this.wallSlide;
+            
+            // Friction particles when moving on the wall.
+            // Stuff here.
         }
-        
+
         // Friction increases as the player's velocity increases.
         // Multiply the velocity be a negative number to make friction
         // go in the opposite direction of movement.
@@ -135,9 +168,11 @@ export default class Player extends Phaser.GameObjects.Sprite {
             this.wallJump()
         }
     
-        if (this.body.y > this.scene.map.heightInPixels) {
+        if (this.body.position.y > this.scene.map.heightInPixels) {
             this.respawn();
         }
+
+        this.collideWorldSides();
     }
 
     teleport(x, y) {
@@ -145,8 +180,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // the body is poitioned based on the top left coordinate, half
         // of the body's width and height must be subtracted from the x
         // and y coordinate.
-        this.body.x = x - this.body.halfWidth;
-        this.body.y = y - this.body.halfHeight;
+        this.body.position.x = x - this.body.halfWidth;
+        this.body.position.y = y - this.body.halfHeight;
     }
 
     respawn() {
@@ -155,5 +190,19 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // Reset their velocity so they don't keep their velocity from
         // before they respawn.
         this.body.setVelocity(0, 0);
+    }
+
+    collideWorldSides() {
+        // Don't go off the left or right side of the screen. This
+        // method is better than doing physics.world.setBoundsCollision
+        // since it doesn't count running into the left or right edge
+        // as being blocked.
+        if (this.body.position.x < 0) {
+            this.body.position.x = 0;
+            this.body.setVelocityX(0);
+        } else if (this.body.position.x + this.body.width > this.scene.map.widthInPixels) {
+            this.body.position.x = this.scene.map.widthInPixels - this.body.width;
+            this.body.setVelocityX(0);
+        }
     }
 }

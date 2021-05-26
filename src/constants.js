@@ -23,6 +23,10 @@ export const DEFAULT_PLAYER = {
     bounce: 0
 }
 
+export const FRICTION_PARTICLES = {
+    startAtRelativeVelocity: 0.7
+}
+
 export const PLAYER_SQUARE = {
     size: 256,
     'elephant': {

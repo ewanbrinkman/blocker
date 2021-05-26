@@ -8,7 +8,7 @@ const startY = 70;
 // const startX = 70;
 // const startY = 1085;
 // Player properties.
-let playerType = 'rabbit';
+let playerType = 'snake';
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -27,6 +27,9 @@ export default class GameScene extends Phaser.Scene {
         this.load.spritesheet('tiles', 'assets/images/spritesheets/tiles.png', {frameWidth: 70, frameHeight: 70, margin: 1, spacing: 4});
         // Player images.
         this.load.atlas('players', 'assets/images/player/spritesheet.png', 'assets/images/player/spritesheet.json')
+
+        // Particles.
+        this.load.image('grass', 'assets/images/particles/grass.png');
     }
 
     create() {
@@ -45,10 +48,15 @@ export default class GameScene extends Phaser.Scene {
         this.physics.world.bounds.y = 0;
         this.physics.world.bounds.width = this.map.widthInPixels;
         this.physics.world.bounds.height = this.map.heightInPixels;
-        // Only collide with the left and right sides of the world
-        // boundary. The player can pass througb the top and bottom
-        // world boundary.
-        this.physics.world.setBoundsCollision(true, true, false, false);
+        // The player will handle world boundary collisions itself. The
+        // player will be able to pass through the top and bottom world
+        // boundary but not the left or right sides.
+        this.physics.world.setBoundsCollision(false, false, false, false);
+
+        // Particle when moving agaisnt surfaces.
+        this.frictionParticles = this.add.particles('grass');
+        // Render on top.
+        this.frictionParticles.setDepth(1);
 
         // Create the player.
         this.player = new Player({
@@ -69,22 +77,6 @@ export default class GameScene extends Phaser.Scene {
 
         // Get the cursor keys for player movement.
         this.cursors = this.input.keyboard.createCursorKeys();
-
-        // // Test for keydown events.
-        // this.input.keyboard.on('keydown', (event) => {
-        //     if (event.code === 'Space' || event.code === 'ArrowUp') {
-        //         this.player.wallJump();
-        //     }
-            
-        //     if (event.code === 'KeyF') {
-        //         // The F key can be used to toggle fullscreen.
-        //         if (this.scale.isFullscreen) {
-        //             this.scale.stopFullscreen();
-        //         } else {
-        //             this.scale.startFullscreen();
-        //         }
-        //     }
-        // });
 
         // The F key can be used to toggle fullscreen.
         this.input.keyboard.on('keydown-F', () => {
