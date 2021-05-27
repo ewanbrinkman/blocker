@@ -95,7 +95,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
         let frictionParticlesFloor = this.scene.frictionParticles.createEmitter({
             on: false,
-            // frame: 35,
             follow: this, // Follow the player.
             speed: 100,
             scale: { start: 0.13, end: 0.1},
@@ -238,20 +237,41 @@ export default class Player extends Phaser.GameObjects.Sprite {
     updateFrictionParticles(particles, type) {
         // Make the image of the particles match the tile the player is
         // on or agaisnt.
-        let tileX, tileY;
+        let tileX, tileY, tile;
+
         if (type === 'floor') {
-            tileX = Math.floor(this.body.center.x / 70);
-            tileY = Math.floor(this.body.center.y / 70) + 1;
+            tileX = Math.floor(this.body.left / 70);
+            tileY = Math.floor(this.body.y / 70) + 1;
+
+            tile = this.scene.map.getTileAt(tileX, tileY);
+
+            // If no tile was found, the body could be at an edge and
+            // is touching a tile on the other side of its body.
+            if (!tile) {
+                // Test for a tile on the other side of the body.
+                tileX = Math.floor(this.body.right / 70);
+                tile = this.scene.map.getTileAt(tileX, tileY);
+            }
         } else if (type === 'wall') {
             if (this.body.blocked.right) {
-                tileX = Math.floor(this.body.center.x / 70) + 1;
+                tileX = Math.floor(this.body.x / 70) + 1;
             } else {
-                tileX = Math.floor(this.body.center.x / 70) - 1;
+                tileX = Math.floor(this.body.x / 70) - 1;
             }
-            tileY = Math.floor(this.body.center.y / 70);
+            tileY = Math.floor(this.body.top / 70);
+
+            tile = this.scene.map.getTileAt(tileX, tileY);
+
+            // If no tile was found, the body could be at an edge and
+            // is touching a tile on the other side of its body.
+            if (!tile) {
+                // Test for a tile on the other side of the body.
+                tileY = Math.floor(this.body.bottom / 70);
+                tile = this.scene.map.getTileAt(tileX, tileY);
+            }
         }
 
-        let tile = this.scene.map.getTileAt(tileX, tileY);
+        // Update the image for the particles, if a tile was found.
         if (tile) {
             particles.setFrame(tile.index - 1);
         }
