@@ -37,9 +37,9 @@ export default class GameScene extends Phaser.Scene {
         this.map = this.make.tilemap({key: 'map'});
         
         // Tiles for the block layer.
-        const blockTiles = this.map.addTilesetImage('tiles', 'tiles', 70, 70, 1, 4);
+        this.blockTiles = this.map.addTilesetImage('tiles', 'tiles', 70, 70, 1, 4);
         // Create the block layer.
-        this.blockLayer = this.map.createLayer('Blocks', blockTiles, 0, 0);
+        this.blockLayer = this.map.createLayer('Blocks', this.blockTiles, 0, 0);
         // The player will collide with this layer.
         this.blockLayer.setCollisionByExclusion([-1]);
 
@@ -54,7 +54,7 @@ export default class GameScene extends Phaser.Scene {
         this.physics.world.setBoundsCollision(false, false, false, false);
 
         // Particle when moving agaisnt surfaces.
-        this.frictionParticles = this.add.particles('grass');
+        this.frictionParticles = this.add.particles('tiles');
         // Render on top.
         // this.frictionParticles.setDepth(1);
 
