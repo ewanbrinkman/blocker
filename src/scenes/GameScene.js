@@ -8,7 +8,7 @@ const startY = 70;
 // const startX = 70;
 // const startY = 1085;
 // Player properties.
-let playerType = 'snake';
+let playerType = 'elephant';
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -56,7 +56,7 @@ export default class GameScene extends Phaser.Scene {
         // Particle when moving agaisnt surfaces.
         this.frictionParticles = this.add.particles('grass');
         // Render on top.
-        this.frictionParticles.setDepth(1);
+        // this.frictionParticles.setDepth(1);
 
         // Create the player.
         this.player = new Player({

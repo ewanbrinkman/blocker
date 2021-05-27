@@ -2,7 +2,7 @@ export const SCENE_KEYS = {
     game: 'game'
 }
 
-export const DEFAULT_PLAYER = {
+export const BASE_PLAYER = {
     scale: 0.25,
     acceleration: 1000,
     jumpVelocity: 560,
@@ -24,7 +24,7 @@ export const DEFAULT_PLAYER = {
 }
 
 export const FRICTION_PARTICLES = {
-    startAtRelativeVelocity: 0.7
+    minPlayerVelocityX: 0.8
 }
 
 export const PLAYER_SQUARE = {

@@ -1,4 +1,4 @@
-import { DEFAULT_PLAYER, PLAYER_SQUARE, FRICTION_PARTICLES } from '../constants.js';
+import { BASE_PLAYER, PLAYER_SQUARE, FRICTION_PARTICLES } from '../constants.js';
 
 function squareCenterOffset(side1, side2, scale) {
     // The argument "side1" is the amount of pixels on one side of the
@@ -29,7 +29,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // the center of the image. The player should spawn so that the
         // center of its square is the given coordinate.
         let [ squareCenterStartX, squareCenterStartY ] = getSquareCenter(
-            config.x, config.y, config.playerType, DEFAULT_PLAYER.scale);
+            config.x, config.y, config.playerType, BASE_PLAYER.scale);
 
         super(config.scene, squareCenterStartX, squareCenterStartY, 
             config.texture, config.frame);
@@ -48,24 +48,24 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // Which animal type the player is.
         this.playerType = config.playerType;
         // Player movement settings.
-        this.acceleration = DEFAULT_PLAYER.acceleration;
-        this.jumpVelocity = DEFAULT_PLAYER.jumpVelocity;
-        this.maxVelocity = DEFAULT_PLAYER.maxVelocity;
-        this.wallJumpVelocity = DEFAULT_PLAYER.wallJumpVelocity;
-        this.wallSlide = DEFAULT_PLAYER.wallSlide;
+        this.acceleration = BASE_PLAYER.acceleration;
+        this.jumpVelocity = BASE_PLAYER.jumpVelocity;
+        this.maxVelocity = BASE_PLAYER.maxVelocity;
+        this.wallJumpVelocity = BASE_PLAYER.wallJumpVelocity;
+        this.wallSlide = BASE_PLAYER.wallSlide;
 
         // Friction when moving. The maximum player velocity is the
         // acceleration divded by the friction constant. For example,
         // if the maximum acceleration is 1000 and the friction
         // constant is 2, then the maximum velocity is 1000 / 2 which
         // is 500.
-        this.friction = DEFAULT_PLAYER.friction;
+        this.friction = BASE_PLAYER.friction;
         // Friction when stopping.
-        this.drag = DEFAULT_PLAYER.drag;
+        this.drag = BASE_PLAYER.drag;
         // How much the player should bounce on impacts.
-        this.bounce = DEFAULT_PLAYER.bounce;
+        this.bounce = BASE_PLAYER.bounce;
 
-        this.topVelocity = {
+        this.baseMaxVelocity = {
             x: this.acceleration / this.friction
         }
         
@@ -78,7 +78,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.body.setBounce(this.bounce);
         
         // Change the player's hitbox size.
-        this.scale = DEFAULT_PLAYER.scale;
+        this.scale = BASE_PLAYER.scale;
         this.body.setSize(PLAYER_SQUARE.size, PLAYER_SQUARE.size);
         // Adjust the hitbox location to overlap with the square body section of
         // the animal.
@@ -93,53 +93,86 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // Collide with the blocks of the map.
         this.scene.physics.add.collider(this.scene.blockLayer, this);
 
-        // Create the friction particle emitter.
-        this.frictionParticlesEmitter = this.scene.frictionParticles.createEmitter({
-            speed: 100,
-            scale: { start: 0.13, end: 0},
-            blendMode: 'NORMAL',
-            follow: this, // Follow the player.
-            frequency: 70, // The amount of ms between particles.
+        let frictionParticlesFloor = this.scene.frictionParticles.createEmitter({
             on: false,
+            follow: this, // Follow the player.
+            speed: 100,
+            scale: { start: 0.13, end: 0.1},
+            blendMode: 'NORMAL',
+            frequency: 45, // The amount of ms between particles.
+            lifespan: 250,
+            alpha: {
+                start: 1,
+                end: 0
+            },
             followOffset: {
                 y: this.displayHeight / 2 - PLAYER_SQUARE[this.playerType].bottom * this.scale
             } // Make the particles appear at the bottom of the player image.
         });
-    }
 
-    wallJump() {
-        if (!this.body.onFloor() && this.body.onWall()) {
-            // Wall jump, set the x velocity in the correct direction.
-            if (this.body.blocked.right) {
-                this.body.setVelocityX(-this.wallJumpVelocity.x);
-            } else if (this.body.blocked.left) {
-                this.body.setVelocityX(this.wallJumpVelocity.x);
-            }
-            this.body.setVelocityY(-this.wallJumpVelocity.y)
-        }
+        let frictionParticlesWall = this.scene.frictionParticles.createEmitter({
+            on: false,
+            follow: this, // Follow the player.
+            speed: 100,
+            scale: { start: 0.13, end: 0.1},
+            blendMode: 'NORMAL',
+            frequency: 70, // The amount of ms between particles.
+            lifespan: 250,
+            alpha: {
+                start: 1,
+                end: 0
+            },
+            followOffset: {
+                y: -this.displayHeight / 2 + PLAYER_SQUARE[this.playerType].top * this.scale
+            } // Make the particles appear at the bottom of the player image.
+        });
+
+        let frictionParticlesWallJump = this.scene.frictionParticles.createEmitter({
+            on: false,
+            speed: 200,
+            scale: { start: 0.13, end: 0.1},
+            blendMode: 'NORMAL',
+            lifespan: 300,
+            alpha: {
+                start: 1,
+                end: 0.8
+            },
+        });
+
+        // Create the friction particle emitter.
+        this.frictionParticles = {
+            floor: frictionParticlesFloor,
+            wall: frictionParticlesWall,
+            wallJump: frictionParticlesWallJump,
+        };
     }
 
     update(cursors, time, delta) {
-        // Friction particles when moving on the ground.
-        if (this.body.onFloor() && Math.abs(this.body.velocity.x) > this.topVelocity.x * FRICTION_PARTICLES.startAtRelativeVelocity) {
-            this.frictionParticlesEmitter.on = true;
-            // Set direction based on player verlocity direction.
-            if (this.body.velocity.x > 0) {
-                this.frictionParticlesEmitter.setAngle({ min: 160, max: 200 })
-            } else {
-                this.frictionParticlesEmitter.setAngle({ min: -20, max: 20 })
+        // Friction particles when moving.
+        if (this.body.onFloor() && Math.abs(this.body.velocity.x) > this.baseMaxVelocity.x * FRICTION_PARTICLES.minPlayerVelocityX) {
+            // Setup the particles.
+            if (!this.frictionParticles.floor.on) {
+                this.createFrictionParticles('floor');
             }
+            // Make sure the image is correct.
+            this.updateFrictionParticles(this.frictionParticles.floor);
         } else {
-            this.frictionParticlesEmitter.on = false;
+            this.frictionParticles.floor.on = false;
         }
 
         // If the player is moving into a wall (moving left or right)
         // and moving down, make them slide slower down the wall.
         if (this.body.onWall() && this.body.velocity.y > 0) {
             this.body.velocity.y *= this.wallSlide;
-            
-            // Friction particles when moving on the wall.
-            // Stuff here.
+
+            // Friction particles on the wall.
+            if (!this.frictionParticles.wall.on) {
+                this.createFrictionParticles('wall');
+            }
+            // Make sure the image is correct.
+            this.updateFrictionParticles(this.frictionParticles.wall);
+        } else {
+            this.frictionParticles.wall.on = false;
         }
 
         // Friction increases as the player's velocity increases.
@@ -165,7 +198,9 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
 
         if (Phaser.Input.Keyboard.JustDown(cursors.up) || Phaser.Input.Keyboard.JustDown(cursors.space)) {
-            this.wallJump()
+            if (!this.body.onFloor() && this.body.onWall()) {
+                this.wallJump()
+            }
         }
     
         if (this.body.position.y > this.scene.map.heightInPixels) {
@@ -173,6 +208,60 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
 
         this.collideWorldSides();
+    }
+
+    createFrictionParticles(type) {
+        if (type === 'floor') {
+            this.frictionParticles.floor.on = true;
+            // Set the position and direction of the particles based on player velocity.
+            if (this.body.velocity.x > 0) {
+                this.frictionParticles.floor.setAngle({ min: 180, max: 240 });
+                this.frictionParticles.floor.followOffset.x = -this.displayWidth / 2 + PLAYER_SQUARE[this.playerType].left * this.scale;
+            } else {
+                this.frictionParticles.floor.setAngle({ min: -40, max: 0 });
+                this.frictionParticles.floor.followOffset.x = this.displayWidth / 2 - PLAYER_SQUARE[this.playerType].right * this.scale;
+            }
+        } else if (type === 'wall') {
+            this.frictionParticles.wall.on = true;
+            // Set the position and direction of the particles based on player velocity.
+            if (this.body.blocked.right) {
+                this.frictionParticles.wall.setAngle({ min: -90, max: -130 });
+                this.frictionParticles.wall.followOffset.x = this.displayWidth / 2 - PLAYER_SQUARE[this.playerType].right * this.scale;
+            } else {
+                this.frictionParticles.wall.setAngle({ min: -50, max: -90 });
+                this.frictionParticles.wall.followOffset.x = -this.displayWidth / 2 + PLAYER_SQUARE[this.playerType].left * this.scale;
+            }
+        }
+    }
+
+    updateFrictionParticles(particles) {
+        // Make the image of the particles match the tile the player is
+        // on or agaisnt.
+    }
+
+    wallJumpParticles(wallSide) {
+        this.updateFrictionParticles(this.frictionParticles.wallJump);
+        if (wallSide === 'right') {
+            // this.frictionParticles.wallJump.setAngle({ min: 110, max: 240 });
+            this.frictionParticles.wallJump.setAngle({ min: 90, max: 270 });
+            this.frictionParticles.wallJump.explode(8, this.body.x + this.body.halfWidth, this.body.y);
+        } else if (wallSide === 'left') {
+            // this.frictionParticles.wallJump.setAngle({ min: -70, max: 70 });
+            this.frictionParticles.wallJump.setAngle({ min: -90, max: 90 });
+            this.frictionParticles.wallJump.explode(8, this.body.x, this.body.y);
+        }
+    }
+
+    wallJump() {
+        // Wall jump, set the x velocity in the correct direction.
+        if (this.body.blocked.right) {
+            this.body.setVelocityX(-this.wallJumpVelocity.x);
+            this.wallJumpParticles('right');
+        } else if (this.body.blocked.left) {
+            this.body.setVelocityX(this.wallJumpVelocity.x);
+            this.wallJumpParticles('left');
+        }
+        this.body.setVelocityY(-this.wallJumpVelocity.y)
     }
 
     teleport(x, y) {
