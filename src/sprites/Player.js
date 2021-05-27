@@ -82,6 +82,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
             this.frictionParticles.floor.on = false;
         }
 
+        if (this.body.onFloor() && (this.body.deltaY() >= 9)) {
+            this.frictionParticles.explodeFloorHitParticles();
+        }
+
         // If the player is moving into a wall (moving left or right)
         // and moving down, make them slide slower down the wall.
         if (this.body.onWall() && this.body.velocity.y > 0) {
@@ -109,11 +113,12 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
 
         if (Phaser.Input.Keyboard.JustDown(cursors.up) || Phaser.Input.Keyboard.JustDown(cursors.space)) {
+            // The player will try to do a wall jump.
             this.wallJump();
         }
         
-        // Don't pass through the left and right edge, and respawn if
-        // below the botom.
+        // Don't pass through the left and right edge of the map, and
+        // respawn if below the bottom of the map.
         this.collideWorldSides();
     }
 

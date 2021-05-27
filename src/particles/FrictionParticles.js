@@ -38,7 +38,7 @@ export class FrictionParticles {
             },
             followOffset: {
                 y: -this.player.displayHeight / 2 + PLAYER_SQUARE[this.player.playerType].top * this.player.scale
-            } // Make the particles appear at the bottom of the player image.
+            } // Make the particles appear at the top of the player image.
         });
 
         // An explosion of particles when wall jumping.
@@ -51,13 +51,30 @@ export class FrictionParticles {
             alpha: {
                 start: 1,
                 end: 0.8
-            },
+            }
+        });
+
+        // An explosion of particles when wall jumping.
+        this.floorHit = this.scene.frictionParticles.createEmitter({
+            on: false,
+            speed: 250,
+            gravityY: 1000,
+            scale: { start: 0.13, end: 0.1},
+            blendMode: 'NORMAL',
+            lifespan: 800,
+            bounce: 0.6,
+            angle: { min: -120, max: -60 },
+            alpha: {
+                start: 1,
+                end: 0.8
+            }
         });
 
         this.particleTypes = {
             'floor': this.floor,
             'wall': this.wall,
-            'wallJump': this.wallJump
+            'wallJump': this.wallJump,
+            'floorHit': this.floorHit
         };
     }
 
@@ -90,7 +107,7 @@ export class FrictionParticles {
         // on or agaisnt.
         let tileX, tileY, tile;
 
-        if (particleType === 'floor') {
+        if (particleType === 'floor' || particleType === 'floorHit') {
             tileX = this.player.body.left;
             tileY = this.player.body.y + 70;
 
@@ -134,13 +151,32 @@ export class FrictionParticles {
         this.updateParticleImage('wallJump');
         
         if (wallSide === 'right') {
-            // this.frictionParticles.wallJump.setAngle({ min: 110, max: 240 });
             this.wallJump.setAngle({ min: 90, max: 270 });
-            this.wallJump.explode(8, this.player.body.x + this.player.body.halfWidth, this.player.body.y);
+            this.wallJump.explode(8, this.player.body.x + this.player.body.halfWidth,
+                this.player.body.y + this.player.body.halfHeight);
         } else if (wallSide === 'left') {
-            // this.frictionParticles.wallJump.setAngle({ min: -70, max: 70 });
             this.wallJump.setAngle({ min: -90, max: 90 });
-            this.wallJump.explode(8, this.player.body.x, this.player.body.y);
+            this.wallJump.explode(8, this.player.body.x,
+                this.player.body.y + this.player.body.halfHeight);
         }
+    }
+
+    explodeFloorHitParticles() {
+        // Make sure the particle image matches the surface the player
+        // is jumping off of.
+        this.updateParticleImage('floorHit');
+
+        let amount = this.player.body.deltaY() - 5
+
+        // Update the bounds so the particles collide with the floor.
+        this.floorHit.setBounds({
+            x: this.player.body.x - 100,
+            y: this.player.body.top - 100,
+            width: this.player.body.x + 200,
+            height: this.player.body.height + 100
+        });
+        
+        this.floorHit.explode(amount, this.player.body.x + this.player.body.halfWidth,
+            this.player.body.bottom);
     }
 }

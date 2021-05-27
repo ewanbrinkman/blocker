@@ -56,7 +56,7 @@ export default class GameScene extends Phaser.Scene {
         // Particle when moving agaisnt surfaces.
         this.frictionParticles = this.add.particles('tiles');
         // Render on top.
-        // this.frictionParticles.setDepth(1);
+        this.frictionParticles.setDepth(1);
 
         // Create the player.
         this.player = new Player({
