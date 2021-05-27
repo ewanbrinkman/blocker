@@ -10,7 +10,7 @@ export const BASE_PLAYER = {
         x: 800,
         y: 560
     },
-    wallSlide: 0.9,
+    wallSlideMultiplier: 0.9,
     maxVelocity: {
         x: 1000,
         y: 750

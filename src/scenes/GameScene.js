@@ -1,5 +1,4 @@
 import Player from '../sprites/Player.js';
-
 import { SCENE_KEYS } from '../constants.js';
 
 // Start position.
