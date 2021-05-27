@@ -240,34 +240,34 @@ export default class Player extends Phaser.GameObjects.Sprite {
         let tileX, tileY, tile;
 
         if (type === 'floor') {
-            tileX = Math.floor(this.body.left / 70);
-            tileY = Math.floor(this.body.y / 70) + 1;
+            tileX = this.body.left;
+            tileY = this.body.y + 70;
 
-            tile = this.scene.map.getTileAt(tileX, tileY);
+            tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.blockLayer);
 
             // If no tile was found, the body could be at an edge and
             // is touching a tile on the other side of its body.
             if (!tile) {
                 // Test for a tile on the other side of the body.
-                tileX = Math.floor(this.body.right / 70);
-                tile = this.scene.map.getTileAt(tileX, tileY);
+                tileX = this.body.right;
+                tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.blockLayer);
             }
         } else if (type === 'wall') {
             if (this.body.blocked.right) {
-                tileX = Math.floor(this.body.x / 70) + 1;
+                tileX = this.body.x + 70;
             } else {
-                tileX = Math.floor(this.body.x / 70) - 1;
+                tileX = this.body.x - 70;
             }
-            tileY = Math.floor(this.body.top / 70);
+            tileY = this.body.top;
 
-            tile = this.scene.map.getTileAt(tileX, tileY);
+            tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.blockLayer);
 
             // If no tile was found, the body could be at an edge and
             // is touching a tile on the other side of its body.
             if (!tile) {
                 // Test for a tile on the other side of the body.
-                tileY = Math.floor(this.body.bottom / 70);
-                tile = this.scene.map.getTileAt(tileX, tileY);
+                tileY = this.body.bottom;
+                tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.blockLayer);
             }
         }
 

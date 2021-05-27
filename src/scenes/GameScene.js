@@ -37,9 +37,10 @@ export default class GameScene extends Phaser.Scene {
         this.map = this.make.tilemap({key: 'map'});
         
         // Tiles for the block layer.
-        this.blockTiles = this.map.addTilesetImage('tiles', 'tiles', 70, 70, 1, 4);
+        this.tiles = this.map.addTilesetImage('tiles', 'tiles', 70, 70, 1, 4);
         // Create the block layer.
-        this.blockLayer = this.map.createLayer('Blocks', this.blockTiles, 0, 0);
+        this.blockLayer = this.map.createLayer('Blocks', this.tiles, 0, 0);
+        this.decorationsLayer = this.map.createLayer('Decorations', this.tiles, 0, 0);
         // The player will collide with this layer.
         this.blockLayer.setCollisionByExclusion([-1]);
 
