@@ -113,7 +113,7 @@ export class FrictionParticles {
 
         if (particleType === 'floor' || particleType === 'floorHit') {
             tileX = this.player.body.left;
-            tileY = this.player.body.y + 70;
+            tileY = this.player.body.bottom + 1;
 
             tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.blockLayer);
 
@@ -126,9 +126,9 @@ export class FrictionParticles {
             }
         } else if (particleType === 'wall' || particleType === 'wallJump') {
             if (this.player.body.blocked.right) {
-                tileX = this.player.body.x + 70;
+                tileX = this.player.body.right + 1;
             } else {
-                tileX = this.player.body.x - 70;
+                tileX = this.player.body.left - 1;
             }
             tileY = this.player.body.top;
 

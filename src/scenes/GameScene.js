@@ -1,5 +1,5 @@
 import Player from '../sprites/Player.js';
-import { SCENE_KEYS } from '../constants.js';
+import { SCENE_KEYS, TILES } from '../constants.js';
 
 // Start position.
 const startX = 210;
@@ -23,7 +23,7 @@ export default class GameScene extends Phaser.Scene {
         // Load maps made with Tiled in JSON format.
         this.load.tilemapTiledJSON('map', 'assets/maps/map2.json');
         // Tiles in spritesheet.
-        this.load.spritesheet('tiles', 'assets/images/spritesheets/tiles.png', {frameWidth: 70, frameHeight: 70, margin: 1, spacing: 4});
+        this.load.spritesheet('tiles', 'assets/images/spritesheets/tiles.png', {frameWidth: TILES.width, frameHeight: TILES.height, margin: 1, spacing: 4});
         // Player images.
         this.load.atlas('players', 'assets/images/player/spritesheet.png', 'assets/images/player/spritesheet.json')
 
@@ -34,27 +34,86 @@ export default class GameScene extends Phaser.Scene {
     create() {
         // Load the map.
         this.map = this.make.tilemap({key: 'map'});
-
-        console.log(this.map.getObjectLayerNames());
         
         // Tiles for the block layer.
-        this.tiles = this.map.addTilesetImage('tiles', 'tiles', 70, 70, 1, 4);
+        this.tiles = this.map.addTilesetImage('tiles', 'tiles', TILES.width, TILES.height, 1, 4);
         // Create the block layer.
         this.blockLayer = this.map.createLayer('Blocks', this.tiles, 0, 0);
         this.decorationsLayer = this.map.createLayer('Decorations', this.tiles, 0, 0);
+        this.collisionsLayer = this.map.createLayer('Collisions', this.tiles, 0, 0);
+
+        this.walls = this.physics.add.staticGroup();
+
+        for (const tileIndex in this.map.tilesets[0].tileData) {
+            // Get the collision boxes on this tile.
+            const walls = this.map.tilesets[0].tileData[tileIndex].objectgroup.objects;
+
+            // Find tiles with this index.
+            this.collisionsLayer.tilemap.forEachTile(tile => {
+                if (tile.index === (parseInt(tileIndex) + 1)) {
+
+                    // Create the collision boxes for this tile.
+                    walls.forEach(wall => {
+                        // Create a static sprite for collisions.
+                        let staticSprite = this.walls.create(wall.x + tile.x * TILES.width,
+                            wall.y + tile.y * TILES.height);
+
+                        staticSprite.setOrigin(0, 0);
+                        staticSprite.displayWidth = wall.width;
+                        staticSprite.displayHeight = wall.height;
+                        staticSprite.visible = false;
+                        
+                        // Update the body after changing it. A static
+                        // body won't update automatically.
+                        staticSprite.refreshBody();
+                    });
+                }
+            });
+        }
+
+        // this.test = this.walls.create(0, 0);
+        // this.test.setOrigin(0, 0);
+        // this.test.displayWidth = 70;
+        // this.test.displayHeight = 70;
+        // this.test.visible = false;
+        // this.test.refreshBody();
+
+        // let test = this.physics.add.sprite(0, 0, 'grass');
+        // test.body.setImmovable(true);
+        // test.body.setAllowGravity(false);
+
+        // let test = this.physics.add.sprite(0, 0);
+        // test.body.width = test.body.height = 70;
+        // console.log(test);
+
+        // this.collisionsLayer.tilemap.layer.data.forEach( i =>{
+        //     console.log(i);
+        //     i.forEach(j =>{
+        //         if (j.index !== -1) {
+        //             console.log(j);
+        //         }
+        //     });
+        // });
+
+        // console.log(this.collisionsLayer.tilemap.layer.data);
+        // console.log(this.map.tilesets[0].getTileProperties());
+        // console.log(this.collisionsLayer.tileset.getTileProperties(56));
+
         // The player will collide with this layer.
         this.blockLayer.setCollisionByExclusion([-1]);
-        this.walls = this.map.createFromObjects('Walls');
-        this.walls.forEach(wall => {
-            this.physics.world.enable(wall);
-        })
-        this.walls.forEach(wall => {
-            wall.body.setImmovable(true);
-            wall.body.setAllowGravity(false);
-            wall.visible = false;
-        })
-        console.log(this.walls);
-        // this.blockLayer.setCollisionFromCollisionGroup();
+
+        // Walls.
+        // this.walls = this.map.createFromObjects('Collisions');
+        // this.walls.forEach(wall => {
+        //     wall.setOrigin(0.5, -0.5);
+        //     this.physics.world.enable(wall);
+        // })
+        // this.walls.forEach(wall => {
+        //     wall.body.setImmovable(true);
+        //     wall.body.setAllowGravity(false);
+        //     wall.visible = false;
+        // })
+        // this.decorationsLayer.setCollisionFromCollisionGroup();
 
         // Physics world boudary.
         this.physics.world.bounds.x = 0;

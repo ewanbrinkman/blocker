@@ -23,6 +23,11 @@ export const BASE_PLAYER = {
     bounce: 0
 }
 
+export const TILES = {
+    width: 70,
+    height: 70
+}
+
 export const PLAYER_SQUARE = {
     size: 256,
     'elephant': {
