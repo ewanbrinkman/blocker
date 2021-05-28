@@ -5,6 +5,10 @@ export class FrictionParticles {
         this.scene = scene;
         this.player = player;
 
+        // Minimum player velocity relative to the maximum while moving
+        // along the floor, in order to start friction particles.
+        this.minVelocityFloor = 0.8
+
         // When moving fast along the floor.
         this.floor = this.scene.frictionParticles.createEmitter({
             on: false,
@@ -166,13 +170,26 @@ export class FrictionParticles {
         // is jumping off of.
         this.updateParticleImage('floorHit');
 
-        let amount = this.player.body.deltaY() - 5
+        let amount;
+
+        if (this.player.lastVelocity.y < 520) {
+            // 2 blocks.
+            amount = 2;
+        } else if (this.player.lastVelocity.y < 640) {
+            // 3 blocks (player jump velocity floor hit is 540).
+            amount = 3;
+        } else if (this.player.lastVelocity.y < 740) {
+            // 4 blocks.
+            amount = 5;
+        } else {
+            amount = 7;
+        }
 
         // Update the bounds so the particles collide with the floor.
         this.floorHit.setBounds({
-            x: this.player.body.x - 100,
+            x: this.player.body.x - 400,
             y: this.player.body.top - 100,
-            width: this.player.body.x + 200,
+            width: this.player.body.width + 800,
             height: this.player.body.height + 100
         });
         

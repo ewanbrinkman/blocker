@@ -13,18 +13,14 @@ export const BASE_PLAYER = {
     wallSlideMultiplier: 0.9,
     maxVelocity: {
         x: 1000,
-        y: 750
+        y: 900
     },
     friction: 4,
     drag: {
         x: 800,
-        y: 10
+        y: 0
     },
     bounce: 0
-}
-
-export const FRICTION_PARTICLES = {
-    minPlayerVelocityX: 0.8
 }
 
 export const PLAYER_SQUARE = {

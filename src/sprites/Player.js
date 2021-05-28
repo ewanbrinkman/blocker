@@ -1,6 +1,6 @@
 import { FrictionParticles } from '../particles/FrictionParticles.js';
 import { getSquareCenter, getBodyOffset } from '../utils.js';
-import { BASE_PLAYER, PLAYER_SQUARE, FRICTION_PARTICLES } from '../constants.js';
+import { BASE_PLAYER, PLAYER_SQUARE } from '../constants.js';
 
 export default class Player extends Phaser.GameObjects.Sprite {
     constructor(config) {
@@ -72,17 +72,27 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
         // Particles when the player moves around.
         this.frictionParticles = new FrictionParticles(this.scene, this);
+        
+        // Keep track of the player's velocity during the last update.
+        // That way, when the player hits the floor, it can be known
+        // how hard they hit using their velocity from the previous
+        // frame.
+        this.lastVelocity = {
+            y: 0
+        }
     }
 
     update(cursors, time, delta) {
         // Friction particles when moving.
-        if (this.body.onFloor() && Math.abs(this.body.velocity.x) > this.baseMaxVelocity.x * FRICTION_PARTICLES.minPlayerVelocityX) {
+        if (this.body.onFloor() && (Math.abs(this.body.velocity.x) > this.baseMaxVelocity.x * this.frictionParticles.minVelocityFloor)) {
             this.movingFast();
         } else {
             this.frictionParticles.floor.on = false;
         }
 
-        if (this.body.onFloor() && (this.body.deltaY() >= 9)) {
+        // If the player hits the floor moving fast enough, some impact
+        // particles appear and bounce along the floor.
+        if (this.body.onFloor() && (this.lastVelocity.y > 500)) {
             this.frictionParticles.explodeFloorHitParticles();
         }
 
@@ -120,6 +130,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // Don't pass through the left and right edge of the map, and
         // respawn if below the bottom of the map.
         this.collideWorldSides();
+
+        this.lastVelocity = {
+            y: this.body.velocity.y
+        }
     }
 
     movingFast() {
