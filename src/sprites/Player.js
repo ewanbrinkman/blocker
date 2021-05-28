@@ -69,6 +69,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.body.setCollideWorldBounds(true);
         // Collide with the blocks of the map.
         this.scene.physics.add.collider(this.scene.blockLayer, this);
+        this.scene.physics.add.collider(this.scene.walls, this);
 
         // Particles when the player moves around.
         this.frictionParticles = new FrictionParticles(this.scene, this);

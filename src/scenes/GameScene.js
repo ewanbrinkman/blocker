@@ -34,6 +34,8 @@ export default class GameScene extends Phaser.Scene {
     create() {
         // Load the map.
         this.map = this.make.tilemap({key: 'map'});
+
+        console.log(this.map.getObjectLayerNames());
         
         // Tiles for the block layer.
         this.tiles = this.map.addTilesetImage('tiles', 'tiles', 70, 70, 1, 4);
@@ -42,6 +44,17 @@ export default class GameScene extends Phaser.Scene {
         this.decorationsLayer = this.map.createLayer('Decorations', this.tiles, 0, 0);
         // The player will collide with this layer.
         this.blockLayer.setCollisionByExclusion([-1]);
+        this.walls = this.map.createFromObjects('Walls');
+        this.walls.forEach(wall => {
+            this.physics.world.enable(wall);
+        })
+        this.walls.forEach(wall => {
+            wall.body.setImmovable(true);
+            wall.body.setAllowGravity(false);
+            wall.visible = false;
+        })
+        console.log(this.walls);
+        // this.blockLayer.setCollisionFromCollisionGroup();
 
         // Physics world boudary.
         this.physics.world.bounds.x = 0;
