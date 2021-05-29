@@ -1,31 +1,16 @@
+import config from './config.js';
+import { SCENE_KEYS } from './constants.js';
 import GameScene from './scenes/GameScene.js';
 
-// The container that will hold the game.
-const parent = document.getElementById('game').getBoundingClientRect();
-
-const config = {
-    type: Phaser.AUTO,
-    width: parent.width,
-    height: parent.height,
-    physics: {
-        default: 'arcade',
-        arcade: {
-            gravity: {
-                y: 1000
-            },
-            debug: false,
-        }
-    },
-    scene: [
-        GameScene
-    ],
-    scale: {
-        parent: 'game',
-        autoCenter: Phaser.Scale.CENTER_BOTH
+class Game extends Phaser.Game {
+    constructor() {
+        super(config);
+        this.scene.add(SCENE_KEYS.game, GameScene);
+        this.scene.start(SCENE_KEYS.game);
     }
-};
+}
 
-const game = new Phaser.Game(config);
+const game = new Game();
 
 // Resize the game to fit the parent container when the window gets
 // resized.
