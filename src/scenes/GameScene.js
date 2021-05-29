@@ -2,12 +2,10 @@ import Player from '../sprites/Player.js';
 import { SCENE_KEYS, TILES } from '../constants.js';
 
 // Start position.
-const startX = 210;
-const startY = 70;
-// const startX = 70;
-// const startY = 1085;
+const startX = 3 * TILES.width;
+const startY = 1 * TILES.height;
 // Player properties.
-let playerType = 'elephant';
+let playerType = 'rabbit';
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -24,11 +22,9 @@ export default class GameScene extends Phaser.Scene {
         this.load.tilemapTiledJSON('map', 'assets/maps/map2.json');
         // Tiles in spritesheet.
         this.load.spritesheet('tiles', 'assets/images/spritesheets/tiles.png', {frameWidth: TILES.width, frameHeight: TILES.height, margin: 1, spacing: 4});
+        
         // Player images.
         this.load.atlas('players', 'assets/images/player/spritesheet.png', 'assets/images/player/spritesheet.json')
-
-        // Particles.
-        this.load.image('grass', 'assets/images/particles/grass.png');
     }
 
     create() {
@@ -77,7 +73,7 @@ export default class GameScene extends Phaser.Scene {
                         staticSprite.refreshBody();
                     });
                 }
-            }, undefined, undefined, undefined, undefined, undefined, undefined, 'Colliders');
+            }, undefined, undefined, undefined, undefined, undefined, undefined, this.collidersLayer);
         }
 
         // The player will collide with this layer. Don't collide with
