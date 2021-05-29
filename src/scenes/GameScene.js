@@ -38,18 +38,27 @@ export default class GameScene extends Phaser.Scene {
         // Tiles for the block layer.
         this.tiles = this.map.addTilesetImage('tiles', 'tiles', TILES.width, TILES.height, 1, 4);
         // Create the block layer.
-        this.blockLayer = this.map.createLayer('Blocks', this.tiles, 0, 0);
+        this.collidersLayer = this.map.createLayer('Colliders', this.tiles, 0, 0);
         this.decorationsLayer = this.map.createLayer('Decorations', this.tiles, 0, 0);
-        this.collisionsLayer = this.map.createLayer('Collisions', this.tiles, 0, 0);
 
+        this.customCollisionTilesIndexes = [];
+
+        // SET FOR EACH TO USE A SPECIFIC LAYER, INSTEAD OF THE MOST RECENT ONE!!!
+
+        // Create custom collision boxes as static sprites.
         this.walls = this.physics.add.staticGroup();
-
+        // Get the data in Tiled of the tiles that have custom
+        // collisions set.
         for (const tileIndex in this.map.tilesets[0].tileData) {
+            // Add this tile to the list of tiles which will have a
+            // custom collision box.
+            this.customCollisionTilesIndexes.push(parseInt(tileIndex) + 1);
+
             // Get the collision boxes on this tile.
             const walls = this.map.tilesets[0].tileData[tileIndex].objectgroup.objects;
-
+            
             // Find tiles with this index.
-            this.collisionsLayer.tilemap.forEachTile(tile => {
+            this.map.forEachTile(tile => {
                 if (tile.index === (parseInt(tileIndex) + 1)) {
 
                     // Create the collision boxes for this tile.
@@ -68,52 +77,14 @@ export default class GameScene extends Phaser.Scene {
                         staticSprite.refreshBody();
                     });
                 }
-            });
+            }, undefined, undefined, undefined, undefined, undefined, undefined, 'Colliders');
         }
 
-        // this.test = this.walls.create(0, 0);
-        // this.test.setOrigin(0, 0);
-        // this.test.displayWidth = 70;
-        // this.test.displayHeight = 70;
-        // this.test.visible = false;
-        // this.test.refreshBody();
-
-        // let test = this.physics.add.sprite(0, 0, 'grass');
-        // test.body.setImmovable(true);
-        // test.body.setAllowGravity(false);
-
-        // let test = this.physics.add.sprite(0, 0);
-        // test.body.width = test.body.height = 70;
-        // console.log(test);
-
-        // this.collisionsLayer.tilemap.layer.data.forEach( i =>{
-        //     console.log(i);
-        //     i.forEach(j =>{
-        //         if (j.index !== -1) {
-        //             console.log(j);
-        //         }
-        //     });
-        // });
-
-        // console.log(this.collisionsLayer.tilemap.layer.data);
-        // console.log(this.map.tilesets[0].getTileProperties());
-        // console.log(this.collisionsLayer.tileset.getTileProperties(56));
-
-        // The player will collide with this layer.
-        this.blockLayer.setCollisionByExclusion([-1]);
-
-        // Walls.
-        // this.walls = this.map.createFromObjects('Collisions');
-        // this.walls.forEach(wall => {
-        //     wall.setOrigin(0.5, -0.5);
-        //     this.physics.world.enable(wall);
-        // })
-        // this.walls.forEach(wall => {
-        //     wall.body.setImmovable(true);
-        //     wall.body.setAllowGravity(false);
-        //     wall.visible = false;
-        // })
-        // this.decorationsLayer.setCollisionFromCollisionGroup();
+        // The player will collide with this layer. Don't collide with
+        // tiles that have an index of -1, as there is nothing there.
+        // Also, collision for the custom collision tiles is done
+        // separately by using static sprites.
+        this.collidersLayer.setCollisionByExclusion([-1].concat(this.customCollisionTilesIndexes));
 
         // Physics world boudary.
         this.physics.world.bounds.x = 0;

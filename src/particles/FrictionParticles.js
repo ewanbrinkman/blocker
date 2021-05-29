@@ -115,14 +115,14 @@ export class FrictionParticles {
             tileX = this.player.body.left;
             tileY = this.player.body.bottom + 1;
 
-            tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.blockLayer);
+            tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.collidersLayer);
 
             // If no tile was found, the body could be at an edge and
             // is touching a tile on the other side of its body.
             if (!tile) {
                 // Test for a tile on the other side of the body.
                 tileX = this.player.body.right;
-                tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.blockLayer);
+                tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.collidersLayer);
             }
         } else if (particleType === 'wall' || particleType === 'wallJump') {
             if (this.player.body.blocked.right) {
@@ -132,14 +132,14 @@ export class FrictionParticles {
             }
             tileY = this.player.body.top;
 
-            tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.blockLayer);
+            tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.collidersLayer);
 
             // If no tile was found, the body could be at an edge and
             // is touching a tile on the other side of its body.
             if (!tile) {
                 // Test for a tile on the other side of the body.
                 tileY = this.player.body.bottom;
-                tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.blockLayer);
+                tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.collidersLayer);
             }
         }
 

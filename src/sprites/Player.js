@@ -68,7 +68,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // Don't go out of the map.
         this.body.setCollideWorldBounds(true);
         // Collide with the blocks of the map.
-        this.scene.physics.add.collider(this.scene.blockLayer, this);
+        this.scene.physics.add.collider(this.scene.collidersLayer, this);
         this.scene.physics.add.collider(this.scene.walls, this);
         // this.scene.physics.add.collider(this.scene.group, this);
 
