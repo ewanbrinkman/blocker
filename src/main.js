@@ -23,9 +23,22 @@ class Game extends Phaser.Game {
 
 const game = new Game();
 
+// Track events here so that they will apply to all scenes.
+
 // Resize the game to fit the parent container when the window gets
 // resized.
 window.addEventListener('resize', () => {
     let rect = game.scale.parent.getBoundingClientRect();
     game.scale.resize(rect.width, rect.height);
+});
+
+// The F key can be used to toggle fullscreen.
+window.addEventListener('keypress', (key) => {
+    if (key.code === 'KeyF') {
+        if (game.scale.isFullscreen) {
+            game.scale.stopFullscreen();
+        } else {
+            game.scale.startFullscreen();
+        }
+    }
 });

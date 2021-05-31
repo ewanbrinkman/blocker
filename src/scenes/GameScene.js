@@ -10,10 +10,6 @@ export default class GameScene extends Phaser.Scene {
         super(SCENE_KEYS.game);
     }
 
-    preload() {
-        // All of the asset loading is done in the preloader scene.
-    }
-
     create() {
         // Load the map.
         this.map = this.make.tilemap({key: 'map'});
@@ -103,15 +99,6 @@ export default class GameScene extends Phaser.Scene {
 
         // Get the cursor keys for player movement.
         this.cursors = this.input.keyboard.createCursorKeys();
-
-        // The F key can be used to toggle fullscreen.
-        this.input.keyboard.on('keydown-F', () => {
-            if (this.scale.isFullscreen) {
-                this.scale.stopFullscreen();
-            } else {
-                this.scale.startFullscreen();
-            }
-        });
 
         // Draw world boundary.
         let graphics;

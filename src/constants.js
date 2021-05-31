@@ -7,9 +7,28 @@ export const SCENE_KEYS = {
     title: 'title'
 }
 
+export const FONT = {
+    main: 'Pixel',
+    Pixel: {
+        offset: {
+            y: -5 // To make the text look like it is truly centered.
+        }
+    }
+}
+
+export const TITLE_SCENE = {
+    gameButton: {
+        offset: {
+            y: 0
+        }
+    }
+}
+
 export const PRELOADER_SCENE = {
     logo: {
-        offsetY: -200
+        offset: {
+            y: -200
+        }
     },
     progressBox: {
         width: 320,
@@ -24,13 +43,14 @@ export const PRELOADER_SCENE = {
         alpha: 1
     },
     loadingText: {
-        offsetY: -50
-    },
-    percentText: {
-        offsetY: -5
+        offset: {
+            y: -50
+        }
     },
     assetText: {
-        offsetY: 50
+        offset: {
+            y: 50
+        }
     }
 }
 
