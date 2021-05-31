@@ -1,6 +1,6 @@
 import { PLAYER_SQUARE } from '../constants.js';
 
-export class FrictionParticles {
+export default class FrictionParticles {
     constructor(scene, player) {
         this.scene = scene;
         this.player = player;

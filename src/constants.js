@@ -1,8 +1,41 @@
 export const SCENE_KEYS = {
-    game: 'game'
+    boot: 'boot',
+    credits: 'credits',
+    game: 'game',
+    options: 'options',
+    preloader: 'preloader',
+    title: 'title'
+}
+
+export const PRELOADER_SCENE = {
+    logo: {
+        offsetY: -200
+    },
+    progressBox: {
+        width: 320,
+        height: 50,
+        color: 0x84be1b,
+        alpha: 1
+    },
+    progressBar: {
+        width: 300,
+        height: 40,
+        color: 0x8cd41c,
+        alpha: 1
+    },
+    loadingText: {
+        offsetY: -50
+    },
+    percentText: {
+        offsetY: -5
+    },
+    assetText: {
+        offsetY: 50
+    }
 }
 
 export const BASE_PLAYER = {
+    playerType: 'rabbit',
     scale: 0.25,
     acceleration: 1000,
     jumpVelocity: 560,

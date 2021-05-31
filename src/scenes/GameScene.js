@@ -1,30 +1,17 @@
 import Player from '../sprites/Player.js';
-import { SCENE_KEYS, TILES } from '../constants.js';
+import { SCENE_KEYS, TILES, BASE_PLAYER } from '../constants.js';
 
 // Start position.
 const startX = 3 * TILES.width;
 const startY = 1 * TILES.height;
-// Player properties.
-let playerType = 'rabbit';
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
-        super({
-            key: SCENE_KEYS.game
-        });
+        super(SCENE_KEYS.game);
     }
 
     preload() {
-        // To extrude a tileset using tile-extruder on the command line:
-        // tile-extruder --tileWidth 70 --tileHeight 70 --spacing 2 --input ./tiles.png --output ./tiles-extruded.png
-        // To load into tiled, use a margin of 1px (1px plus the original 0px) and a spacing of 4px (2px plus the original 2px).
-        // Load maps made with Tiled in JSON format.
-        this.load.tilemapTiledJSON('map', 'assets/maps/map2.json');
-        // Tiles in spritesheet.
-        this.load.spritesheet('tiles', 'assets/images/spritesheets/tiles.png', {frameWidth: TILES.width, frameHeight: TILES.height, margin: 1, spacing: 4});
-        
-        // Player images.
-        this.load.atlas('players', 'assets/images/player/spritesheet.png', 'assets/images/player/spritesheet.json')
+        // All of the asset loading is done in the preloader scene.
     }
 
     create() {
@@ -103,8 +90,8 @@ export default class GameScene extends Phaser.Scene {
             x: startX,
             y: startY,
             texture: 'players',
-            frame: playerType,
-            playerType: playerType,
+            frame: BASE_PLAYER.playerType,
+            playerType: BASE_PLAYER.playerType,
         });
 
         // Set bounds so the camera won't go outside the game world.

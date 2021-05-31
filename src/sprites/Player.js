@@ -1,4 +1,4 @@
-import { FrictionParticles } from '../particles/FrictionParticles.js';
+import FrictionParticles from '../particles/FrictionParticles.js';
 import { getSquareCenter, getBodyOffset } from '../utils.js';
 import { BASE_PLAYER, PLAYER_SQUARE } from '../constants.js';
 
