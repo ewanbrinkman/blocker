@@ -8,7 +8,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // the center of the image. The player should spawn so that the
         // center of its square is the given coordinate.
         let [ squareCenterStartX, squareCenterStartY ] = getSquareCenter(
-            config.x, config.y, config.playerType, BASE_PLAYER.scale);
+            config.x, config.y, config.playerType, BASE_PLAYER.scale, false);
 
         super(config.scene, squareCenterStartX, squareCenterStartY, 
             config.texture, config.frame);

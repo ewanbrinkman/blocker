@@ -1,4 +1,4 @@
-import { SCENE_KEYS, FONT, PRELOADER_SCENE, TILES } from '../constants.js';
+import { SCENE_KEYS, FONT, PRELOADER_SCENE, TILES, COLORS } from '../constants.js';
 
 export default class PreloaderScene extends Phaser.Scene {
     constructor() {
@@ -20,16 +20,13 @@ export default class PreloaderScene extends Phaser.Scene {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
 
-        // Add a background image.
-        this.bg = this.add.image(width / 2, height / 2, 'bg');
-        this.bg.displayWidth = width;
-        this.bg.displayHeight = height;
-
-        this.background = this.add.image(width / 2, height, 'background');
+        // Background color.
+        this.cameras.main.setBackgroundColor(COLORS.background);
+        // The background image of world tiles.
+        this.background = this.add.image(width / 2, height, 'backgroundPreloader');
         this.background.setOrigin(0.5, 1);
-
         // Add the logo image.
-        this.logo = this.add.image(width / 2, height / 2 + PRELOADER_SCENE.logo.offset.y, 'logo');
+        this.logo = this.add.image(width / 2, PRELOADER_SCENE.logo.offset.y, 'logo');
         this.logo.setScale(0.4, 0.4);
 
         // The box around the progress bar.
@@ -129,6 +126,9 @@ export default class PreloaderScene extends Phaser.Scene {
         this.load.image('greenbuttonup', 'assets/images/ui/greenbuttonup.png');
         this.load.image('greenbuttondown', 'assets/images/ui/greenbuttondown.png');
 
+        // Load background images.
+        this.load.image('backgroundTitle', 'assets/images/ui/backgroundTitle.png');
+
         // For testing the loading bar.
         // for (let i = 0; i<300; i++) {
         //     this.load.tilemapTiledJSON('mapTest'+i, 'assets/maps/map2.json');
@@ -144,6 +144,8 @@ export default class PreloaderScene extends Phaser.Scene {
         this.input.on('pointerdown', () => {
             this.startTitleScene();
         });
+
+        // console.log(this.registry);
     }
 
     startTitleScene() {
@@ -163,18 +165,12 @@ export default class PreloaderScene extends Phaser.Scene {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
 
-        // Set objects to be in the correct position with the new screen size.
-        this.bg.setPosition(width / 2, height / 2);
-        this.bg.displayWidth = width;
-        this.bg.displayHeight = height;
-
+        // Set objects to be in the correct position with the new
+        // screen size.
         this.background.setPosition(width / 2, height);
-
-        this.logo.setPosition(width / 2, height / 2 + PRELOADER_SCENE.logo.offset.y);
-
+        this.logo.setPosition(width / 2, PRELOADER_SCENE.logo.offset.y);
         this.progressBox.setPosition(width / 2, height / 2);
         this.progressBar.setPosition(width / 2 - PRELOADER_SCENE.progressBar.width / 2, height / 2);
-
         this.loadingText.setPosition(width / 2, height / 2 + PRELOADER_SCENE.loadingText.offset.y + FONT[this.font].offset.y);
         this.percentText.setPosition(width / 2, height / 2 + FONT[this.font].offset.y);
         this.assetText.setPosition(width / 2, height / 2 + PRELOADER_SCENE.assetText.offset.y + FONT[this.font].offset.y);

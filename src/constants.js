@@ -16,18 +16,14 @@ export const FONT = {
     }
 }
 
-export const TITLE_SCENE = {
-    gameButton: {
-        offset: {
-            y: 0
-        }
-    }
+export const COLORS = {
+    background: '#a1e1ff'
 }
 
 export const PRELOADER_SCENE = {
     logo: {
         offset: {
-            y: -200
+            y: 100
         }
     },
     progressBox: {
@@ -50,6 +46,34 @@ export const PRELOADER_SCENE = {
     assetText: {
         offset: {
             y: 50
+        }
+    }
+}
+
+export const TITLE_SCENE = {
+    logo: {
+        offset: {
+            y: 100
+        }
+    },
+    gameButton: {
+        offset: {
+            y: 0
+        }
+    },
+    backButton: {
+        offset: {
+            y: 100
+        }
+    },
+    optionsButton: {
+        offset: {
+            x: -350
+        }
+    },
+    creditsButton: {
+        offset: {
+            x: 350
         }
     }
 }

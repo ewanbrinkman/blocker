@@ -1,5 +1,5 @@
 import Player from '../sprites/Player.js';
-import { SCENE_KEYS, TILES, BASE_PLAYER } from '../constants.js';
+import { SCENE_KEYS, TILES, BASE_PLAYER, COLORS } from '../constants.js';
 
 // Start position.
 const startX = 3 * TILES.width;
@@ -95,7 +95,7 @@ export default class GameScene extends Phaser.Scene {
         // Make the camera follow the player.
         this.cameras.main.startFollow(this.player);
         // Set the background color of the camera.
-        this.cameras.main.setBackgroundColor('#87CEEB');
+        this.cameras.main.setBackgroundColor(COLORS.background);
 
         // Get the cursor keys for player movement.
         this.cursors = this.input.keyboard.createCursorKeys();

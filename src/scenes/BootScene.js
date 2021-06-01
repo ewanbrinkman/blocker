@@ -1,4 +1,4 @@
-import { SCENE_KEYS } from '../constants.js';
+import { SCENE_KEYS, BASE_PLAYER } from '../constants.js';
 
 export default class BootScene extends Phaser.Scene {
     constructor() {
@@ -7,11 +7,15 @@ export default class BootScene extends Phaser.Scene {
 
     preload() {
         this.load.image('logo', 'assets/images/ui/logo.png');
-        this.load.image('bg', 'assets/images/ui/bg.png')
-        this.load.image('background', 'assets/images/ui/background.png')
+        this.load.image('backgroundPreloader', 'assets/images/ui/backgroundPreloader.png');
     }
 
     create() {
+        // Create the player object in the registry.
+        this.registry.player = {
+            playerType: BASE_PLAYER.playerType
+        }
+        // Start the loading screen.
         this.scene.start(SCENE_KEYS.preloader);
     }
 };
