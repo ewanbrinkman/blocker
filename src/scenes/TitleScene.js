@@ -72,7 +72,7 @@ export default class TitleScene extends Phaser.Scene {
         // Background color.
         this.cameras.main.setBackgroundColor(COLORS.background);
 
-        // Add another background to the scrolling backgrounds.
+        // Add backgrounds to the scrolling backgrounds.
         this.backgrounds = []
         this.addBackground();
         this.addBackground();

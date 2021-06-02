@@ -15,13 +15,14 @@ export default class BootScene extends Phaser.Scene {
         this.registry.player = {
             playerType: BASE_PLAYER.playerType
         }
-        // Get a list of all background title files.
+
+        // Create a list of all background title files.
         this.registry.titleBackgrounds = []
         for (let i = 1; i <= (MAPS.titleAmount); i++) {
             this.registry.titleBackgrounds.push('backgroundTitle' + i);
         }
 
-        // Get a list of all level files.
+        // Create a list of all level files.
         this.registry.levels = []
         for (let i = 1; i <= (MAPS.levelAmount); i++) {
             this.registry.levels.push('level' + i);
