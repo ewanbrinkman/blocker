@@ -21,6 +21,16 @@ export const COLORS = {
     text: '#bc8142'
 }
 
+export const TILES = {
+    width: 70,
+    height: 70
+}
+
+export const MAPS = {
+    titleAmount: 3,
+    levelAmount: 1
+}
+
 export const PRELOADER_SCENE = {
     logo: {
         offset: {
@@ -77,13 +87,12 @@ export const TITLE_SCENE = {
             x: 350
         }
     },
-    // backgroundSpeed: 50
-    backgroundSpeed: 1000
+    backgroundSpeed: 50
 }
 
 export const CREDITS_SCENE = {
     textSpeed: 200,
-    startDelay: 500
+    startDelay: 750
 }
 
 export const BASE_PLAYER = {
@@ -106,11 +115,6 @@ export const BASE_PLAYER = {
         y: 0
     },
     bounce: 0
-}
-
-export const TILES = {
-    width: 70,
-    height: 70
 }
 
 export const PLAYER_SQUARE = {

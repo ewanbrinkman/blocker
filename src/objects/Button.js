@@ -1,12 +1,14 @@
 import { FONT, COLORS } from "../constants.js";
 
 export default class Button extends Phaser.GameObjects.Container {
-    constructor(scene, x, y, imageUp, imageDown, text, targetScene) {
+    constructor(scene, x, y, imageUp, imageDown, text, targetScene, sceneData = null) {
         super(scene);
 
         this.scene = scene;
         this.x = x;
         this.y = y;
+
+        this.sceneData = sceneData;
 
         this.font = FONT.main;
 
@@ -24,7 +26,11 @@ export default class Button extends Phaser.GameObjects.Container {
         this.add(this.text);
 
         this.button.on('pointerdown', () => {
-            this.scene.scene.start(targetScene);
+            if (this.sceneData) {
+                this.scene.scene.start(targetScene, sceneData);
+            } else {
+                this.scene.scene.start(targetScene);
+            }
         });
 
         this.button.on('pointerover', () => {

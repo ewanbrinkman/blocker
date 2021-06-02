@@ -10,9 +10,13 @@ export default class GameScene extends Phaser.Scene {
         super(SCENE_KEYS.game);
     }
 
+    init(data) {
+        this.levelKey = data.levelKey;
+    }
+
     create() {
         // Load the map.
-        this.map = this.make.tilemap({key: 'map'});
+        this.map = this.make.tilemap({key: this.levelKey});
         
         // Tiles for the block layer.
         this.tiles = this.map.addTilesetImage('tiles', 'tiles', TILES.width, TILES.height, 1, 4);
