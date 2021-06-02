@@ -22,18 +22,28 @@ export default class TitleScene extends Phaser.Scene {
 
         // Background color.
         this.cameras.main.setBackgroundColor(COLORS.background);
+
         // The background image of world tiles.
-        this.background = this.add.image(width / 2, height, 'backgroundTitle');
-        this.background.setOrigin(0.5, 1);
+        // this.background = this.add.image(width / 2, height, 'backgroundTitle');
+        // this.background.setOrigin(0.5, 1);
+
+        // The background image of world tiles.
+        this.background = this.add.image(0, height, 'backgroundTitle')
+        this.background.setOrigin(0, 1);
+        this.backgroundTween = this.tweens.add({
+            targets: this.background,
+            x: -this.background.displayWidth,
+            ease: Phaser.Math.Easing.Linear,
+            // Time = distance / speed. Multiply by 1000 to go from seconds to milliseconds.
+            duration: (this.background.displayWidth / TITLE_SCENE.backgroundSpeed) * 1000,
+            onComplete: () => {
+                console.log('Done!');
+            },
+        });
+
         // Add the logo image.
         this.logo = this.add.image(width / 2, TITLE_SCENE.logo.offset.y, 'logo');
         this.logo.setScale(0.4, 0.4);
-
-        // Add the selected player image. Also find the offset to place the player directly on the ground.
-        let [ x, y ] = getSquareCenter(
-            width / 2 - 350, height - 245, this.registry.player.playerType, BASE_PLAYER.scale, true);
-        this.playerImage = this.add.sprite(x, y, 'players', this.registry.player.playerType);
-        this.playerImage.setScale(BASE_PLAYER.scale);
 
         this.gameButton = new Button(
             this,
@@ -79,14 +89,11 @@ export default class TitleScene extends Phaser.Scene {
 
         // Set objects to be in the correct position with the new
         // screen size.
-        this.background.setPosition(width / 2, height);
+        this.background.setY(height);
         this.logo.setPosition(width / 2, TITLE_SCENE.logo.offset.y);
         this.gameButton.setPosition(width / 2, height / 2 + TITLE_SCENE.gameButton.offset.y);
         this.backButton.setPosition(width / 2, height / 2 + TITLE_SCENE.backButton.offset.y);
         this.optionsButton.setPosition(width / 2 + TITLE_SCENE.optionsButton.offset.x, height / 2,);
         this.creditsButton.setPosition(width / 2 + TITLE_SCENE.creditsButton.offset.x, height / 2);
-        let [ x, y ] = getSquareCenter(
-            width / 2 - 350, height - 245, BASE_PLAYER.playerType, BASE_PLAYER.scale, true);
-        this.playerImage.setPosition(x, y);
     }
 };

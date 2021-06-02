@@ -1,4 +1,4 @@
-import { FONT } from "../constants.js";
+import { FONT, COLORS } from "../constants.js";
 
 export default class Button extends Phaser.GameObjects.Container {
     constructor(scene, x, y, imageUp, imageDown, text, targetScene) {
@@ -11,7 +11,7 @@ export default class Button extends Phaser.GameObjects.Container {
         this.font = FONT.main;
 
         this.button = this.scene.add.sprite(0, 0, imageUp).setInteractive();
-        this.text = this.scene.add.text(0, 0, text, { font: '32px ' + this.font, fill: '#bc8142' });
+        this.text = this.scene.add.text(0, 0, text, { font: '32px ' + this.font, fill: COLORS.text });
         Phaser.Display.Align.In.Center(this.text, this.button);
 
         // Add a slight offset to the text, so it looks like it is

@@ -6,8 +6,6 @@ export default class PreloaderScene extends Phaser.Scene {
     }
 
     preload() {
-        this.font = FONT.main;
-
         // Reposition objects when the screen is resized.
         this.scale.on('resize', this.resize, this);
 
@@ -15,6 +13,8 @@ export default class PreloaderScene extends Phaser.Scene {
         this.events.on('shutdown', () => {
             this.scale.off('resize', this.resize);
         });
+
+        this.font = FONT.main;
 
         // Get the screen size of the game.
         const width = this.cameras.main.width;
@@ -55,28 +55,28 @@ export default class PreloaderScene extends Phaser.Scene {
             width / 2,
             height / 2 + PRELOADER_SCENE.loadingText.offset.y + FONT[this.font].offset.y,
             'Loading...',
-            { font: '48px ' + this.font, fill: '#bc8142'});
+            { font: '48px ' + this.font, fill: COLORS.text});
         this.loadingText.setOrigin(0.5, 0.5);
 
         this.percentText = this.add.text(
             width / 2,
             height / 2 + FONT[this.font].offset.y,
             '0%',
-            { font: '48px ' + this.font, fill: '#bc8142'});
+            { font: '48px ' + this.font, fill: COLORS.text});
         this.percentText.setOrigin(0.5, 0.5);
 
         this.assetText = this.add.text(
             width / 2,
             height / 2 + PRELOADER_SCENE.assetText.offset.y + FONT[this.font].offset.y,
             '',
-            { font: '48px ' + this.font, fill: '#bc8142'});
+            { font: '48px ' + this.font, fill: COLORS.text});
         this.assetText.setOrigin(0.5, 0.5);
 
         this.readyText = this.add.text(
             width / 2,
             height / 2 + FONT[this.font].offset.y,
             'Press Any Key To Start',
-            { font: '72px ' + this.font, fill: '#bc8142'});
+            { font: '72px ' + this.font, fill: COLORS.text});
         this.readyText.setOrigin(0.5, 0.5);
         this.readyText.visible = false;
 
@@ -102,13 +102,13 @@ export default class PreloaderScene extends Phaser.Scene {
             // Show text to prompt the user to click any key.
             this.readyText.visible = true;
             // Make the text flash.
-            this.tweens.add({
+            this.readyTextTween = this.tweens.add({
                 targets: this.readyText,
                 alpha: 0,
                 duration: 1000,
                 ease: Phaser.Math.Easing.Linear,
                 yoyo: true,
-                loop: -1
+                loop: -1,
             });
         });
 

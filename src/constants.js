@@ -17,7 +17,8 @@ export const FONT = {
 }
 
 export const COLORS = {
-    background: '#a1e1ff'
+    background: '#a1e1ff',
+    text: '#bc8142'
 }
 
 export const PRELOADER_SCENE = {
@@ -75,7 +76,13 @@ export const TITLE_SCENE = {
         offset: {
             x: 350
         }
-    }
+    },
+    backgroundSpeed: 50
+}
+
+export const CREDITS_SCENE = {
+    textSpeed: 200,
+    startDelay: 500
 }
 
 export const BASE_PLAYER = {
