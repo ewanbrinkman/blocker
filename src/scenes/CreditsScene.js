@@ -23,7 +23,7 @@ export default class CreditsScene extends Phaser.Scene {
         // Background color.
         this.cameras.main.setBackgroundColor(COLORS.background);
         // The background image of world tiles.
-        this.background = this.add.image(width / 2, height, 'backgroundTitle');
+        this.background = this.add.image(width / 2, height, 'backgroundCredits');
         this.background.setOrigin(0.5, 1);
         // Add the logo image.
         // this.logo = this.add.image(width / 2, TITLE_SCENE.logo.offset.y, 'logo');

@@ -1,10 +1,42 @@
 import Button from '../objects/Button.js';
-import { getSquareCenter } from '../utils.js';
-import { SCENE_KEYS, COLORS, TITLE_SCENE, BASE_PLAYER } from '../constants.js';
+import { SCENE_KEYS, COLORS, TITLE_SCENE } from '../constants.js';
 
 export default class TitleScene extends Phaser.Scene {
     constructor() {
         super(SCENE_KEYS.title);
+    }
+
+    addBackground() {
+        // Get the screen size of the game.
+        const height = this.cameras.main.height;
+
+        let beforeBackground = this.backgrounds[0];
+
+        console.log(beforeBackground.getTopRight().x, beforeBackground.displayWidth);
+
+        let newBackground = this.add.image(beforeBackground.displayWidth, height, 'backgroundTitle2');
+        newBackground.setOrigin(0, 1);
+
+        let tweenDuration = ((newBackground.displayWidth + beforeBackground.displayWidth) / TITLE_SCENE.backgroundSpeed) * 1000;
+        this.tweens.add({
+            targets: newBackground,
+            x: -newBackground.displayWidth,
+            ease: Phaser.Math.Easing.Linear,
+            // Time = distance / speed. Multiply by 1000 to go from seconds to milliseconds.
+            duration: tweenDuration,
+            onComplete: () => {
+                this.backgrounds.shift();
+                newBackground.destroy();
+
+                // Add another background to the scrolling backgrounds.
+                this.addBackground();
+            },
+        });
+        this.backgrounds.push(newBackground);
+
+        console.log('duration', tweenDuration);
+
+        console.log(beforeBackground.getTopRight().x, beforeBackground.displayWidth);
     }
 
     create() {
@@ -28,18 +60,32 @@ export default class TitleScene extends Phaser.Scene {
         // this.background.setOrigin(0.5, 1);
 
         // The background image of world tiles.
-        this.background = this.add.image(0, height, 'backgroundTitle')
-        this.background.setOrigin(0, 1);
-        this.backgroundTween = this.tweens.add({
-            targets: this.background,
-            x: -this.background.displayWidth,
+        this.backgrounds = []
+        let startBackground = this.add.image(0, height, 'backgroundTitle1');
+        startBackground.setOrigin(0, 1);
+
+        let tweenDuration = (startBackground.displayWidth / TITLE_SCENE.backgroundSpeed) * 1000;
+        this.tweens.add({
+            targets: startBackground,
+            x: -startBackground.displayWidth,
             ease: Phaser.Math.Easing.Linear,
             // Time = distance / speed. Multiply by 1000 to go from seconds to milliseconds.
-            duration: (this.background.displayWidth / TITLE_SCENE.backgroundSpeed) * 1000,
+            duration: tweenDuration,
             onComplete: () => {
-                console.log('Done!');
+                // Remove the finished background.
+                this.backgrounds.shift();
+                startBackground.destroy();
+
+                // Add another background to the scrolling backgrounds.
+                this.addBackground();
             },
         });
+        this.backgrounds.push(startBackground);
+
+        console.log('duration', tweenDuration);
+
+        // Add another background to the scrolling backgrounds.
+        this.addBackground();
 
         // Add the logo image.
         this.logo = this.add.image(width / 2, TITLE_SCENE.logo.offset.y, 'logo');
@@ -89,7 +135,10 @@ export default class TitleScene extends Phaser.Scene {
 
         // Set objects to be in the correct position with the new
         // screen size.
-        this.background.setY(height);
+        this.backgrounds.forEach(background => {
+            background.setY(height);
+        }) 
+        // this.background.setY(height);
         this.logo.setPosition(width / 2, TITLE_SCENE.logo.offset.y);
         this.gameButton.setPosition(width / 2, height / 2 + TITLE_SCENE.gameButton.offset.y);
         this.backButton.setPosition(width / 2, height / 2 + TITLE_SCENE.backButton.offset.y);

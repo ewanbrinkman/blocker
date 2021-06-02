@@ -116,7 +116,7 @@ export default class PreloaderScene extends Phaser.Scene {
         // tile-extruder --tileWidth 70 --tileHeight 70 --spacing 2 --input ./tiles.png --output ./tiles-extruded.png
         // To load into tiled, use a margin of 1px (1px plus the original 0px) and a spacing of 4px (2px plus the original 2px).
         // Load maps made with Tiled in JSON format.
-        this.load.tilemapTiledJSON('map', 'assets/maps/map2.json');
+        this.load.tilemapTiledJSON('map', 'assets/maps/levels/level1.json');
         // Tiles in spritesheet.
         this.load.spritesheet('tiles', 'assets/images/spritesheets/tiles.png', {frameWidth: TILES.width, frameHeight: TILES.height, margin: 1, spacing: 4});
         // Player images.
@@ -127,7 +127,9 @@ export default class PreloaderScene extends Phaser.Scene {
         this.load.image('greenbuttondown', 'assets/images/ui/greenbuttondown.png');
 
         // Load background images.
-        this.load.image('backgroundTitle', 'assets/images/ui/backgroundTitle.png');
+        this.load.image('backgroundTitle1', 'assets/images/backgrounds/title/backgroundTitle1.png');
+        this.load.image('backgroundTitle2', 'assets/images/backgrounds/title/backgroundTitle2.png');
+        this.load.image('backgroundCredits', 'assets/images/backgrounds/credits/backgroundCredits.png');
 
         // For testing the loading bar.
         // for (let i = 0; i<300; i++) {

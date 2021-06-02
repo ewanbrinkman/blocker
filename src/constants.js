@@ -77,7 +77,8 @@ export const TITLE_SCENE = {
             x: 350
         }
     },
-    backgroundSpeed: 50
+    // backgroundSpeed: 50
+    backgroundSpeed: 1000
 }
 
 export const CREDITS_SCENE = {
