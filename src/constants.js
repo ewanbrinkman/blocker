@@ -90,9 +90,19 @@ export const TITLE_SCENE = {
     backgroundSpeed: 50
 }
 
+export const CREDITS_TEXT_SIZES = {
+    title: '100px',
+    header: '64px',
+    body: '48px'
+}
+
 export const CREDITS_SCENE = {
-    textSpeed: 200,
-    startDelay: 750
+    textSpeed: 150,
+    startDelay: 750,
+    spacingBefore: {
+        header: 100,
+        body: 5
+    }
 }
 
 export const BASE_PLAYER = {

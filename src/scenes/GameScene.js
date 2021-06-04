@@ -42,11 +42,11 @@ export default class GameScene extends Phaser.Scene {
             const walls = this.map.tilesets[0].tileData[tileIndex].objectgroup.objects;
             
             // Find tiles with this index.
-            this.map.forEachTile(tile => {
+            this.map.forEachTile((tile) => {
                 if (tile.index === (parseInt(tileIndex) + 1)) {
 
                     // Create the collision boxes for this tile.
-                    walls.forEach(wall => {
+                    walls.forEach((wall) => {
                         // Create a static sprite for collisions.
                         let staticSprite = this.walls.create(wall.x + tile.x * TILES.width,
                             wall.y + tile.y * TILES.height);
