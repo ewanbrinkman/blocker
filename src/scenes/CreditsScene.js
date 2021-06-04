@@ -45,18 +45,6 @@ export default class CreditsScene extends Phaser.Scene {
         this.addCreditsText('body', 'Player Images: Kenney (https://www.kenney.nl/)');
         this.addCreditsText('body', 'User Interface Images: Kenney (https://www.kenney.nl/)');
         this.addCreditsText('body', 'Font: Kenney (https://www.kenney.nl/)');
-        
-        // The x and y position of the zone is its center.
-        this.zone = this.add.zone(width / 2, height / 2, width, height);
-        // Center all credits text.
-        this.credits.forEach(creditsText => {
-            Phaser.Display.Align.In.Center (
-                // The text attribute is the actual text object stored
-                // in the custom CreditsText object.
-                creditsText.text,
-                this.zone
-            );
-        })
 
         // Keep track of the current y offset to keep adding text
         // further and further down.
@@ -65,6 +53,9 @@ export default class CreditsScene extends Phaser.Scene {
         this.creditsTweens = [];
 
         this.credits.forEach((creditsText, index, array) => {
+            // Move the text to the center of the screen.
+            creditsText.text.setX(width / 2);
+
             // Add the spacing for this text type.
             if (creditsText.textType === 'title') {
                 this.currentOffsetY += height / 2;
