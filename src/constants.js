@@ -67,11 +67,6 @@ export const TITLE_SCENE = {
             y: 100
         }
     },
-    gameButton: {
-        offset: {
-            y: 0
-        }
-    },
     quitButton: {
         offset: {
             y: -100
@@ -134,6 +129,19 @@ export const BASE_PLAYER = {
     },
     bounce: 0
 }
+
+export const PLAYER_TYPES = [
+    'elephant',
+    'giraffe',
+    'hippo',
+    'monkey',
+    'panda',
+    'parrot',
+    'penguin',
+    'pig',
+    'rabbit',
+    'snake'
+]
 
 export const PLAYER_SQUARE = {
     size: 256,

@@ -1,0 +1,215 @@
+{
+	"frames": {
+		"elephant.png": {
+			"frame": {
+				"x": 2,
+				"y": 2,
+				"w": 424,
+				"h": 342
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 424,
+				"h": 342
+			},
+			"sourceSize": {
+				"w": 424,
+				"h": 342
+			}
+		},
+		"giraffe.png": {
+			"frame": {
+				"x": 2,
+				"y": 348,
+				"w": 382,
+				"h": 370
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 382,
+				"h": 370
+			},
+			"sourceSize": {
+				"w": 382,
+				"h": 370
+			}
+		},
+		"hippo.png": {
+			"frame": {
+				"x": 2,
+				"y": 722,
+				"w": 333,
+				"h": 344
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 333,
+				"h": 344
+			},
+			"sourceSize": {
+				"w": 333,
+				"h": 344
+			}
+		},
+		"monkey.png": {
+			"frame": {
+				"x": 2,
+				"y": 1070,
+				"w": 392,
+				"h": 284
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 392,
+				"h": 284
+			},
+			"sourceSize": {
+				"w": 392,
+				"h": 284
+			}
+		},
+		"panda.png": {
+			"frame": {
+				"x": 2,
+				"y": 1358,
+				"w": 392,
+				"h": 331
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 392,
+				"h": 331
+			},
+			"sourceSize": {
+				"w": 392,
+				"h": 331
+			}
+		},
+		"parrot.png": {
+			"frame": {
+				"x": 2,
+				"y": 1693,
+				"w": 284,
+				"h": 284
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 284,
+				"h": 284
+			},
+			"sourceSize": {
+				"w": 284,
+				"h": 284
+			}
+		},
+		"penguin.png": {
+			"frame": {
+				"x": 2,
+				"y": 1981,
+				"w": 284,
+				"h": 284
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 284,
+				"h": 284
+			},
+			"sourceSize": {
+				"w": 284,
+				"h": 284
+			}
+		},
+		"pig.png": {
+			"frame": {
+				"x": 2,
+				"y": 2269,
+				"w": 359,
+				"h": 305
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 359,
+				"h": 305
+			},
+			"sourceSize": {
+				"w": 359,
+				"h": 305
+			}
+		},
+		"rabbit.png": {
+			"frame": {
+				"x": 2,
+				"y": 2578,
+				"w": 284,
+				"h": 414
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 284,
+				"h": 414
+			},
+			"sourceSize": {
+				"w": 284,
+				"h": 414
+			}
+		},
+		"snake.png": {
+			"frame": {
+				"x": 2,
+				"y": 2996,
+				"w": 284,
+				"h": 334
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 284,
+				"h": 334
+			},
+			"sourceSize": {
+				"w": 284,
+				"h": 334
+			}
+		}
+	},
+	"meta": {
+		"app": "http://www.codeandweb.com/texturepacker",
+		"version": "1.0",
+		"image": "spritesheet.png",
+		"format": "RGBA8888",
+		"size": {
+			"w": 428,
+			"h": 3332
+		},
+		"scale": "1"
+	}
+}

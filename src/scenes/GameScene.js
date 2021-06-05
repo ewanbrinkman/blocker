@@ -91,8 +91,8 @@ export default class GameScene extends Phaser.Scene {
             x: startX,
             y: startY,
             texture: 'players',
-            frame: BASE_PLAYER.playerType,
-            playerType: BASE_PLAYER.playerType,
+            frame: this.registry.player.playerType,
+            playerType: this.registry.player.playerType,
         });
 
         // Set bounds so the camera won't go outside the game world.

@@ -37,42 +37,46 @@ export default class TitleScene extends Phaser.Scene {
         this.logo = this.add.image(width / 2, TITLE_SCENE.logo.offset.y, 'logo');
         this.logo.setScale(0.4, 0.4);
 
-        this.gameButton = new Button(
-            this,
-            width / 2,
-            height / 2 + TITLE_SCENE.gameButton.offset.y,
-            'greenbuttonup',
-            'greenbuttondown',
-            'Play',
-            SCENE_KEYS.game,
-            {levelKey: 'level1'});
+        this.gameButton = new Button({
+            scene: this,
+            x: width / 2,
+            y: height / 2,
+            imageUp: 'greenbuttonup',
+            imageDown: 'greenbuttondown',
+            text: 'Play',
+            targetScene: SCENE_KEYS.game,
+            sceneData: {levelKey: 'level1'}
+        });
 
-        this.quitButton = new Button(
-            this,
-            width / 2,
-            height + TITLE_SCENE.quitButton.offset.y,
-            'greenbuttonup',
-            'greenbuttondown',
-            'Quit',
-            SCENE_KEYS.preloader);
+        this.quitButton = new Button({
+            scene: this,
+            x: width / 2,
+            y: height + TITLE_SCENE.quitButton.offset.y,
+            imageUp: 'greenbuttonup',
+            imageDown: 'greenbuttondown',
+            text: 'Quit',
+            targetScene: SCENE_KEYS.preloader
+        });
 
-        this.optionsButton = new Button(
-            this,
-            width / 2 + TITLE_SCENE.optionsButton.offset.x,
-            height / 2,
-            'greenbuttonup',
-            'greenbuttondown',
-            'Options',
-            SCENE_KEYS.options);
+        this.optionsButton = new Button({
+            scene: this,
+            x: width / 2 + TITLE_SCENE.optionsButton.offset.x,
+            y: height / 2,
+            imageUp: 'greenbuttonup',
+            imageDown: 'greenbuttondown',
+            text: 'Options',
+            targetScene: SCENE_KEYS.options
+        });
 
-        this.creditsButton = new Button(
-            this,
-            width / 2 + TITLE_SCENE.creditsButton.offset.x,
-            height / 2,
-            'greenbuttonup',
-            'greenbuttondown',
-            'Credits',
-            SCENE_KEYS.credits);
+        this.creditsButton = new Button({
+            scene: this,
+            x: width / 2 + TITLE_SCENE.creditsButton.offset.x,
+            y: height / 2,
+            imageUp: 'greenbuttonup',
+            imageDown: 'greenbuttondown',
+            text: 'Credits',
+            targetScene: SCENE_KEYS.credits
+        });
     }
 
     resize() {
@@ -87,7 +91,7 @@ export default class TitleScene extends Phaser.Scene {
         }) 
         // this.background.setY(height);
         this.logo.setPosition(width / 2, TITLE_SCENE.logo.offset.y);
-        this.gameButton.setPosition(width / 2, height / 2 + TITLE_SCENE.gameButton.offset.y);
+        this.gameButton.setPosition(width / 2, height / 2);
         this.quitButton.setPosition(width / 2, height + TITLE_SCENE.quitButton.offset.y);
         this.optionsButton.setPosition(width / 2 + TITLE_SCENE.optionsButton.offset.x, height / 2,);
         this.creditsButton.setPosition(width / 2 + TITLE_SCENE.creditsButton.offset.x, height / 2);

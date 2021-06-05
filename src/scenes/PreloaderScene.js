@@ -122,7 +122,8 @@ export default class PreloaderScene extends Phaser.Scene {
         // Tiles in spritesheet.
         this.load.spritesheet('tiles', 'assets/images/spritesheets/tiles.png', {frameWidth: TILES.width, frameHeight: TILES.height, margin: 1, spacing: 4});
         // Player images.
-        this.load.atlas('players', 'assets/images/player/spritesheet.png', 'assets/images/player/spritesheet.json')
+        this.load.atlas('players', 'assets/images/players/players.png', 'assets/images/players/players.json')
+        this.load.atlas('selectedPlayers', 'assets/images/players/selectedPlayers.png', 'assets/images/players/selectedPlayers.json')
 
         // Load user interface assets.
         this.load.image('greenbuttonup', 'assets/images/ui/greenbuttonup.png');
