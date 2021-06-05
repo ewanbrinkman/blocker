@@ -132,6 +132,7 @@ export default class PreloaderScene extends Phaser.Scene {
         this.registry.titleBackgrounds.forEach(filename => {
             this.load.image(filename, 'assets/images/backgrounds/title/' + filename + '.png');
         });
+        this.load.image('backgroundOptions', 'assets/images/backgrounds/options/backgroundOptions.png');
         this.load.image('backgroundCredits', 'assets/images/backgrounds/credits/backgroundCredits.png');
 
         // For testing the loading bar.

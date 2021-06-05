@@ -72,9 +72,9 @@ export const TITLE_SCENE = {
             y: 0
         }
     },
-    backButton: {
+    quitButton: {
         offset: {
-            y: 100
+            y: -100
         }
     },
     optionsButton: {
@@ -102,6 +102,14 @@ export const CREDITS_SCENE = {
     spacingBefore: {
         header: 100,
         body: 5
+    }
+}
+
+export const OPTIONS_SCENE = {
+    backButton: {
+        offset: {
+            y: -100
+        }
     }
 }
 
