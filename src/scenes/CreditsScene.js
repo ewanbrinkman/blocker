@@ -1,5 +1,5 @@
 import CreditsText from '../objects/CreditsText.js';
-import { SCENE_KEYS, FONT, COLORS, CREDITS_SCENE } from '../constants.js';
+import { SCENE_KEYS, FONT, COLORS, CREDITS_SCENE, TITLE_SCENE } from '../constants.js';
 
 export default class CreditsScene extends Phaser.Scene {
     constructor() {
@@ -28,9 +28,6 @@ export default class CreditsScene extends Phaser.Scene {
         this.backgroundLeft.setOrigin(0, 1);
         this.backgroundRight = this.add.image(width, height, 'backgroundCredits');
         this.backgroundRight.setOrigin(1, 1);
-        // Add the logo image.
-        // this.logo = this.add.image(width / 2, TITLE_SCENE.logo.offset.y, 'logo');
-        // this.logo.setScale(0.4, 0.4);
 
         // Create the credits text.
         this.credits = [];
@@ -41,22 +38,21 @@ export default class CreditsScene extends Phaser.Scene {
         this.addCreditsText('body', 'Ewan Brinkman');
         // Assets.
         this.addCreditsText('header', 'Assets');
-        this.addCreditsText('body', 'Tile Images: Kenney (https://www.kenney.nl/)');
-        this.addCreditsText('body', 'Player Images: Kenney (https://www.kenney.nl/)');
-        this.addCreditsText('body', 'User Interface Images: Kenney (https://www.kenney.nl/)');
-        this.addCreditsText('body', 'Font: Kenney (https://www.kenney.nl/)');
+        this.addCreditsText('body', 'Tile Images: Kenney');
+        this.addCreditsText('body', 'Player Images: Kenney');
+        this.addCreditsText('body', 'User Interface Images: Kenney');
+        this.addCreditsText('body', 'Font: Kenney');
+        // Links.
+        this.addCreditsText('header', 'Links');
+        this.addCreditsText('body', 'Kenney: https://www.kenney.nl');
 
         // Keep track of the current y offset to keep adding text
         // further and further down.
         this.currentOffsetY = 0;
 
-        this.creditsTweens = [];
-
+        // Set each credits text to the correct starting y height.
         this.credits.forEach((creditsText, index, array) => {
-            // Move the text to the center of the screen.
-            creditsText.text.setX(width / 2);
-
-            // Add the spacing for this text type.
+            // Add the spacing for the text.
             if (creditsText.textType === 'title') {
                 this.currentOffsetY += height / 2;
             } else {
@@ -75,23 +71,6 @@ export default class CreditsScene extends Phaser.Scene {
             // Set the correct position of the text.
             creditsText.text.setY(this.currentOffsetY);
 
-            // Add the scroll animation for this text.
-            this.creditsTweens.push(this.tweens.add({
-                targets: creditsText.text,
-                y: -creditsText.text.displayHeight / 2,
-                ease: Phaser.Math.Easing.Linear,
-                // Time = distance / speed. Multiply by 1000 to go from seconds to milliseconds.
-                duration: (this.currentOffsetY / CREDITS_SCENE.textSpeed) * 1000,
-                delay: CREDITS_SCENE.startDelay,
-                onComplete: () => {
-                    // If the last bit of text left the screen, return
-                    // to the title screen.
-                    if (index === array.length - 1) {
-                        this.scene.start(SCENE_KEYS.title);
-                    }
-                }
-            }));
-
             if (creditsText.textType === 'title') {
                 this.currentOffsetY += height / 2;
             } else {
@@ -99,6 +78,8 @@ export default class CreditsScene extends Phaser.Scene {
                 this.currentOffsetY += creditsText.text.displayHeight / 2
             }
         });
+
+        this.createCreditsTweens({delay: true});
     }
 
     resize() {
@@ -114,31 +95,55 @@ export default class CreditsScene extends Phaser.Scene {
         this.creditsTweens.forEach((tween) => {
             tween.stop();
         });
+
+        this.createCreditsTweens({delay: false});
+    }
+
+    addCreditsText(textType, text) {
+        this.credits.push(new CreditsText(this, textType, text));
+    }
+
+    createCreditsTweens(config) {
+        const width = this.cameras.main.width;
+
         this.creditsTweens = [];
 
         this.credits.forEach((creditsText, index, array) => {
             // Move the text to the new center of the screen.
             creditsText.text.setX(width / 2);
 
-            // Redo the scroll animation for this text with the new position.
-            this.creditsTweens.push(this.tweens.add({
-                targets: creditsText.text,
-                y: -creditsText.text.displayHeight / 2,
-                ease: Phaser.Math.Easing.Linear,
-                // Time = distance / speed. Multiply by 1000 to go from seconds to milliseconds.
-                duration: (creditsText.text.y / CREDITS_SCENE.textSpeed) * 1000,
-                onComplete: () => {
-                    // If the last bit of text left the screen, return
-                    // to the title screen.
-                    if (index === array.length - 1) {
-                        this.scene.start(SCENE_KEYS.title);
-                    }
-                }
-            }));
-        });
-    }
+            let creditsTextTween;
 
-    addCreditsText(textType, text) {
-        this.credits.push(new CreditsText(this, textType, text));
+            if (config.delay) {
+                // Redo the scroll animation for this text with the new position.
+                creditsTextTween = this.tweens.add({
+                    targets: creditsText.text,
+                    y: -creditsText.text.displayHeight / 2,
+                    ease: Phaser.Math.Easing.Linear,
+                    // Time = distance / speed. Multiply by 1000 to go from seconds to milliseconds.
+                    duration: (creditsText.text.y / CREDITS_SCENE.textSpeed) * 1000,
+                    delay: CREDITS_SCENE.startDelay,
+                });
+            } else {
+                // Redo the scroll animation for this text with the new position.
+                creditsTextTween = this.tweens.add({
+                    targets: creditsText.text,
+                    y: -creditsText.text.displayHeight / 2,
+                    ease: Phaser.Math.Easing.Linear,
+                    // Time = distance / speed. Multiply by 1000 to go from seconds to milliseconds.
+                    duration: (creditsText.text.y / CREDITS_SCENE.textSpeed) * 1000,
+                });
+            }
+
+            // If this is the last bit of text of the credits, it will
+            // start the title screen when it finishes scrolling.
+            if (index === array.length - 1) {
+                creditsTextTween.setCallback('onComplete', () => {
+                    this.scene.start(SCENE_KEYS.title);
+                }, [], this);
+            }
+
+            this.creditsTweens.push(creditsTextTween);
+        });  
     }
 };
