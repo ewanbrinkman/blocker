@@ -27,8 +27,6 @@ export default class GameScene extends Phaser.Scene {
 
         this.customCollisionTilesIndexes = [];
 
-        // SET FOR EACH TO USE A SPECIFIC LAYER, INSTEAD OF THE MOST RECENT ONE!!!
-
         // Create custom collision boxes as static sprites.
         this.walls = this.physics.add.staticGroup();
         // Get the data in Tiled of the tiles that have custom

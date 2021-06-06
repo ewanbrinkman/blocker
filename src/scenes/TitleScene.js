@@ -1,5 +1,6 @@
 import Button from '../objects/Button.js';
-import { SCENE_KEYS, COLORS, TITLE_SCENE } from '../constants.js';
+import { SCENE_KEYS, COLORS, TITLE_SCENE, FONT } from '../constants.js';
+import { SPLASHES } from '../constants/splashes.js';
 
 export default class TitleScene extends Phaser.Scene {
     constructor() {
@@ -15,11 +16,13 @@ export default class TitleScene extends Phaser.Scene {
             this.scale.off('resize', this.resize);
         });
 
-        this.input.keyboard.on('keydown-B', () => {
-            let x1right = this.backgrounds[0].getTopRight().x;
-            let x2left = this.backgrounds[1].getTopLeft().x;
-            console.log('Space Between:', x2left - x1right);
-        })
+        // this.input.keyboard.on('keydown-B', () => {
+        //     let x1right = this.backgrounds[0].getTopRight().x;
+        //     let x2left = this.backgrounds[1].getTopLeft().x;
+        //     console.log('Space Between:', x2left - x1right);
+        // })
+
+        this.font = FONT.main;
 
         // Get the screen size of the game.
         const width = this.cameras.main.width;
@@ -36,6 +39,23 @@ export default class TitleScene extends Phaser.Scene {
         // Add the logo image.
         this.logo = this.add.image(width / 2, TITLE_SCENE.logo.offset.y, 'logo');
         this.logo.setScale(0.4, 0.4);
+
+        this.splashText = this.add.text(
+            this.logo.getBottomRight().x + TITLE_SCENE.splashText.offset.x,
+            this.logo.getBottomRight().y + TITLE_SCENE.splashText.offset.y + FONT[this.font].offset.y,
+            Phaser.Math.RND.pick(SPLASHES),
+            { font: '36px ' + this.font, fill: COLORS.text});
+        this.splashText.setOrigin(0.5, 0.5);
+        this.splashText.setAngle(-15);
+
+        this.tweens.add({
+            targets: this.splashText,
+            duration: 300,
+            ease: Phaser.Math.Easing.Quadratic.In,
+            yoyo: true,
+            loop: -1,
+            scale: 1.1
+        });
 
         this.gameButton = new Button({
             scene: this,
@@ -88,9 +108,13 @@ export default class TitleScene extends Phaser.Scene {
         // screen size.
         this.backgrounds.forEach((background) => {
             background.setY(height);
-        }) 
+        });
         // this.background.setY(height);
         this.logo.setPosition(width / 2, TITLE_SCENE.logo.offset.y);
+        this.splashText.setPosition(
+            this.logo.getBottomRight().x + TITLE_SCENE.splashText.offset.x,
+            this.logo.getBottomRight().y + TITLE_SCENE.splashText.offset.y + FONT[this.font].offset.y
+        );
         this.gameButton.setPosition(width / 2, height / 2);
         this.quitButton.setPosition(width / 2, height + TITLE_SCENE.quitButton.offset.y);
         this.optionsButton.setPosition(width / 2 + TITLE_SCENE.optionsButton.offset.x, height / 2,);

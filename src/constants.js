@@ -82,6 +82,12 @@ export const TITLE_SCENE = {
             x: 350
         }
     },
+    splashText: {
+        offset: {
+            x: 10,
+            y: 10
+        }
+    },
     backgroundSpeed: 50
 }
 

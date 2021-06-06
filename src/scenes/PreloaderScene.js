@@ -151,8 +151,6 @@ export default class PreloaderScene extends Phaser.Scene {
         this.input.on('pointerdown', () => {
             this.startTitleScene();
         });
-
-        // console.log(this.registry);
     }
 
     startTitleScene() {
