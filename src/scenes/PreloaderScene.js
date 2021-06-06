@@ -116,7 +116,7 @@ export default class PreloaderScene extends Phaser.Scene {
         // tile-extruder --tileWidth 70 --tileHeight 70 --spacing 2 --input ./tiles.png --output ./tiles-extruded.png
         // To load into tiled, use a margin of 1px (1px plus the original 0px) and a spacing of 4px (2px plus the original 2px).
         // Load maps made with Tiled in JSON format.
-        this.registry.levels.forEach(filename => {
+        this.registry.levels.forEach((filename) => {
             this.load.tilemapTiledJSON(filename, 'assets/maps/levels/' + filename + '.json');
         });
         // Tiles in spritesheet.
@@ -130,7 +130,7 @@ export default class PreloaderScene extends Phaser.Scene {
         this.load.image('greenbuttondown', 'assets/images/ui/greenbuttondown.png');
 
         // Load background images.
-        this.registry.titleBackgrounds.forEach(filename => {
+        this.registry.titleBackgrounds.forEach((filename) => {
             this.load.image(filename, 'assets/images/backgrounds/title/' + filename + '.png');
         });
         this.load.image('backgroundOptions', 'assets/images/backgrounds/options/backgroundOptions.png');

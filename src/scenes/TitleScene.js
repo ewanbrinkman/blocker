@@ -1,6 +1,5 @@
 import Button from '../objects/Button.js';
 import { SCENE_KEYS, COLORS, TITLE_SCENE, FONT } from '../constants.js';
-import { SPLASHES } from '../constants/splashes.js';
 
 export default class TitleScene extends Phaser.Scene {
     constructor() {
@@ -43,7 +42,7 @@ export default class TitleScene extends Phaser.Scene {
         this.splashText = this.add.text(
             this.logo.getBottomRight().x + TITLE_SCENE.splashText.offset.x,
             this.logo.getBottomRight().y + TITLE_SCENE.splashText.offset.y + FONT[this.font].offset.y,
-            Phaser.Math.RND.pick(SPLASHES),
+            this.registry.splash,
             { font: '36px ' + this.font, fill: COLORS.text});
         this.splashText.setOrigin(0.5, 0.5);
         this.splashText.setAngle(-15);

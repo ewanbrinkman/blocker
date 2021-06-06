@@ -1,4 +1,5 @@
 import { SCENE_KEYS, BASE_PLAYER, MAPS } from '../constants.js';
+import { SPLASHES } from '../constants/splashes.js';
 
 export default class BootScene extends Phaser.Scene {
     constructor() {
@@ -11,22 +12,24 @@ export default class BootScene extends Phaser.Scene {
     }
 
     create() {
+        // Since the boot scene is only ever started once (at the very
+        // start), set up any registry variables here.
         // Create the player object in the registry.
         this.registry.player = {
             playerType: BASE_PLAYER.playerType
         }
-
         // Create a list of all background title files.
         this.registry.titleBackgrounds = []
         for (let i = 1; i <= (MAPS.titleAmount); i++) {
             this.registry.titleBackgrounds.push('backgroundTitle' + i);
         }
-
         // Create a list of all level files.
         this.registry.levels = []
         for (let i = 1; i <= (MAPS.levelAmount); i++) {
             this.registry.levels.push('level' + i);
         }
+        // Choose a random splash text.
+        this.registry.splash = Phaser.Math.RND.pick(SPLASHES);
 
         // Start the loading screen.
         this.scene.start(SCENE_KEYS.preloader);
