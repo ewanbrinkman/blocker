@@ -1,4 +1,5 @@
-import { BASE_PLAYER, TILES, PLAYER_SQUARE } from './constants.js';
+import { BASE_PLAYER, PLAYER_SQUARE } from './constants/player.js';
+import { TILES } from './constants/maps.js';
 
 export function squareCenterOffset(side1, side2, scale) {
     // The argument "side1" is the amount of pixels on one side of the

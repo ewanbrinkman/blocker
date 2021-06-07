@@ -1,5 +1,6 @@
 import Button from '../objects/Button.js';
-import { SCENE_KEYS, COLORS, TITLE_SCENE, FONT } from '../constants.js';
+import { COLORS, FONT } from '../constants/style.js';
+import { SCENE_KEYS, TITLE_SCENE } from '../constants/scenes.js';
 
 export default class TitleScene extends Phaser.Scene {
     constructor() {
@@ -15,11 +16,11 @@ export default class TitleScene extends Phaser.Scene {
             this.scale.off('resize', this.resize);
         });
 
-        // this.input.keyboard.on('keydown-B', () => {
-        //     let x1right = this.backgrounds[0].getTopRight().x;
-        //     let x2left = this.backgrounds[1].getTopLeft().x;
-        //     console.log('Space Between:', x2left - x1right);
-        // })
+        this.input.keyboard.on('keydown-B', () => {
+            let x1right = this.backgrounds[0].getTopRight().x;
+            let x2left = this.backgrounds[1].getTopLeft().x;
+            console.log('Space Between:', x2left - x1right);
+        })
 
         this.font = FONT.main;
 

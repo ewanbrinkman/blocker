@@ -1,4 +1,4 @@
-import { PLAYER_SQUARE } from '../constants.js';
+import { PLAYER_SQUARE } from '../constants/player.js';
 
 export default class FrictionParticles {
     constructor(scene, player) {

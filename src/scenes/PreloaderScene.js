@@ -1,4 +1,6 @@
-import { SCENE_KEYS, FONT, PRELOADER_SCENE, TILES, COLORS } from '../constants.js';
+import { COLORS, FONT } from '../constants/style.js';
+import { TILES } from '../constants/maps.js';
+import { SCENE_KEYS, PRELOADER_SCENE } from '../constants/scenes.js';
 
 export default class PreloaderScene extends Phaser.Scene {
     constructor() {

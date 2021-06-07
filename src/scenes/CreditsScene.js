@@ -1,5 +1,7 @@
 import CreditsText from '../objects/CreditsText.js';
-import { SCENE_KEYS, FONT, COLORS, CREDITS_SCENE } from '../constants.js';
+import { COLORS, FONT } from '../constants/style.js';
+import { SCENE_KEYS, CREDITS_SCENE } from '../constants/scenes.js';
+
 
 export default class CreditsScene extends Phaser.Scene {
     constructor() {

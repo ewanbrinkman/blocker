@@ -1,4 +1,4 @@
-import { FONT, COLORS } from "../constants.js";
+import { COLORS, FONT } from '../constants/style.js';
 
 export default class Button extends Phaser.GameObjects.Container {
     constructor(config) {

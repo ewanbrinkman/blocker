@@ -1,5 +1,7 @@
 import Player from '../sprites/Player.js';
-import { SCENE_KEYS, TILES, BASE_PLAYER, COLORS } from '../constants.js';
+import { COLORS } from '../constants/style.js';
+import { TILES } from '../constants/maps.js';
+import { SCENE_KEYS } from '../constants/scenes.js';
 
 // Start position.
 const startX = 3 * TILES.width;

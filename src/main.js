@@ -1,5 +1,5 @@
 import config from './config.js';
-import { SCENE_KEYS } from './constants.js';
+import { SCENE_KEYS } from './constants/scenes.js';
 import BootScene from './scenes/BootScene.js';
 import CreditsScene from './scenes/CreditsScene.js';
 import GameScene from './scenes/GameScene.js';

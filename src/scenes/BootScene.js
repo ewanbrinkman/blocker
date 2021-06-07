@@ -1,4 +1,6 @@
-import { SCENE_KEYS, BASE_PLAYER, MAPS } from '../constants.js';
+import { BASE_PLAYER } from '../constants/player.js';
+import { SCENE_KEYS } from '../constants/scenes.js';
+import { MAPS } from '../constants/maps.js';
 import { SPLASHES } from '../constants/splashes.js';
 
 export default class BootScene extends Phaser.Scene {

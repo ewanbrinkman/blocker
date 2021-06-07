@@ -1,5 +1,7 @@
 import Button from '../objects/Button.js';
-import { SCENE_KEYS, COLORS, OPTIONS_SCENE, PLAYER_TYPES } from '../constants.js';
+import { PLAYER_TYPES } from '../constants/player.js';
+import { SCENE_KEYS, OPTIONS_SCENE } from '../constants/scenes.js';
+import { COLORS } from '../constants/style.js';
 
 export default class OptionsScene extends Phaser.Scene {
     constructor() {

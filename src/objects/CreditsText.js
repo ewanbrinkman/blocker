@@ -1,4 +1,5 @@
-import { FONT, COLORS, CREDITS_TEXT_SIZES } from '../constants.js';
+import { COLORS, FONT } from '../constants/style.js';
+import { CREDITS_TEXT_SIZES } from '../constants/scenes.js'
 
 export default class CreditsText {
     constructor(scene, textType, text) {
