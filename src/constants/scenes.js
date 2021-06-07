@@ -87,5 +87,18 @@ export const OPTIONS_SCENE = {
         offset: {
             y: -100
         }
+    },
+    titleText: {
+        offset: {
+            y: 70
+        }
+    },
+    playerButton: {
+        offsetStart: {
+            y: 200
+        },
+        offsetBetween: {
+            y: 150
+        }
     }
 }

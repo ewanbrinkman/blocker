@@ -4,8 +4,8 @@ import { TILES } from '../constants/maps.js';
 import { SCENE_KEYS } from '../constants/scenes.js';
 
 // Start position.
-const startX = 3 * TILES.width;
-const startY = 1 * TILES.height;
+const startX = 3 * TILES.width + 0.5 * TILES.width;
+const startY = 1 * TILES.height + 0.5 * TILES.height;
 
 export default class GameScene extends Phaser.Scene {
     constructor() {

@@ -16,12 +16,6 @@ export default class TitleScene extends Phaser.Scene {
             this.scale.off('resize', this.resize);
         });
 
-        this.input.keyboard.on('keydown-B', () => {
-            let x1right = this.backgrounds[0].getTopRight().x;
-            let x2left = this.backgrounds[1].getTopLeft().x;
-            console.log('Space Between:', x2left - x1right);
-        })
-
         this.font = FONT.main;
 
         // Get the screen size of the game.

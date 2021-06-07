@@ -5,5 +5,6 @@ export const SPLASHES = [
     'Monkey main!',
     'print("Hello, Blocker!")',
     'Should it be called squarer?',
-    'The derivative of e^2 is not 2e!'
+    'The derivative of e^2 is not 2e!',
+    'Infinity over infinity does not equal 1!'
 ]

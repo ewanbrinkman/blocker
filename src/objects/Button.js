@@ -4,9 +4,11 @@ export default class Button extends Phaser.GameObjects.Container {
     constructor(config) {
         super(config.scene);
 
+        this.config = config;
+
         this.scene = config.scene;
-        this.x = config.x;
-        this.y = config.y;
+        this.setX(config.x);
+        this.setY(config.y);
         
         // If a certain key is not set in the config, it will be
         // "undefined".
@@ -17,18 +19,27 @@ export default class Button extends Phaser.GameObjects.Container {
 
         this.font = FONT.main;
 
-        this.button = this.scene.add.sprite(0, 0, config.imageUp).setInteractive();
-        this.text = this.scene.add.text(0, 0, config.text, { font: '32px ' + this.font, fill: COLORS.text });
-        Phaser.Display.Align.In.Center(this.text, this.button);
+        this.button = this.scene.add.sprite(0, 0, config.imageUp, config.frameUp).setInteractive();
+        if (config.text) {
+            this.text = this.scene.add.text(0, 0, config.text, { font: '32px ' + this.font, fill: COLORS.text });
+            Phaser.Display.Align.In.Center(this.text, this.button);
 
-        // Add a slight offset to the text, so it looks like it is
-        // actually in the center.
-        this.text.setY(this.text.y + FONT[this.font].offset.y);
+            // Add a slight offset to the text, so it looks like it is
+            // actually in the center.
+            this.text.setY(this.text.y + FONT[this.font].offset.y);
+        }
 
-        this.setScale(1.5);
+        if (config.scaleUp) {
+            this.setScale(config.scaleUp);
+        } else {
+            this.setScale(1.5);
+        }
 
         this.add(this.button);
-        this.add(this.text);
+
+        if (config.text) {
+            this.add(this.text);
+        }
 
         this.button.on('pointerdown', () => {
             // If there is a target scene set, start that scene. It
@@ -45,11 +56,19 @@ export default class Button extends Phaser.GameObjects.Container {
         });
 
         this.button.on('pointerover', () => {
-            this.button.setTexture(config.imageDown);
+            // It doesn't matter if no frame was passed into the config.
+            this.button.setTexture(this.config.imageDown, this.config.frameDown);
+            if (this.config.scaleDown) {
+                this.setScale(this.config.scaleDown);
+            }
         });
 
         this.button.on('pointerout', () => {
-            this.button.setTexture(config.imageUp);
+            // It doesn't matter if no frame was passed into the config.
+            this.button.setTexture(this.config.imageUp, this.config.frameUp);
+            if (this.config.scaleUp) {
+                this.setScale(this.config.scaleUp);
+            }
         });
 
         this.scene.add.existing(this);
