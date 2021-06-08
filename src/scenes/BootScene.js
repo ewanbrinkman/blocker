@@ -34,6 +34,15 @@ export default class BootScene extends Phaser.Scene {
         this.registry.splash = Phaser.Math.RND.pick(SPLASHES);
         // The current game mode.
         this.registry.gamemode = 'normal';
+        // Data needed for when playing the game.
+        this.registry.game = {
+            lastLevel: null,
+            startTime: 0,
+            endTime: 0,
+            timeLeft: 0,
+            possibleLevels: [],
+            completedLevelsCount: 0
+        }
 
         // Start the loading screen.
         this.scene.start(SCENE_KEYS.preloader);

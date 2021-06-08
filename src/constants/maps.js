@@ -1,6 +1,6 @@
 export const MAPS = {
     titleAmount: 3,
-    levelAmount: 1
+    levelAmount: 3
 }
 
 export const TILES = {

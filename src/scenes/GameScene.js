@@ -2,6 +2,7 @@ import Player from '../sprites/Player.js';
 import { COLORS } from '../constants/style.js';
 import { TILES } from '../constants/maps.js';
 import { SCENE_KEYS } from '../constants/scenes.js';
+import { LEVELS } from '../constants/levels.js';
 
 // Start position.
 const startX = 3 * TILES.width + 0.5 * TILES.width;
@@ -14,12 +15,50 @@ export default class GameScene extends Phaser.Scene {
 
     init(data) {
         this.data = data;
-        this.levelKey = data.levelKey;
+        if (this.data.starting) {
+            // Create a list of all uncompleted levels. This way, the
+            // game doesn't randomly give the player the same level in
+            // a row.
+            this.refillLevels();
+            this.registry.game.timeLeft = LEVELS.normal.startTime;
+        }
+
+        // Choose a random level.
+        // this.randomLevel(this.registry.lastLevel);
+        this.randomLevel(this.registry.game.lastLevel);
+    }
+
+    refillLevels() {
+        this.registry.game.possibleLevels = [...this.registry.levels]; 
+    }
+
+    randomLevel(omitLevel) {
+        let possibleLevels = [...this.registry.game.possibleLevels];
+        // Make sure the new level wasn't just completed.
+        if (omitLevel) {
+            possibleLevels = possibleLevels.filter(element => element !== omitLevel);
+        }
+        // Choose a random level.
+        this.currentLevel = Phaser.Utils.Array.RemoveRandomElement(possibleLevels);
+
+        // Update possible levels that can be chosen next by taking out
+        // the level that was just chosen.
+        this.registry.game.possibleLevels = this.registry.game.possibleLevels.filter(element => element !== this.currentLevel);
+
+        // The level that was just chosen can't be chosen again in the
+        // next level. This will only matter if the list of levels was
+        // just refilled.
+        this.registry.game.lastLevel = this.currentLevel;
+
+        // If all levels have been completed, refill the uncompleted levels list.
+        if (this.registry.game.possibleLevels.length === 0) {
+            this.refillLevels();
+        }
     }
 
     create() {
         // Load the map.
-        this.map = this.make.tilemap({key: this.levelKey});
+        this.map = this.make.tilemap({key: this.currentLevel});
         
         // Tiles for the block layer.
         this.tiles = this.map.addTilesetImage('tiles', 'tiles', TILES.width, TILES.height, 1, 4);
@@ -114,10 +153,27 @@ export default class GameScene extends Phaser.Scene {
         // 32px radius at the corners.
         graphics.strokeRect(0 - strokeWidth / 2, 0 - strokeWidth / 2,
             this.map.widthInPixels + strokeWidth, this.map.heightInPixels + strokeWidth);
+
+        // Allow the user to return to the title screen by pressing the
+        // escape key.
+        this.input.keyboard.on('keydown-ESC', () => {
+            this.nextLevel();
+        });
+
+        this.scene.launch(SCENE_KEYS.hud);
     }
 
     update(time, delta) {
         // Update the player.
         this.player.update(this.cursors, time, delta);
+    }
+
+    nextLevel() {
+        // In the future, might want to add an option for the scene
+        // data to pass in current player effects. That way, effects
+        // can continue throughout levels.
+        this.registry.game.completedLevelsCount += 1;
+
+        this.scene.restart({starting: false});
     }
 }

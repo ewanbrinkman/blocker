@@ -2,6 +2,7 @@ export const SCENE_KEYS = {
     boot: 'boot',
     credits: 'credits',
     game: 'game',
+    hud: 'hud',
     options: 'options',
     preloader: 'preloader',
     title: 'title'
@@ -110,6 +111,15 @@ export const OPTIONS_SCENE = {
     gamemodeText: {
         offset: {
             x: 0
+        }
+    }
+}
+
+export const HUD_SCENE = {
+    timeText: {
+        offset: {
+            x: 20,
+            y: 20
         }
     }
 }

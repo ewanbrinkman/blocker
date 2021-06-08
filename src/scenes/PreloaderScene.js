@@ -139,11 +139,6 @@ export default class PreloaderScene extends Phaser.Scene {
         });
         this.load.image('backgroundOptions', 'assets/images/backgrounds/options/backgroundOptions.png');
         this.load.image('backgroundCredits', 'assets/images/backgrounds/credits/backgroundCredits.png');
-
-        // For testing the loading bar.
-        // for (let i = 0; i<300; i++) {
-        //     this.load.tilemapTiledJSON('mapTest'+i, 'assets/maps/map2.json');
-        // }
     }
 
     create() {

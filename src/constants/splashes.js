@@ -6,5 +6,5 @@ export const SPLASHES = [
     'print("Hello, Blocker!")',
     'Should it be called squarer?',
     'The derivative of e^2 is not 2e!',
-    'Infinity over infinity does not equal 1!'
+    'Infinity over infinity? More work required!'
 ]
