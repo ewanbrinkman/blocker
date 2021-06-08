@@ -128,8 +128,10 @@ export default class PreloaderScene extends Phaser.Scene {
         this.load.atlas('selectedPlayers', 'assets/images/players/selectedPlayers.png', 'assets/images/players/selectedPlayers.json')
 
         // Load user interface assets.
-        this.load.image('greenbuttonup', 'assets/images/ui/greenbuttonup.png');
-        this.load.image('greenbuttondown', 'assets/images/ui/greenbuttondown.png');
+        this.load.image('greenButtonUp', 'assets/images/ui/greenButtonUp.png');
+        this.load.image('greenButtonDown', 'assets/images/ui/greenButtonDown.png');
+        this.load.image('greenboxCheckmark', 'assets/images/ui/greenboxCheckmark.png');
+        this.load.image('emptyBox', 'assets/images/ui/emptyBox.png')
 
         // Load background images.
         this.registry.titleBackgrounds.forEach((filename) => {

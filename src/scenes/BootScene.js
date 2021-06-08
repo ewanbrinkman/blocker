@@ -32,6 +32,8 @@ export default class BootScene extends Phaser.Scene {
         }
         // Choose a random splash text.
         this.registry.splash = Phaser.Math.RND.pick(SPLASHES);
+        // The current game mode.
+        this.registry.gamemode = 'normal';
 
         // Start the loading screen.
         this.scene.start(SCENE_KEYS.preloader);

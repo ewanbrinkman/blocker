@@ -55,8 +55,8 @@ export default class TitleScene extends Phaser.Scene {
             scene: this,
             x: width / 2,
             y: height / 2,
-            imageUp: 'greenbuttonup',
-            imageDown: 'greenbuttondown',
+            imageUp: 'greenButtonUp',
+            imageDown: 'greenButtonDown',
             text: 'Play',
             targetScene: SCENE_KEYS.game,
             sceneData: {levelKey: 'level1'}
@@ -66,8 +66,8 @@ export default class TitleScene extends Phaser.Scene {
             scene: this,
             x: width / 2,
             y: height + TITLE_SCENE.quitButton.offset.y,
-            imageUp: 'greenbuttonup',
-            imageDown: 'greenbuttondown',
+            imageUp: 'greenButtonUp',
+            imageDown: 'greenButtonDown',
             text: 'Quit',
             targetScene: SCENE_KEYS.preloader
         });
@@ -76,8 +76,8 @@ export default class TitleScene extends Phaser.Scene {
             scene: this,
             x: width / 2 + TITLE_SCENE.optionsButton.offset.x,
             y: height / 2,
-            imageUp: 'greenbuttonup',
-            imageDown: 'greenbuttondown',
+            imageUp: 'greenButtonUp',
+            imageDown: 'greenButtonDown',
             text: 'Options',
             targetScene: SCENE_KEYS.options
         });
@@ -86,8 +86,8 @@ export default class TitleScene extends Phaser.Scene {
             scene: this,
             x: width / 2 + TITLE_SCENE.creditsButton.offset.x,
             y: height / 2,
-            imageUp: 'greenbuttonup',
-            imageDown: 'greenbuttondown',
+            imageUp: 'greenButtonUp',
+            imageDown: 'greenButtonDown',
             text: 'Credits',
             targetScene: SCENE_KEYS.credits
         });

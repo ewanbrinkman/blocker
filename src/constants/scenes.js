@@ -90,15 +90,26 @@ export const OPTIONS_SCENE = {
     },
     titleText: {
         offset: {
-            y: 70
+            y: 50
         }
     },
     playerButton: {
         offsetStart: {
-            y: 200
+            y: 175
         },
         offsetBetween: {
-            y: 150
+            y: 140
+        }
+    },
+    gamemodeButton: {
+        offset: {
+            x: 70,
+            y: -280
+        }
+    },
+    gamemodeText: {
+        offset: {
+            x: 0
         }
     }
 }

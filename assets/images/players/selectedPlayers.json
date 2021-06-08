@@ -1,6 +1,6 @@
 {
 	"frames": {
-		"elephant.png": {
+		"elephant": {
 			"frame": {
 				"x": 2,
 				"y": 2,
@@ -20,7 +20,7 @@
 				"h": 342
 			}
 		},
-		"giraffe.png": {
+		"giraffe": {
 			"frame": {
 				"x": 2,
 				"y": 348,
@@ -40,7 +40,7 @@
 				"h": 370
 			}
 		},
-		"hippo.png": {
+		"hippo": {
 			"frame": {
 				"x": 2,
 				"y": 722,
@@ -60,7 +60,7 @@
 				"h": 344
 			}
 		},
-		"monkey.png": {
+		"monkey": {
 			"frame": {
 				"x": 2,
 				"y": 1070,
@@ -80,7 +80,7 @@
 				"h": 284
 			}
 		},
-		"panda.png": {
+		"panda": {
 			"frame": {
 				"x": 2,
 				"y": 1358,
@@ -100,7 +100,7 @@
 				"h": 331
 			}
 		},
-		"parrot.png": {
+		"parrot": {
 			"frame": {
 				"x": 2,
 				"y": 1693,
@@ -120,7 +120,7 @@
 				"h": 284
 			}
 		},
-		"penguin.png": {
+		"penguin": {
 			"frame": {
 				"x": 2,
 				"y": 1981,
@@ -140,7 +140,7 @@
 				"h": 284
 			}
 		},
-		"pig.png": {
+		"pig": {
 			"frame": {
 				"x": 2,
 				"y": 2269,
@@ -160,7 +160,7 @@
 				"h": 305
 			}
 		},
-		"rabbit.png": {
+		"rabbit": {
 			"frame": {
 				"x": 2,
 				"y": 2578,
@@ -180,7 +180,7 @@
 				"h": 414
 			}
 		},
-		"snake.png": {
+		"snake": {
 			"frame": {
 				"x": 2,
 				"y": 2996,

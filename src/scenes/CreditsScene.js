@@ -82,6 +82,12 @@ export default class CreditsScene extends Phaser.Scene {
         });
 
         this.createCreditsTweens({delay: true});
+
+        // Allow the user to return to the title screen by pressing the
+        // escape key.
+        this.input.keyboard.on('keydown-ESC', () => {
+            this.scene.start(SCENE_KEYS.title);
+        });
     }
 
     resize() {

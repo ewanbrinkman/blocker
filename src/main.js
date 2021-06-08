@@ -41,4 +41,8 @@ window.addEventListener('keypress', (key) => {
             game.scale.startFullscreen();
         }
     }
+
+    if (key.code === 'KeyB') {
+        console.log(game.registry.gamemode);
+    }
 });
