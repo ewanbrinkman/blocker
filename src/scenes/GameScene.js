@@ -20,7 +20,16 @@ export default class GameScene extends Phaser.Scene {
             // game doesn't randomly give the player the same level in
             // a row.
             this.refillLevels();
-            this.registry.game.timeLeft = LEVELS.normal.startTime;
+
+            // The game timer.
+            this.endTimer = this.time.addEvent({
+                delay: LEVELS.normal.startTime * 1000,
+                callback: this.gameOver,
+                args: [],
+                callbackScope: this,
+                // startAt: 0,
+                // paused: false
+            });
         }
 
         // Choose a random level.
@@ -160,7 +169,13 @@ export default class GameScene extends Phaser.Scene {
             this.nextLevel();
         });
 
-        this.scene.launch(SCENE_KEYS.hud);
+        this.input.keyboard.on('keydown-A', () => {
+            this.endTimer.delay += 1000;
+        });
+
+        // Start the HUD scene for the game. It will run at the same
+        // time as the game.
+        this.scene.launch(SCENE_KEYS.hud, {gameScene: this});
     }
 
     update(time, delta) {
@@ -175,5 +190,16 @@ export default class GameScene extends Phaser.Scene {
         this.registry.game.completedLevelsCount += 1;
 
         this.scene.restart({starting: false});
+    }
+
+    createLevel() {
+        // Create the current level and destroy anything from the
+        // previous level.
+    }
+
+    gameOver() {
+        console.log('Game over!');
+        this.scene.stop(SCENE_KEYS.hud);
+        this.scene.start(SCENE_KEYS.gameover);
     }
 }

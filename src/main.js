@@ -1,5 +1,5 @@
 import config from './config.js';
-import { SCENE_KEYS } from './constants/scenes.js';
+import { HUD_SCENE, SCENE_KEYS } from './constants/scenes.js';
 import BootScene from './scenes/BootScene.js';
 import CreditsScene from './scenes/CreditsScene.js';
 import GameScene from './scenes/GameScene.js';
@@ -7,6 +7,7 @@ import HUDScene from './scenes/HUDScene.js';
 import OptionsScene from './scenes/OptionsScene.js';
 import PreloaderScene from './scenes/PreloaderScene.js';
 import TitleScene from './scenes/TitleScene.js';
+import GameOverScene from './scenes/GameOverScene.js';
 
 class Game extends Phaser.Game {
     constructor() {
@@ -18,6 +19,7 @@ class Game extends Phaser.Game {
         this.scene.add(SCENE_KEYS.options, OptionsScene);
         this.scene.add(SCENE_KEYS.preloader, PreloaderScene);
         this.scene.add(SCENE_KEYS.title, TitleScene);
+        this.scene.add(SCENE_KEYS.gameover, GameOverScene);
         this.scene.start(SCENE_KEYS.boot);
     }
 }
@@ -41,9 +43,5 @@ window.addEventListener('keypress', (key) => {
         } else {
             game.scale.startFullscreen();
         }
-    }
-
-    if (key.code === 'KeyB') {
-        console.log(game.registry.gamemode);
     }
 });

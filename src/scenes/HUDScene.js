@@ -6,6 +6,11 @@ export default class GameScene extends Phaser.Scene {
         super(SCENE_KEYS.hud);
     }
 
+    init(data) {
+        this.data = data;
+        this.gameScene = data.gameScene;
+    }
+
     create() {
         // Reposition objects when the screen is resized.
         this.scale.on('resize', this.resize, this);
@@ -21,9 +26,15 @@ export default class GameScene extends Phaser.Scene {
         this.timeText = this.add.text(
             HUD_SCENE.timeText.offset.x,
             HUD_SCENE.timeText.offset.y + FONT[this.font].offset.y,
-            'Time Left: '+ this.registry.game.timeLeft,
+            'Time Left:',
             { font: '48px ' + this.font, fill: COLORS.text});
         this.timeText.setOrigin(0, 0.5);
+    }
+
+    update() {
+        // Round the remaining time in seconds to 1 decimal place.
+        let remainingSeconds = this.gameScene.endTimer.getRemainingSeconds().toFixed(1);
+        this.timeText.text = 'Time Left: ' + remainingSeconds;
     }
 
     resize() {

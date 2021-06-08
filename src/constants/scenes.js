@@ -5,7 +5,8 @@ export const SCENE_KEYS = {
     hud: 'hud',
     options: 'options',
     preloader: 'preloader',
-    title: 'title'
+    title: 'title',
+    gameover: 'gameover'
 }
 
 export const PRELOADER_SCENE = {

@@ -39,7 +39,6 @@ export default class BootScene extends Phaser.Scene {
             lastLevel: null,
             startTime: 0,
             endTime: 0,
-            timeLeft: 0,
             possibleLevels: [],
             completedLevelsCount: 0
         }
