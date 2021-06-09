@@ -26,15 +26,29 @@ export default class GameScene extends Phaser.Scene {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
 
+        this.titleText = this.add.text(
+            width / 2,
+            50 + FONT[this.font].offset.y,
+            'Game Results',
+            { font: '72px ' + this.font, fill: COLORS.text});
+        this.titleText.setOrigin(0.5, 0.5);
+
         // Add text to display levels completed.
-        this.resultsText = this.add.text(
+        this.levelsCompletedText = this.add.text(
             width / 2,
             height / 2,
             'Levels Completed: ' + this.registry.game.completedLevelsCount,
             { font: '48px ' + this.font, fill: COLORS.text});
-        this.resultsText.setOrigin(0.5, 0.5);
+        this.levelsCompletedText.setOrigin(0.5, 0.5);
 
         // Add text to display total time.
+        // Add text to display levels completed.
+        this.elapsedTimeText = this.add.text(
+            width / 2,
+            height / 2 + 100,
+            'Total Time: ' + this.registry.game.totalTimeElapsed,
+            { font: '48px ' + this.font, fill: COLORS.text});
+        this.elapsedTimeText.setOrigin(0.5, 0.5);
     }
 
     resize() {
@@ -42,6 +56,8 @@ export default class GameScene extends Phaser.Scene {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
 
-        this.resultsText.setPosition(width / 2, height / 2);
+        this.titleText.setPosition(width / 2, 50 + FONT[this.font].offset.y);
+        this.levelsCompletedText.setPosition(width / 2, height / 2);
+        this.elapsedTimeText.setPosition(width / 2, height / 2 + 100);
     }
 }

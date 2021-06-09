@@ -40,6 +40,11 @@
     <object id="1" x="0" y="0" width="70" height="40"/>
    </objectgroup>
   </tile>
+  <tile id="57">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="70" height="70"/>
+   </objectgroup>
+  </tile>
   <tile id="68">
    <objectgroup draworder="index" id="2">
     <object id="1" x="0" y="0" width="70" height="40"/>

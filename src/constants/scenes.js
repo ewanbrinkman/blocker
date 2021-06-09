@@ -117,10 +117,16 @@ export const OPTIONS_SCENE = {
 }
 
 export const HUD_SCENE = {
-    timeText: {
+    timeLeftText: {
         offset: {
             x: 20,
             y: 20
+        }
+    },
+    timeElapsedText: {
+        offset: {
+            x: 20,
+            y: 60
         }
     }
 }

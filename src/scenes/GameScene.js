@@ -70,6 +70,20 @@ export default class GameScene extends Phaser.Scene {
             callbackScope: this,
         });
 
+        // For testing the timer.
+        this.input.keyboard.on('keydown-A', () => {
+            this.endTimer.delay += 10000;
+        });
+
+        // For testing going to the next level.
+        this.input.keyboard.on('keydown-ESC', () => {
+            this.nextLevel();
+        });
+        // For testing going to the next level.
+        this.input.keyboard.on('keydown-T', () => {
+            this.player.body.setVelocityX(1000);
+        });
+
         // Start the HUD scene for the game. It will run at the same
         // time as the game.
         this.scene.launch(SCENE_KEYS.hud, {gameScene: this});
@@ -148,19 +162,19 @@ export default class GameScene extends Phaser.Scene {
     }
 
     destroyLevel() {
-        // Destroy a level.
+        // Destroy the tilemap.
         this.map.destroy();
+
         // Pass in "true" to destroy everything in the group.
         this.walls.destroy(true);
-        this.exitDoorTops.destroy(true);
+        this.exitDoors.destroy(true);
 
         // Remove the player's colliders.
         this.colliders['collidersLayer'].destroy();
         this.colliders['walls'].destroy();
-        this.overlaps['doorsExitLayer'].destroy();
-        this.overlaps['exitDoorTops'].destroy();
+        this.overlaps['exitDoors'].destroy();
 
-        // Stop all of the friction particles.
+        // Kill all of the friction particles.
         this.player.frictionParticles.killAllParticles();
         
     }
@@ -194,10 +208,10 @@ export default class GameScene extends Phaser.Scene {
 
         // Create custom collision boxes as static sprites.
         this.walls = this.physics.add.staticGroup();
-        this.exitDoorTops = this.physics.add.staticGroup();
+        this.exitDoors = this.physics.add.staticGroup();
 
         this.addCustomCollisions(this.walls, this.collidersLayer);
-        this.addCustomCollisions(this.exitDoorTops, this.doorsExitLayer);
+        this.addCustomCollisions(this.exitDoors, this.doorsExitLayer);
 
         // The player will collide with this layer. Don't collide with
         // tiles that have an index of -1, as there is nothing there.
@@ -269,6 +283,8 @@ export default class GameScene extends Phaser.Scene {
     }
 
     gameOver() {
+        // Get the total time.
+        this.registry.game.totalTimeElapsed = this.endTimer.getElapsedSeconds().toFixed(1);
         // Stop the HUD scene from running.
         this.scene.stop(SCENE_KEYS.hud);
         // Switch to the game over screen.

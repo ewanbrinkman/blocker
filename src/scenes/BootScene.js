@@ -37,8 +37,7 @@ export default class BootScene extends Phaser.Scene {
         // Data needed for when playing the game.
         this.registry.game = {
             lastLevel: null,
-            startTime: 0,
-            endTime: 0,
+            totalTimeElapsed: 0,
             possibleLevels: [],
             completedLevelsCount: 0
         }
