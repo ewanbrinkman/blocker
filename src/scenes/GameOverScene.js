@@ -1,5 +1,6 @@
 import Button from '../objects/Button.js';
 import { COLORS, FONT } from '../constants/style.js';
+import { LEVELS } from '../constants/levels.js';
 import { SCENE_KEYS, GAME_OVER_SCENE } from '../constants/scenes.js';
 
 export default class GameScene extends Phaser.Scene {
@@ -62,7 +63,7 @@ export default class GameScene extends Phaser.Scene {
         this.timePerLevelText = this.add.text(
             width / 2,
             height / 2 + GAME_OVER_SCENE.resultsTextSpacing + FONT[this.font].offset.y,
-            'Average Time Per Level: ' + (this.registry.game.totalTimeElapsed / this.registry.game.completedLevelsCount).toFixed(1) + ' seconds',
+            'Average Time Per Level: ' + (this.registry.game.totalTimeElapsed / this.registry.game.completedLevelsCount).toFixed(LEVELS.normal.timeDigitsResults) + ' seconds',
             { font: '48px ' + this.font, fill: COLORS.text});
         this.timePerLevelText.setOrigin(0.5, 0.5);
 
@@ -72,7 +73,7 @@ export default class GameScene extends Phaser.Scene {
             y: height + GAME_OVER_SCENE.backButton.offset.y,
             imageUp: 'greenButtonUp',
             imageDown: 'greenButtonDown',
-            text: 'Back',
+            text: 'Return To Title',
             targetScene: SCENE_KEYS.title,
         });
     }

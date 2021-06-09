@@ -292,7 +292,7 @@ export default class GameScene extends Phaser.Scene {
 
     gameOver() {
         // Get the total time.
-        this.registry.game.totalTimeElapsed = this.endTimer.getElapsedSeconds().toFixed(1);
+        this.registry.game.totalTimeElapsed = this.endTimer.getElapsedSeconds().toFixed(LEVELS.normal.timeDigitsResults);
         // Stop the HUD scene from running.
         this.scene.stop(SCENE_KEYS.hud);
         // Switch to the game over screen.

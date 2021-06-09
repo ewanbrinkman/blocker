@@ -1,5 +1,6 @@
 import { COLORS, FONT } from '../constants/style.js';
 import { SCENE_KEYS, HUD_SCENE } from '../constants/scenes.js';
+import { LEVELS } from '../constants/levels.js';
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -41,10 +42,10 @@ export default class GameScene extends Phaser.Scene {
 
     update() {
         // Round times (in seconds) to 1 decimal place.
-        let remainingSeconds = this.gameScene.endTimer.getRemainingSeconds().toFixed(1);
+        let remainingSeconds = this.gameScene.endTimer.getRemainingSeconds().toFixed(LEVELS.normal.timeDigitsGame);
         this.timeLeftText.text = 'Time Left: ' + remainingSeconds;
 
-        let elapsedSeconds = this.gameScene.endTimer.getElapsedSeconds().toFixed(1);
+        let elapsedSeconds = this.gameScene.endTimer.getElapsedSeconds().toFixed(LEVELS.normal.timeDigitsGame);
         this.timeElapsedText.text = 'Time Elapsed : ' + elapsedSeconds;
     }
 
