@@ -58,8 +58,7 @@ export default class TitleScene extends Phaser.Scene {
             imageUp: 'greenButtonUp',
             imageDown: 'greenButtonDown',
             text: 'Play',
-            targetScene: SCENE_KEYS.game,
-            sceneData: {starting: true}
+            targetScene: SCENE_KEYS.game
         });
 
         this.quitButton = new Button({

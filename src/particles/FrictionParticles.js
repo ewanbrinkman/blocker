@@ -9,6 +9,10 @@ export default class FrictionParticles {
         // along the floor, in order to start friction particles.
         this.minVelocityFloor = 0.8
 
+        this.createEmitters();
+    }
+
+    createEmitters() {
         // When moving fast along the floor.
         this.floor = this.scene.frictionParticles.createEmitter({
             on: false,
@@ -192,8 +196,16 @@ export default class FrictionParticles {
             width: this.player.body.width + 800,
             height: this.player.body.height + 100
         });
-        
+
         this.floorHit.explode(amount, this.player.body.x + this.player.body.halfWidth,
             this.player.body.bottom);
+    }
+
+    killAllParticles() {
+        // Stop all particles that are currently playing.
+        for (let particleType in this.particleTypes) {
+            // this.particleTypes[particleType].stop();
+            this.particleTypes[particleType].killAll();
+        }
     }
 }

@@ -30,7 +30,7 @@ export default class GameScene extends Phaser.Scene {
         this.resultsText = this.add.text(
             width / 2,
             height / 2,
-            'Levels Completed:',
+            'Levels Completed: ' + this.registry.game.completedLevelsCount,
             { font: '48px ' + this.font, fill: COLORS.text});
         this.resultsText.setOrigin(0.5, 0.5);
 

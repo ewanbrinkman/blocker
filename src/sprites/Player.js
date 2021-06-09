@@ -17,8 +17,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.scene = config.scene;
 
         // Start position.
-        this.startX = config.x
-        this.startY = config.y
+        // this.startX = config.x
+        // this.startY = config.y
+        this.startX = squareCenterStartX;
+        this.startY = squareCenterStartY;
         
         // Add the player to the scene.
         this.scene.add.existing(this);
@@ -68,9 +70,9 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // Don't go out of the map.
         this.body.setCollideWorldBounds(true);
         // Collide with the blocks of the map.
-        this.scene.physics.add.collider(this.scene.collidersLayer, this);
-        this.scene.physics.add.collider(this.scene.walls, this);
-        // this.scene.physics.add.collider(this.scene.group, this);
+        this.scene.colliders['collidersLayer'] = this.scene.physics.add.collider(this.scene.collidersLayer, this);
+        // Collide with the custom sized collision boxes of the map.
+        this.scene.colliders['walls'] = this.scene.physics.add.collider(this.scene.walls, this);
 
         // Particles when the player moves around.
         this.frictionParticles = new FrictionParticles(this.scene, this);
@@ -176,28 +178,23 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     teleport(x, y) {
-        // Set the body's center to the given x and y position. Since
-        // the body is poitioned based on the top left coordinate, half
-        // of the body's width and height must be subtracted from the x
-        // and y coordinate.
-        this.body.position.x = x - this.body.halfWidth;
-        this.body.position.y = y - this.body.halfHeight;
+        this.setPosition(x, y);
     }
 
     respawn() {
+        // To counter gravity pushing the player into the wall.
+        let gravityYOffset = 0;
+        if (this.body.deltaY() > 0) {
+            gravityYOffset = this.body.deltaY();
+        }
         // Teleport back to the spawn point.
-        this.teleport(this.startX, this.startY);
+        this.teleport(this.startX, this.startY - gravityYOffset)
         // Reset their velocity so they don't keep their velocity from
         // before they respawn.
         this.body.setVelocity(0, 0);
     }
 
     collideWorldSides() {
-        // Respawn if the player fell out of the map.
-        if (this.body.position.y > this.scene.map.heightInPixels) {
-            this.respawn();
-        }
-
         // Don't go off the left or right side of the screen. This
         // method is better than doing physics.world.setBoundsCollision
         // since it doesn't count running into the left or right edge
@@ -208,6 +205,11 @@ export default class Player extends Phaser.GameObjects.Sprite {
         } else if (this.body.position.x + this.body.width > this.scene.map.widthInPixels) {
             this.body.position.x = this.scene.map.widthInPixels - this.body.width;
             this.body.setVelocityX(0);
+        }
+
+        // Respawn if the player fell out of the map.
+        if (this.body.position.y > this.scene.map.heightInPixels) {
+            this.respawn();
         }
     }
 }

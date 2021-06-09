@@ -1,4 +1,5 @@
 import Player from '../sprites/Player.js';
+import FrictionParticles from '../particles/FrictionParticles.js';
 import { COLORS } from '../constants/style.js';
 import { TILES } from '../constants/maps.js';
 import { SCENE_KEYS } from '../constants/scenes.js';
@@ -11,30 +12,6 @@ const startY = 1 * TILES.height + 0.5 * TILES.height;
 export default class GameScene extends Phaser.Scene {
     constructor() {
         super(SCENE_KEYS.game);
-    }
-
-    init(data) {
-        this.data = data;
-        if (this.data.starting) {
-            // Create a list of all uncompleted levels. This way, the
-            // game doesn't randomly give the player the same level in
-            // a row.
-            this.refillLevels();
-
-            // The game timer.
-            this.endTimer = this.time.addEvent({
-                delay: LEVELS.normal.startTime * 1000,
-                callback: this.gameOver,
-                args: [],
-                callbackScope: this,
-                // startAt: 0,
-                // paused: false
-            });
-        }
-
-        // Choose a random level.
-        // this.randomLevel(this.registry.lastLevel);
-        this.randomLevel(this.registry.game.lastLevel);
     }
 
     refillLevels() {
@@ -66,9 +43,130 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
-        // Load the map.
-        this.map = this.make.tilemap({key: this.currentLevel});
+        // Keep track of colliders.
+        this.colliders = {}
+
+        // Create a list of all uncompleted levels. This way, the
+        // game doesn't randomly give the player the same level in
+        // a row.
+        this.refillLevels();
+
+        // Choose a random level. Make sure the last level that was
+        // just completed isn't chosen again.
+        this.randomLevel(this.registry.game.lastLevel);
+
+        // Create the level.
+        this.createLevel();
         
+        // Particle when moving agaisnt surfaces.
+        this.frictionParticles = this.add.particles('tiles');
+        // Render on top.
+        this.frictionParticles.setDepth(1);
+
+        // Create the player.
+        this.player = new Player({
+            scene: this,
+            x: startX,
+            y: startY,
+            texture: 'players',
+            frame: this.registry.player.playerType,
+            playerType: this.registry.player.playerType,
+        });
+
+        // Make the camera follow the player.
+        this.cameras.main.startFollow(this.player);
+
+        // Get the cursor keys for player movement.
+        this.cursors = this.input.keyboard.createCursorKeys();
+
+        // For testing going to the next level.
+        this.input.keyboard.on('keydown-ESC', () => {
+            this.nextLevel();
+        });
+
+        // For testing the timer.
+        this.input.keyboard.on('keydown-A', () => {
+            this.endTimer.delay += 10000;
+        });
+
+        // For testing the timer.
+        this.input.keyboard.on('keydown-R', () => {
+            this.player.respawn();
+        });
+
+        // The game timer.
+        this.endTimer = this.time.addEvent({
+            delay: LEVELS.normal.startTime * 1000,
+            callback: this.gameOver,
+            args: [],
+            callbackScope: this,
+        });
+
+        // Start the HUD scene for the game. It will run at the same
+        // time as the game.
+        this.scene.launch(SCENE_KEYS.hud, {gameScene: this});
+    }
+
+    update(time, delta) {
+        // Update the player.
+        this.player.update(this.cursors, time, delta);
+    }
+
+    nextLevel() {
+        // In the future, might want to add an option for the scene
+        // data to pass in current player effects. That way, effects
+        // can continue throughout levels.
+        this.registry.game.completedLevelsCount += 1;
+
+        // Destroy the current level.
+        this.destroyLevel();
+
+        // Choose a random level. Make sure the last level that was
+        // just completed isn't chosen again.
+        this.randomLevel(this.registry.game.lastLevel);
+        // Create the level.
+        this.createLevel();
+
+        // Update the player's collisions.
+        // Collide with the blocks of the map.
+        this.colliders['collidersLayer'] = this.physics.add.collider(this.collidersLayer, this.player);
+        // Collide with the custom sized collision boxes of the map.
+        this.colliders['walls'] = this.physics.add.collider(this.walls, this.player);
+
+        // Move the player to the starting position of the level.
+        this.player.respawn();
+
+        // Recreate the particle emitter. This prevents it from putting
+        // particles in the wrong place after a new level starts.
+        this.frictionParticles.destroy();
+        // Particle when moving agaisnt surfaces.
+        this.frictionParticles = this.add.particles('tiles');
+        // Render on top.
+        this.frictionParticles.setDepth(1);
+        this.player.frictionParticles = new FrictionParticles(this, this.player);
+    }
+
+    destroyLevel() {
+        // Destroy a level.
+        this.map.destroy();
+        // Pass in "true" to 
+        this.walls.destroy(true);
+
+        // Remove the player's colliders.
+        this.physics.world.colliders.remove(this.colliders['collidersLayer']);
+        this.physics.world.colliders.remove(this.colliders['walls']);
+
+        // Stop all of the friction particles.
+        this.player.frictionParticles.killAllParticles();
+        
+    }
+
+    createLevel() {
+        // Create the current level.
+        // Load the map.
+        // this.map = this.make.tilemap({key: this.currentLevel});
+        this.map = this.make.tilemap({key: this.currentLevel});
+
         // Tiles for the block layer.
         this.tiles = this.map.addTilesetImage('tiles', 'tiles', TILES.width, TILES.height, 1, 4);
         // Create the block layer.
@@ -128,32 +226,14 @@ export default class GameScene extends Phaser.Scene {
         // boundary but not the left or right sides.
         this.physics.world.setBoundsCollision(false, false, false, false);
 
-        // Particle when moving agaisnt surfaces.
-        this.frictionParticles = this.add.particles('tiles');
-        // Render on top.
-        this.frictionParticles.setDepth(1);
-
-        // Create the player.
-        this.player = new Player({
-            scene: this,
-            x: startX,
-            y: startY,
-            texture: 'players',
-            frame: this.registry.player.playerType,
-            playerType: this.registry.player.playerType,
-        });
-
         // Set bounds so the camera won't go outside the game world.
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
-        // Make the camera follow the player.
-        this.cameras.main.startFollow(this.player);
+        
         // Set the background color of the camera.
         this.cameras.main.setBackgroundColor(COLORS.background);
 
-        // Get the cursor keys for player movement.
-        this.cursors = this.input.keyboard.createCursorKeys();
-
-        // Draw world boundary.
+        // Draw the world boundary in yellow. It won't be seen unless
+        // the level isn't big enough to take up the entire screen.
         let graphics;
         let strokeWidth = 10;
         graphics = this.add.graphics();
@@ -162,44 +242,12 @@ export default class GameScene extends Phaser.Scene {
         // 32px radius at the corners.
         graphics.strokeRect(0 - strokeWidth / 2, 0 - strokeWidth / 2,
             this.map.widthInPixels + strokeWidth, this.map.heightInPixels + strokeWidth);
-
-        // Allow the user to return to the title screen by pressing the
-        // escape key.
-        this.input.keyboard.on('keydown-ESC', () => {
-            this.nextLevel();
-        });
-
-        this.input.keyboard.on('keydown-A', () => {
-            this.endTimer.delay += 1000;
-        });
-
-        // Start the HUD scene for the game. It will run at the same
-        // time as the game.
-        this.scene.launch(SCENE_KEYS.hud, {gameScene: this});
-    }
-
-    update(time, delta) {
-        // Update the player.
-        this.player.update(this.cursors, time, delta);
-    }
-
-    nextLevel() {
-        // In the future, might want to add an option for the scene
-        // data to pass in current player effects. That way, effects
-        // can continue throughout levels.
-        this.registry.game.completedLevelsCount += 1;
-
-        this.scene.restart({starting: false});
-    }
-
-    createLevel() {
-        // Create the current level and destroy anything from the
-        // previous level.
     }
 
     gameOver() {
-        console.log('Game over!');
+        // Stop the HUD scene from running.
         this.scene.stop(SCENE_KEYS.hud);
+        // Switch to the game over screen.
         this.scene.start(SCENE_KEYS.gameover);
     }
 }
