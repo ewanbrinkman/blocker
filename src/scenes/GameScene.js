@@ -15,6 +15,14 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
+        // Reset the data needed for when playing the game.
+        this.registry.game = {
+            lastLevel: null,
+            totalTimeElapsed: 0,
+            possibleLevels: [],
+            completedLevelsCount: 0
+        }
+
         // The chosen starting position of a level.
         this.spawnPoint = {
             x: 0,

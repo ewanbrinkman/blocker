@@ -130,3 +130,12 @@ export const HUD_SCENE = {
         }
     }
 }
+
+export const GAME_OVER_SCENE = {
+    backButton: {
+        offset: {
+            y: -100
+        }
+    },
+    resultsTextSpacing: 50
+}

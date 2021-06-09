@@ -139,6 +139,7 @@ export default class PreloaderScene extends Phaser.Scene {
         });
         this.load.image('backgroundOptions', 'assets/images/backgrounds/options/backgroundOptions.png');
         this.load.image('backgroundCredits', 'assets/images/backgrounds/credits/backgroundCredits.png');
+        this.load.image('backgroundGameOver', 'assets/images/backgrounds/gameover/backgroundGameOver.png');
     }
 
     create() {
