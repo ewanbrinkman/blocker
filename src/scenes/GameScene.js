@@ -14,6 +14,72 @@ export default class GameScene extends Phaser.Scene {
         super(SCENE_KEYS.game);
     }
 
+    create() {
+        // The chosen starting position of a level.
+        this.spawnPoint = {
+            x: 0,
+            y: 0
+        }
+        // Keep track of colliders.
+        this.colliders = {}
+        this.overlaps = {}
+
+        // Create a list of all uncompleted levels. This way, the
+        // game doesn't randomly give the player the same level in
+        // a row.
+        this.refillLevels();
+
+        // Choose a random level. Make sure the last level that was
+        // just completed isn't chosen again.
+        this.randomLevel(this.registry.game.lastLevel);
+
+        // Create the level.
+        this.createLevel();
+        
+        // Particle when moving agaisnt surfaces.
+        this.frictionParticles = this.add.particles('tiles');
+        // Render on top.
+        this.frictionParticles.setDepth(2);
+
+        // Create the player.
+        this.player = new Player({
+            scene: this,
+            x: this.spawnPoint.x,
+            y: this.spawnPoint.y,
+            texture: 'players',
+            frame: this.registry.player.playerType,
+            playerType: this.registry.player.playerType,
+        });
+
+        // Make the camera follow the player.
+        this.cameras.main.startFollow(this.player);
+
+        // Create keys other than the cursor keys. Keys and their uses:
+        // r: respawn the player.
+        this.keys = this.input.keyboard.addKeys({
+            r: Phaser.Input.Keyboard.KeyCodes.R,
+        });
+        // Create the cursor keys for player movement.
+        this.keys.cursors = this.input.keyboard.createCursorKeys();;
+
+        // The game timer.
+        this.endTimer = this.time.addEvent({
+            delay: LEVELS.normal.startTime * 1000,
+            callback: this.gameOver,
+            args: [],
+            callbackScope: this,
+        });
+
+        // Start the HUD scene for the game. It will run at the same
+        // time as the game.
+        this.scene.launch(SCENE_KEYS.hud, {gameScene: this});
+    }
+
+    update(time, delta) {
+        // Update the player.
+        this.player.update(this.keys, time, delta);
+    }
+
     refillLevels() {
         this.registry.game.possibleLevels = [...this.registry.levels]; 
     }
@@ -42,89 +108,11 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
-    create() {
-        // The chosen starting position of a level.
-        this.startPosition = {
-            x: 0,
-            y: 0
-        }
-        // Keep track of colliders.
-        this.colliders = {}
-        this.overlaps = {}
-
-        // Create a list of all uncompleted levels. This way, the
-        // game doesn't randomly give the player the same level in
-        // a row.
-        this.refillLevels();
-
-        // Choose a random level. Make sure the last level that was
-        // just completed isn't chosen again.
-        this.randomLevel(this.registry.game.lastLevel);
-
-        // Create the level.
-        this.createLevel();
-        
-        // Particle when moving agaisnt surfaces.
-        this.frictionParticles = this.add.particles('tiles');
-        // Render on top.
-        this.frictionParticles.setDepth(2);
-
-        // Create the player.
-        this.player = new Player({
-            scene: this,
-            // x: startX,
-            // y: startY,
-            x: this.startPosition.x,
-            y: this.startPosition.y,
-            texture: 'players',
-            frame: this.registry.player.playerType,
-            playerType: this.registry.player.playerType,
-        });
-
-        // Make the camera follow the player.
-        this.cameras.main.startFollow(this.player);
-
-        // Get the cursor keys for player movement.
-        this.cursors = this.input.keyboard.createCursorKeys();
-
-        // For testing going to the next level.
-        this.input.keyboard.on('keydown-ESC', () => {
-            this.nextLevel();
-        });
-
-        // For testing the timer.
-        this.input.keyboard.on('keydown-A', () => {
-            this.endTimer.delay += 10000;
-        });
-
-        // For testing the timer.
-        this.input.keyboard.on('keydown-R', () => {
-            this.player.respawn();
-        });
-
-        // The game timer.
-        this.endTimer = this.time.addEvent({
-            delay: LEVELS.normal.startTime * 1000,
-            callback: this.gameOver,
-            args: [],
-            callbackScope: this,
-        });
-
-        // Start the HUD scene for the game. It will run at the same
-        // time as the game.
-        this.scene.launch(SCENE_KEYS.hud, {gameScene: this});
-    }
-
-    update(time, delta) {
-        // Update the player.
-        this.player.update(this.cursors, time, delta);
-    }
-
     nextLevel() {
         // In the future, might want to add an option for the scene
         // data to pass in current player effects. That way, effects
         // can continue throughout levels.
-        this.registry.game.completedLevelsCount += 1;
+        this.registry.game.completedLevelsCount ++;
 
         // Destroy the current level.
         this.destroyLevel();
@@ -136,26 +124,21 @@ export default class GameScene extends Phaser.Scene {
         this.createLevel();
 
         // Update the player's collisions.
-        // Collide with the blocks of the map.
-        // this.colliders['collidersLayer'] = this.physics.add.collider(this.collidersLayer, this.player);
-        // Collide with the custom sized collision boxes of the map.
-        // this.colliders['walls'] = this.physics.add.collider(this.walls, this.player);
-        // Exit doors.
-        // this.overlaps['doorsExit'] = this.physics.add.overlap(this.doorsExitLayer, this.player, this.player.doorExit, undefined, this);
         this.player.addCollisions();
 
         // Move the player to the starting position of the level.
-        let [startX, startY] = this.player.getBodyCenter(this.startPosition.x, this.startPosition.y);
-        this.startPosition = {
-            x: startX,
-            y: startY
+        let [spawnPointX, spawnPointY] = this.player.getBodyCenter(this.spawnPoint.x, this.spawnPoint.y);
+        this.spawnPoint = {
+            x: spawnPointX,
+            y: spawnPointY
         }
-        this.player.startX = this.startPosition.x;
-        this.player.startY = this.startPosition.y;
+        this.player.spawnPoint.x = this.spawnPoint.x;
+        this.player.spawnPoint.y = this.spawnPoint.y;
         this.player.respawn();
 
-        // Recreate the particle emitter. This prevents it from putting
-        // particles in the wrong place after a new level starts.
+        // Recreate the friction particle emitter. This prevents it
+        // from putting friction particles in the wrong place after a
+        // new level starts.
         this.frictionParticles.destroy();
         // Particle when moving agaisnt surfaces.
         this.frictionParticles = this.add.particles('tiles');
@@ -202,7 +185,7 @@ export default class GameScene extends Phaser.Scene {
         // Choose a random starting door to start at.
         let startDoorBottom = Phaser.Math.RND.pick(startDoorBottoms);
         // Add half a tile size to the coordinates to get the center.
-        this.startPosition = {
+        this.spawnPoint = {
             x: startDoorBottom.pixelX + 0.5 * TILES.width,
             y: startDoorBottom.pixelY + 0.5 * TILES.height
         }

@@ -17,8 +17,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.scene = config.scene;
 
         // Start position.
-        this.startX = squareCenterStartX;
-        this.startY = squareCenterStartY;
+        this.spawnPoint = {
+            x: squareCenterStartX,
+            y: squareCenterStartY
+        }
         
         // Add the player to the scene.
         this.scene.add.existing(this);
@@ -82,37 +84,13 @@ export default class Player extends Phaser.GameObjects.Sprite {
             y: 0
         }
 
-        // Render on top.
+        // Render on top. Friction particles have a higher depth than
+        // the player, so friction particles render on top of the
+        // player, while the player renders on top of the map.
         this.setDepth(1);
     }
 
-    getBodyCenter(x, y) {
-        let [ squareCenterStartX, squareCenterStartY ] = getSquareCenter(
-            x, y, this.playerType, this.scale, true);
-
-        return [ squareCenterStartX, squareCenterStartY ];
-    }
-
-    doorExit() {
-        this.scene.nextLevel();
-    }
-
-    addCollisions() {
-        // Collide with the blocks of the map.
-        this.scene.colliders['collidersLayer'] = this.scene.physics.add.collider(this.scene.collidersLayer, this);
-        // Collide with the custom sized collision boxes of the map.
-        this.scene.colliders['walls'] = this.scene.physics.add.collider(this.scene.walls, this);
-
-        // Collide with the bottom of exit doors. The index is one more
-        // than that shown in Tiled.
-        this.scene.doorsExitLayer.setTileIndexCallback(58, this.doorExit, this);
-        this.scene.overlaps['doorsExitLayer'] = this.scene.physics.add.overlap(this.scene.doorsExitLayer, this);
-        // Collide with the top of exit doors. The top has a smaller
-        // hitbox to match the image.
-        this.scene.overlaps['exitDoorTops'] = this.scene.physics.add.overlap(this.scene.exitDoorTops, this, this.doorExit, undefined, this);
-    }
-
-    update(cursors, time, delta) {
+    update(keys, time, delta) {
         // Friction particles when moving.
         if (this.body.onFloor() && (Math.abs(this.body.velocity.x) > this.baseMaxVelocity.x * this.frictionParticles.minVelocityFloor)) {
             this.movingFast();
@@ -137,22 +115,22 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // Friction increases as the player's velocity increases.
         // Multiply the velocity be a negative number to make friction
         // go in the opposite direction of movement.
-        if (cursors.left.isDown) {
+        if (keys.cursors.left.isDown) {
             this.body.setAccelerationX(-this.acceleration + this.body.velocity.x * -this.friction);
-        } else if (cursors.right.isDown) {
+        } else if (keys.cursors.right.isDown) {
             this.body.setAccelerationX(this.acceleration + this.body.velocity.x * -this.friction);
         } else {
             this.body.setAccelerationX(0);
         }
 
-        if (cursors.space.isDown || cursors.up.isDown) {
+        if (keys.cursors.space.isDown || keys.cursors.up.isDown) {
             if (this.body.onFloor()) {
                 // Jump off the ground.
                 this.body.setVelocityY(-this.jumpVelocity);
             }
         }
 
-        if (Phaser.Input.Keyboard.JustDown(cursors.up) || Phaser.Input.Keyboard.JustDown(cursors.space)) {
+        if (Phaser.Input.Keyboard.JustDown(keys.cursors.up) || Phaser.Input.Keyboard.JustDown(keys.cursors.space)) {
             // The player will try to do a wall jump.
             this.wallJump();
         }
@@ -163,6 +141,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
         this.lastVelocity = {
             y: this.body.velocity.y
+        }
+
+        if (Phaser.Input.Keyboard.JustDown(keys.r)) {
+            this.respawn();
         }
     }
 
@@ -203,21 +185,47 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
     }
 
-    teleport(x, y) {
-        this.setPosition(x, y);
+    getBodyCenter(x, y, onBottom = true) {
+        return getSquareCenter(x, y, this.playerType, this.scale, onBottom);
+    }
+
+    doorExit() {
+        this.scene.nextLevel();
+    }
+
+    addCollisions() {
+        // Collide with the blocks of the map.
+        this.scene.colliders['collidersLayer'] = this.scene.physics.add.collider(this.scene.collidersLayer, this);
+        // Collide with the custom sized collision boxes of the map.
+        this.scene.colliders['walls'] = this.scene.physics.add.collider(this.scene.walls, this);
+
+        // Collide with the bottom of exit doors. The index is one more
+        // than that shown in Tiled.
+        this.scene.doorsExitLayer.setTileIndexCallback(58, this.doorExit, this);
+        this.scene.overlaps['doorsExitLayer'] = this.scene.physics.add.overlap(this.scene.doorsExitLayer, this);
+        // Collide with the top of exit doors. The top has a smaller
+        // hitbox to match the image.
+        this.scene.overlaps['exitDoorTops'] = this.scene.physics.add.overlap(this.scene.exitDoorTops, this, this.doorExit, undefined, this);
     }
 
     respawn() {
-        // To counter gravity pushing the player into the wall.
+        // To counter gravity pushing the player into the wall below.
         let gravityYOffset = 0;
         if (this.body.deltaY() > 0) {
             gravityYOffset = this.body.deltaY();
         }
+        console.log(this.body.deltaX());
         // Teleport back to the spawn point.
-        this.teleport(this.startX, this.startY - gravityYOffset)
+        this.setPosition(this.spawnPoint.x, this.spawnPoint.y - gravityYOffset);
+
         // Reset their velocity so they don't keep their velocity from
         // before they respawn.
         this.body.setVelocity(0, 0);
+        // Reset the last velocity that is used by the friction
+        // particles.
+        this.lastVelocity = {
+            y: 0
+        }
     }
 
     collideWorldSides() {
