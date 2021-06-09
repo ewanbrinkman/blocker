@@ -153,13 +153,15 @@ export default class GameScene extends Phaser.Scene {
     destroyLevel() {
         // Destroy a level.
         this.map.destroy();
-        // Pass in "true" to 
+        // Pass in "true" to destroy everything in the group.
         this.walls.destroy(true);
+        this.exitDoorTops.destroy(true);
 
         // Remove the player's colliders.
         this.colliders['collidersLayer'].destroy();
         this.colliders['walls'].destroy();
         this.overlaps['doorsExitLayer'].destroy();
+        this.overlaps['exitDoorTops'].destroy();
 
         // Stop all of the friction particles.
         this.player.frictionParticles.killAllParticles();
@@ -184,38 +186,10 @@ export default class GameScene extends Phaser.Scene {
 
         // Create custom collision boxes as static sprites.
         this.walls = this.physics.add.staticGroup();
-        // Get the data in Tiled of the tiles that have custom
-        // collisions set.
-        for (const tileIndex in this.map.tilesets[0].tileData) {
-            // Add this tile to the list of tiles which will have a
-            // custom collision box.
-            this.customCollisionTilesIndexes.push(parseInt(tileIndex) + 1);
+        this.exitDoorTops = this.physics.add.staticGroup();
 
-            // Get the collision boxes on this tile.
-            const walls = this.map.tilesets[0].tileData[tileIndex].objectgroup.objects;
-            
-            // Find tiles with this index.
-            this.map.forEachTile((tile) => {
-                if (tile.index === (parseInt(tileIndex) + 1)) {
-
-                    // Create the collision boxes for this tile.
-                    walls.forEach((wall) => {
-                        // Create a static sprite for collisions.
-                        let staticSprite = this.walls.create(wall.x + tile.x * TILES.width,
-                            wall.y + tile.y * TILES.height);
-
-                        staticSprite.setOrigin(0, 0);
-                        staticSprite.displayWidth = wall.width;
-                        staticSprite.displayHeight = wall.height;
-                        staticSprite.visible = false;
-                        
-                        // Update the body after changing it. A static
-                        // body won't update automatically.
-                        staticSprite.refreshBody();
-                    });
-                }
-            }, undefined, undefined, undefined, undefined, undefined, undefined, this.collidersLayer);
-        }
+        this.addCustomCollisions(this.walls, this.collidersLayer);
+        this.addCustomCollisions(this.exitDoorTops, this.doorsExitLayer);
 
         // The player will collide with this layer. Don't collide with
         // tiles that have an index of -1, as there is nothing there.
@@ -249,6 +223,41 @@ export default class GameScene extends Phaser.Scene {
         // 32px radius at the corners.
         graphics.strokeRect(0 - strokeWidth / 2, 0 - strokeWidth / 2,
             this.map.widthInPixels + strokeWidth, this.map.heightInPixels + strokeWidth);
+    }
+
+    addCustomCollisions(group, layer) {
+        // Get the data in Tiled of the tiles that have custom
+        // collisions set.
+        for (const tileIndex in this.map.tilesets[0].tileData) {
+            // Add this tile to the list of tiles which will have a
+            // custom collision box.
+            this.customCollisionTilesIndexes.push(parseInt(tileIndex) + 1);
+
+            // Get the collision boxes on this tile.
+            const walls = this.map.tilesets[0].tileData[tileIndex].objectgroup.objects;
+            
+            // Find tiles with this index.
+            this.map.forEachTile((tile) => {
+                if (tile.index === (parseInt(tileIndex) + 1)) {
+
+                    // Create the collision boxes for this tile.
+                    walls.forEach((wall) => {
+                        // Create a static sprite for collisions.
+                        let staticSprite = group.create(wall.x + tile.x * TILES.width,
+                            wall.y + tile.y * TILES.height);
+
+                        staticSprite.setOrigin(0, 0);
+                        staticSprite.displayWidth = wall.width;
+                        staticSprite.displayHeight = wall.height;
+                        staticSprite.visible = false;
+                        
+                        // Update the body after changing it. A static
+                        // body won't update automatically.
+                        staticSprite.refreshBody();
+                    });
+                }
+            }, undefined, undefined, undefined, undefined, undefined, undefined, layer);
+        }
     }
 
     gameOver() {

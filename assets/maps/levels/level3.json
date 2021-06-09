@@ -4,7 +4,7 @@
      "export":
         {
          "format":"json",
-         "target":"level1.json"
+         "target":"level3.json"
         }
     },
  "height":20,
@@ -209,6 +209,32 @@
                              "width":70,
                              "x":0,
                              "y":0
+                            }],
+                     "opacity":1,
+                     "type":"objectgroup",
+                     "visible":true,
+                     "x":0,
+                     "y":0
+                    }
+                }, 
+                {
+                 "id":45,
+                 "objectgroup":
+                    {
+                     "draworder":"index",
+                     "id":2,
+                     "name":"",
+                     "objects":[
+                            {
+                             "height":40,
+                             "id":1,
+                             "name":"",
+                             "rotation":0,
+                             "type":"",
+                             "visible":true,
+                             "width":70,
+                             "x":0,
+                             "y":30
                             }],
                      "opacity":1,
                      "type":"objectgroup",
