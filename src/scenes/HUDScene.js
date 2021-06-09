@@ -32,12 +32,12 @@ export default class GameScene extends Phaser.Scene {
         this.timeLeftText.setOrigin(0, 0.5);
 
         // Add text to display loading information.
-        this.timeElapsedText = this.add.text(
-            HUD_SCENE.timeElapsedText.offset.x,
-            HUD_SCENE.timeElapsedText.offset.y + FONT[this.font].offset.y,
-            'Time Elapsed:',
-            { font: '48px ' + this.font, fill: COLORS.text});
-        this.timeElapsedText.setOrigin(0, 0.5);
+        // this.timeElapsedText = this.add.text(
+        //     HUD_SCENE.timeElapsedText.offset.x,
+        //     HUD_SCENE.timeElapsedText.offset.y + FONT[this.font].offset.y,
+        //     'Time Elapsed:',
+        //     { font: '48px ' + this.font, fill: COLORS.text});
+        // this.timeElapsedText.setOrigin(0, 0.5);
     }
 
     update() {
@@ -45,8 +45,8 @@ export default class GameScene extends Phaser.Scene {
         let remainingSeconds = this.gameScene.endTimer.getRemainingSeconds().toFixed(LEVELS.normal.timeDigitsGame);
         this.timeLeftText.text = 'Time Left: ' + remainingSeconds;
 
-        let elapsedSeconds = this.gameScene.endTimer.getElapsedSeconds().toFixed(LEVELS.normal.timeDigitsGame);
-        this.timeElapsedText.text = 'Time Elapsed : ' + elapsedSeconds;
+        // let elapsedSeconds = this.gameScene.endTimer.getElapsedSeconds().toFixed(LEVELS.normal.timeDigitsGame);
+        // this.timeElapsedText.text = 'Time Elapsed : ' + elapsedSeconds;
     }
 
     resize() {
@@ -54,9 +54,9 @@ export default class GameScene extends Phaser.Scene {
             HUD_SCENE.timeLeftText.offset.x,
             HUD_SCENE.timeLeftText.offset.y + FONT[this.font].offset.y
         );
-        this.timeElapsedText.setPosition(
-            HUD_SCENE.timeElapsedText.offset.x,
-            HUD_SCENE.timeElapsedText.offset.y + FONT[this.font].offset.y
-        );
+        // this.timeElapsedText.setPosition(
+        //     HUD_SCENE.timeElapsedText.offset.x,
+        //     HUD_SCENE.timeElapsedText.offset.y + FONT[this.font].offset.y
+        // );
     }
 }

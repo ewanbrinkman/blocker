@@ -1,7 +1,6 @@
 import FrictionParticles from '../particles/FrictionParticles.js';
 import { getSquareCenter, getBodyOffset } from '../utils.js';
 import { BASE_PLAYER, PLAYER_SQUARE } from '../constants/player.js';
-import { SCENE_KEYS } from '../constants/scenes.js';
 
 export default class Player extends Phaser.GameObjects.Sprite {
     constructor(config) {
@@ -186,8 +185,18 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
     }
 
-    getBodyCenter(x, y, onBottom = true) {
+    getPlayerCenter(x, y, onBottom = true) {
         return getSquareCenter(x, y, this.playerType, this.scale, onBottom);
+    }
+
+    getSpritePosition(side) {
+        if (side === 'left') {
+            let [x, y] = getSquareCenter(this.getTopLeft().x, 0, this.playerType, this.scale, false);
+            return x;
+        } else if (side === 'right') {
+            let [x, y] = getSquareCenter(this.getTopRight().x, 0, this.playerType, this.scale, false);
+            return x;
+        }
     }
 
     doorExit() {
@@ -209,13 +218,13 @@ export default class Player extends Phaser.GameObjects.Sprite {
             x: 0,
             y: 0
         };
-        if (this.body.deltaY() > 0) {
-            // Due to gravity.
-            movementOffset.y = this.body.deltaY();
-        }
         if (this.body.deltaX()) {
             // Due to player movement.
             movementOffset.x = this.body.deltaX();
+        }
+        if (this.body.deltaY() > 0) {
+            // Due to gravity.
+            movementOffset.y = this.body.deltaY();
         }
         // Teleport back to the spawn point.
         this.setPosition(
@@ -233,18 +242,17 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     collideWorldSides() {
-        // Don't go off the left or right side of the screen. This
-        // method is better than doing physics.world.setBoundsCollision
-        // since it doesn't count running into the left or right edge
-        // as being blocked.
-        if (this.body.position.x < 0) {
-            this.body.position.x = 0;
-            this.body.setVelocityX(0);
-        } else if (this.body.position.x + this.body.width > this.scene.map.widthInPixels) {
-            this.body.position.x = this.scene.map.widthInPixels - this.body.width;
-            this.body.setVelocityX(0);
+        // Use the sprite position. Using the body won't work when a
+        // level switches and the map gets smaller.
+        if (this.getSpritePosition('left') < 0) {
+            let [ newX, newY ] = this.getPlayerCenter(0, 0);
+            this.setX(newX + this.displayWidth / 2);  
+            this.body.setVelocityX(0);  
+        } else if (this.getSpritePosition('right') > this.scene.map.widthInPixels) {
+            let [ newX, newY ] = this.getPlayerCenter(this.scene.map.widthInPixels, 0);
+            this.setX(newX - this.displayWidth / 2);  
+            this.body.setVelocityX(0);  
         }
-
         // Respawn if the player fell out of the map.
         if (this.body.position.y > this.scene.map.heightInPixels) {
             this.respawn();

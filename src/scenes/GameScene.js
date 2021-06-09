@@ -15,6 +15,8 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
+        this.levelActive = false;
+
         // Reset the data needed for when playing the game.
         this.registry.game = {
             lastLevel: null,
@@ -91,15 +93,31 @@ export default class GameScene extends Phaser.Scene {
         this.input.keyboard.on('keydown-T', () => {
             this.player.body.setVelocityX(1000);
         });
+        // For testing the player position.
+        this.input.keyboard.on('keydown-P', () => {
+            console.log(this.player.getCenter());
+        });
+        // For testing the player position.
+        this.input.keyboard.on('keydown-O', () => {
+            this.player.setPosition(5159, 570)
+        });
+        // For testing, get player side.
+        this.input.keyboard.on('keydown-I', () => {
+            console.log(this.player.getSpritePosition('left'));
+        });
 
         // Start the HUD scene for the game. It will run at the same
         // time as the game.
         this.scene.launch(SCENE_KEYS.hud, {gameScene: this});
+
+        this.levelActive = true;
     }
 
     update(time, delta) {
-        // Update the player.
-        this.player.update(this.keys, time, delta);
+        if (this.levelActive) {
+            // Update the player.
+            this.player.update(this.keys, time, delta);
+        }
     }
 
     refillLevels() {
@@ -131,6 +149,13 @@ export default class GameScene extends Phaser.Scene {
     }
 
     nextLevel() {
+        this.levelActive = false;
+        this.scene.pause(SCENE_KEYS.game);
+        this.physics.world.pause();
+
+        // Add a little bit of time to the timer.
+        this.endTimer.delay += LEVELS.normal.completeTime * 1000;
+
         // In the future, might want to add an option for the scene
         // data to pass in current player effects. That way, effects
         // can continue throughout levels.
@@ -149,11 +174,12 @@ export default class GameScene extends Phaser.Scene {
         this.player.addCollisions();
 
         // Move the player to the starting position of the level.
-        let [spawnPointX, spawnPointY] = this.player.getBodyCenter(this.spawnPoint.x, this.spawnPoint.y);
+        let [spawnPointX, spawnPointY] = this.player.getPlayerCenter(this.spawnPoint.x, this.spawnPoint.y);
         this.spawnPoint = {
             x: spawnPointX,
             y: spawnPointY
         }
+
         this.player.spawnPoint.x = this.spawnPoint.x;
         this.player.spawnPoint.y = this.spawnPoint.y;
         this.player.respawn();
@@ -167,11 +193,18 @@ export default class GameScene extends Phaser.Scene {
         // Render on top.
         this.frictionParticles.setDepth(2);
         this.player.frictionParticles = new FrictionParticles(this, this.player);
+
+        this.scene.resume(SCENE_KEYS.game);
+        this.physics.world.resume();
+
+        this.levelActive = true;
     }
 
     destroyLevel() {
         // Destroy the tilemap.
         this.map.destroy();
+
+        this.graphics.destroy();
 
         // Pass in "true" to destroy everything in the group.
         this.walls.destroy(true);
@@ -206,6 +239,7 @@ export default class GameScene extends Phaser.Scene {
         let startDoorBottoms = this.doorsStartLayer.filterTiles((tile) => (tile.index === 58))
         // Choose a random starting door to start at.
         let startDoorBottom = Phaser.Math.RND.pick(startDoorBottoms);
+
         // Add half a tile size to the coordinates to get the center.
         this.spawnPoint = {
             x: startDoorBottom.pixelX + 0.5 * TILES.width,
@@ -245,13 +279,12 @@ export default class GameScene extends Phaser.Scene {
 
         // Draw the world boundary in yellow. It won't be seen unless
         // the level isn't big enough to take up the entire screen.
-        let graphics;
         let strokeWidth = 10;
-        graphics = this.add.graphics();
-        graphics.lineStyle(strokeWidth, 0xffff00, 1);
+        this.graphics = this.add.graphics();
+        this.graphics.lineStyle(strokeWidth, 0xffff00, 1);
 
         // 32px radius at the corners.
-        graphics.strokeRect(0 - strokeWidth / 2, 0 - strokeWidth / 2,
+        this.graphics.strokeRect(0 - strokeWidth / 2, 0 - strokeWidth / 2,
             this.map.widthInPixels + strokeWidth, this.map.heightInPixels + strokeWidth);
     }
 
