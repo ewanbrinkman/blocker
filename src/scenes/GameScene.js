@@ -22,14 +22,14 @@ export default class GameScene extends Phaser.Scene {
         let possibleLevels = [...this.registry.game.possibleLevels];
         // Make sure the new level wasn't just completed.
         if (omitLevel) {
-            possibleLevels = possibleLevels.filter(element => element !== omitLevel);
+            possibleLevels = possibleLevels.filter((element) => (element !== omitLevel));
         }
         // Choose a random level.
         this.currentLevel = Phaser.Utils.Array.RemoveRandomElement(possibleLevels);
 
         // Update possible levels that can be chosen next by taking out
         // the level that was just chosen.
-        this.registry.game.possibleLevels = this.registry.game.possibleLevels.filter(element => element !== this.currentLevel);
+        this.registry.game.possibleLevels = this.registry.game.possibleLevels.filter((element) => (element !== this.currentLevel));
 
         // The level that was just chosen can't be chosen again in the
         // next level. This will only matter if the list of levels was
@@ -43,6 +43,11 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
+        // The chosen starting position of a level.
+        this.startPosition = {
+            x: 0,
+            y: 0
+        }
         // Keep track of colliders.
         this.colliders = {}
         this.overlaps = {}
@@ -67,8 +72,10 @@ export default class GameScene extends Phaser.Scene {
         // Create the player.
         this.player = new Player({
             scene: this,
-            x: startX,
-            y: startY,
+            // x: startX,
+            // y: startY,
+            x: this.startPosition.x,
+            y: this.startPosition.y,
             texture: 'players',
             frame: this.registry.player.playerType,
             playerType: this.registry.player.playerType,
@@ -138,6 +145,13 @@ export default class GameScene extends Phaser.Scene {
         this.player.addCollisions();
 
         // Move the player to the starting position of the level.
+        let [startX, startY] = this.player.getBodyCenter(this.startPosition.x, this.startPosition.y);
+        this.startPosition = {
+            x: startX,
+            y: startY
+        }
+        this.player.startX = this.startPosition.x;
+        this.player.startY = this.startPosition.y;
         this.player.respawn();
 
         // Recreate the particle emitter. This prevents it from putting
@@ -181,6 +195,17 @@ export default class GameScene extends Phaser.Scene {
         this.decorationsLayer = this.map.createLayer('Decorations', this.tiles, 0, 0);
         this.doorsStartLayer = this.map.createLayer('Doors/Start', this.tiles, 0, 0);
         this.doorsExitLayer = this.map.createLayer('Doors/Exit', this.tiles, 0, 0);
+
+        // Get a list of all starting door coordinates (the bottom part
+        // of the door).
+        let startDoorBottoms = this.doorsStartLayer.filterTiles((tile) => (tile.index === 58))
+        // Choose a random starting door to start at.
+        let startDoorBottom = Phaser.Math.RND.pick(startDoorBottoms);
+        // Add half a tile size to the coordinates to get the center.
+        this.startPosition = {
+            x: startDoorBottom.pixelX + 0.5 * TILES.width,
+            y: startDoorBottom.pixelY + 0.5 * TILES.height
+        }
 
         this.customCollisionTilesIndexes = [];
 

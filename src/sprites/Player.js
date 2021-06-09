@@ -17,8 +17,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.scene = config.scene;
 
         // Start position.
-        // this.startX = config.x
-        // this.startY = config.y
         this.startX = squareCenterStartX;
         this.startY = squareCenterStartY;
         
@@ -88,8 +86,15 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.setDepth(1);
     }
 
+    getBodyCenter(x, y) {
+        let [ squareCenterStartX, squareCenterStartY ] = getSquareCenter(
+            x, y, this.playerType, this.scale, true);
+
+        return [ squareCenterStartX, squareCenterStartY ];
+    }
+
     doorExit() {
-        console.log('Door exit.');
+        this.scene.nextLevel();
     }
 
     addCollisions() {
@@ -97,13 +102,14 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.scene.colliders['collidersLayer'] = this.scene.physics.add.collider(this.scene.collidersLayer, this);
         // Collide with the custom sized collision boxes of the map.
         this.scene.colliders['walls'] = this.scene.physics.add.collider(this.scene.walls, this);
+
         // Collide with the bottom of exit doors. The index is one more
         // than that shown in Tiled.
         this.scene.doorsExitLayer.setTileIndexCallback(58, this.doorExit, this);
         this.scene.overlaps['doorsExitLayer'] = this.scene.physics.add.overlap(this.scene.doorsExitLayer, this);
         // Collide with the top of exit doors. The top has a smaller
         // hitbox to match the image.
-        this.scene.overlaps['exitDoorTops'] = this.scene.physics.add.overlap(this.scene.exitDoorTops, this, this.doorExit);
+        this.scene.overlaps['exitDoorTops'] = this.scene.physics.add.overlap(this.scene.exitDoorTops, this, this.doorExit, undefined, this);
     }
 
     update(cursors, time, delta) {
