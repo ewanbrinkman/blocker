@@ -69,10 +69,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
         // Don't go out of the map.
         this.body.setCollideWorldBounds(true);
-        // Collide with the blocks of the map.
-        this.scene.colliders['collidersLayer'] = this.scene.physics.add.collider(this.scene.collidersLayer, this);
-        // Collide with the custom sized collision boxes of the map.
-        this.scene.colliders['walls'] = this.scene.physics.add.collider(this.scene.walls, this);
+
+        this.addCollisions();
 
         // Particles when the player moves around.
         this.frictionParticles = new FrictionParticles(this.scene, this);
@@ -84,6 +82,25 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.lastVelocity = {
             y: 0
         }
+
+        // Render on top.
+        this.setDepth(1);
+    }
+
+    doorExit() {
+        console.log('Door exit collide.');
+    }
+
+    addCollisions() {
+        // Collide with the blocks of the map.
+        this.scene.colliders['collidersLayer'] = this.scene.physics.add.collider(this.scene.collidersLayer, this);
+        // Collide with the custom sized collision boxes of the map.
+        this.scene.colliders['walls'] = this.scene.physics.add.collider(this.scene.walls, this);
+        // Collide with the bottom of exit doors.
+        this.scene.doorsExitLayer.setTileIndexCallback(58, this.doorExit, this);
+        this.scene.overlaps['doorsExitLayer'] = this.scene.physics.add.overlap(this.scene.doorsExitLayer, this);
+        // Collide with the top of exit doors. The top has a smaller
+        // hitbox to match the image.
     }
 
     update(cursors, time, delta) {

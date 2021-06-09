@@ -45,6 +45,7 @@ export default class GameScene extends Phaser.Scene {
     create() {
         // Keep track of colliders.
         this.colliders = {}
+        this.overlaps = {}
 
         // Create a list of all uncompleted levels. This way, the
         // game doesn't randomly give the player the same level in
@@ -61,7 +62,7 @@ export default class GameScene extends Phaser.Scene {
         // Particle when moving agaisnt surfaces.
         this.frictionParticles = this.add.particles('tiles');
         // Render on top.
-        this.frictionParticles.setDepth(1);
+        this.frictionParticles.setDepth(2);
 
         // Create the player.
         this.player = new Player({
@@ -129,9 +130,12 @@ export default class GameScene extends Phaser.Scene {
 
         // Update the player's collisions.
         // Collide with the blocks of the map.
-        this.colliders['collidersLayer'] = this.physics.add.collider(this.collidersLayer, this.player);
+        // this.colliders['collidersLayer'] = this.physics.add.collider(this.collidersLayer, this.player);
         // Collide with the custom sized collision boxes of the map.
-        this.colliders['walls'] = this.physics.add.collider(this.walls, this.player);
+        // this.colliders['walls'] = this.physics.add.collider(this.walls, this.player);
+        // Exit doors.
+        // this.overlaps['doorsExit'] = this.physics.add.overlap(this.doorsExitLayer, this.player, this.player.doorExit, undefined, this);
+        this.player.addCollisions();
 
         // Move the player to the starting position of the level.
         this.player.respawn();
@@ -142,7 +146,7 @@ export default class GameScene extends Phaser.Scene {
         // Particle when moving agaisnt surfaces.
         this.frictionParticles = this.add.particles('tiles');
         // Render on top.
-        this.frictionParticles.setDepth(1);
+        this.frictionParticles.setDepth(2);
         this.player.frictionParticles = new FrictionParticles(this, this.player);
     }
 
@@ -153,8 +157,9 @@ export default class GameScene extends Phaser.Scene {
         this.walls.destroy(true);
 
         // Remove the player's colliders.
-        this.physics.world.colliders.remove(this.colliders['collidersLayer']);
-        this.physics.world.colliders.remove(this.colliders['walls']);
+        this.colliders['collidersLayer'].destroy();
+        this.colliders['walls'].destroy();
+        this.overlaps['doorsExitLayer'].destroy();
 
         // Stop all of the friction particles.
         this.player.frictionParticles.killAllParticles();
@@ -172,6 +177,8 @@ export default class GameScene extends Phaser.Scene {
         // Create the block layer.
         this.collidersLayer = this.map.createLayer('Colliders', this.tiles, 0, 0);
         this.decorationsLayer = this.map.createLayer('Decorations', this.tiles, 0, 0);
+        this.doorsStartLayer = this.map.createLayer('Doors/Start', this.tiles, 0, 0);
+        this.doorsExitLayer = this.map.createLayer('Doors/Exit', this.tiles, 0, 0);
 
         this.customCollisionTilesIndexes = [];
 
