@@ -4,7 +4,7 @@ import BootScene from './scenes/BootScene.js';
 import CreditsScene from './scenes/CreditsScene.js';
 import GameScene from './scenes/GameScene.js';
 import HUDScene from './scenes/HUDScene.js';
-import OptionsScene from './scenes/OptionsScene.js';
+import CharactersScene from './scenes/CharactersScene.js';
 import PreloaderScene from './scenes/PreloaderScene.js';
 import TitleScene from './scenes/TitleScene.js';
 import GameOverScene from './scenes/GameOverScene.js';
@@ -16,7 +16,7 @@ class Game extends Phaser.Game {
         this.scene.add(SCENE_KEYS.credits, CreditsScene);
         this.scene.add(SCENE_KEYS.game, GameScene);
         this.scene.add(SCENE_KEYS.hud, HUDScene);
-        this.scene.add(SCENE_KEYS.options, OptionsScene);
+        this.scene.add(SCENE_KEYS.characters, CharactersScene);
         this.scene.add(SCENE_KEYS.preloader, PreloaderScene);
         this.scene.add(SCENE_KEYS.title, TitleScene);
         this.scene.add(SCENE_KEYS.gameover, GameOverScene);

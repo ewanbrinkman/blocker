@@ -3,7 +3,7 @@ export const SCENE_KEYS = {
     credits: 'credits',
     game: 'game',
     hud: 'hud',
-    options: 'options',
+    characters: 'characters',
     preloader: 'preloader',
     title: 'title',
     gameover: 'gameover'
@@ -50,7 +50,7 @@ export const TITLE_SCENE = {
             y: -100
         }
     },
-    optionsButton: {
+    charactersButton: {
         offset: {
             x: -350
         }
@@ -64,6 +64,17 @@ export const TITLE_SCENE = {
         offset: {
             x: 10,
             y: 10
+        }
+    },
+    gamemodeButton: {
+        offset: {
+            x: 70,
+            y: 70
+        }
+    },
+    gamemodeText: {
+        offset: {
+            x: 0
         }
     },
     backgroundSpeed: 50
@@ -84,7 +95,7 @@ export const CREDITS_SCENE = {
     }
 }
 
-export const OPTIONS_SCENE = {
+export const CHARACTERS_SCENE = {
     backButton: {
         offset: {
             y: -100
@@ -101,17 +112,6 @@ export const OPTIONS_SCENE = {
         },
         offsetBetween: {
             y: 140
-        }
-    },
-    gamemodeButton: {
-        offset: {
-            x: 70,
-            y: -280
-        }
-    },
-    gamemodeText: {
-        offset: {
-            x: 0
         }
     }
 }

@@ -71,14 +71,14 @@ export default class TitleScene extends Phaser.Scene {
             targetScene: SCENE_KEYS.preloader
         });
 
-        this.optionsButton = new Button({
+        this.charactersButton = new Button({
             scene: this,
-            x: width / 2 + TITLE_SCENE.optionsButton.offset.x,
+            x: width / 2 + TITLE_SCENE.charactersButton.offset.x,
             y: height / 2,
             imageUp: 'greenButtonUp',
             imageDown: 'greenButtonDown',
-            text: 'Options',
-            targetScene: SCENE_KEYS.options
+            text: 'Characters',
+            targetScene: SCENE_KEYS.characters
         });
 
         this.creditsButton = new Button({
@@ -90,6 +90,41 @@ export default class TitleScene extends Phaser.Scene {
             text: 'Credits',
             targetScene: SCENE_KEYS.credits
         });
+
+        this.gamemodeButton = new Button({
+            scene: this,
+            x: TITLE_SCENE.gamemodeButton.offset.x,
+            y: TITLE_SCENE.gamemodeButton.offset.y,
+            imageUnselected: 'emptyBox',
+            imageSelected: 'greenboxCheckmark',
+            selectionFunction: (updateTargetVariable) => {
+                // The function is called when the selection button is
+                // pressed. The returned value is if the button is
+                // currently selected.
+                if (this.registry.gamemode === 'normal') {
+                    if (updateTargetVariable) {
+                        this.registry.gamemode = 'speedrun';
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    if (updateTargetVariable) {
+                        this.registry.gamemode = 'normal';
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+        });
+
+        this.gamemodeText = this.add.text(
+            this.gamemodeButton.x + this.gamemodeButton.button.width + TITLE_SCENE.gamemodeText.offset.x,
+            this.gamemodeButton.y + FONT[this.font].offset.y,
+            'Speedrun Mode',
+            { font: '48px ' + this.font, fill: COLORS.text});
+        this.gamemodeText.setOrigin(0, 0.5);
     }
 
     resize() {
@@ -108,9 +143,14 @@ export default class TitleScene extends Phaser.Scene {
             this.logo.getBottomRight().x + TITLE_SCENE.splashText.offset.x,
             this.logo.getBottomRight().y + TITLE_SCENE.splashText.offset.y + FONT[this.font].offset.y
         );
+        this.gamemodeButton.setPosition(TITLE_SCENE.gamemodeButton.offset.x, TITLE_SCENE.gamemodeButton.offset.y);
+        this.gamemodeText.setPosition(
+            this.gamemodeButton.x + this.gamemodeButton.button.width + TITLE_SCENE.gamemodeText.offset.x,
+            this.gamemodeButton.y + FONT[this.font].offset.y
+        );
         this.gameButton.setPosition(width / 2, height / 2);
         this.quitButton.setPosition(width / 2, height + TITLE_SCENE.quitButton.offset.y);
-        this.optionsButton.setPosition(width / 2 + TITLE_SCENE.optionsButton.offset.x, height / 2,);
+        this.charactersButton.setPosition(width / 2 + TITLE_SCENE.charactersButton.offset.x, height / 2,);
         this.creditsButton.setPosition(width / 2 + TITLE_SCENE.creditsButton.offset.x, height / 2);
     }
 
