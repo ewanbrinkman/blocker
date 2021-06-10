@@ -44,9 +44,13 @@ export default class CreditsScene extends Phaser.Scene {
         this.addCreditsText('body', 'Player Images: Kenney');
         this.addCreditsText('body', 'User Interface Images: Kenney');
         this.addCreditsText('body', 'Font: Kenney');
+        this.addCreditsText('body', 'Background Music: CodeManu');
         // Links.
         this.addCreditsText('header', 'Links');
-        this.addCreditsText('body', 'Kenney: https://www.kenney.nl');
+        this.addCreditsText('body', 'Kenney:');
+        this.addCreditsText('body', 'https://kenney.nl');
+        this.addCreditsText('body', 'CodeManu:')
+        this.addCreditsText('body', 'https://opengameart.org/content/platformer-game-music-pack')
 
         // Keep track of the current y offset to keep adding text
         // further and further down.
