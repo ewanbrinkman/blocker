@@ -80,32 +80,6 @@ export default class GameScene extends Phaser.Scene {
             callbackScope: this,
         });
 
-        // For testing the timer.
-        this.input.keyboard.on('keydown-A', () => {
-            this.endTimer.delay += 10000;
-        });
-
-        // For testing going to the next level.
-        this.input.keyboard.on('keydown-ESC', () => {
-            this.nextLevel();
-        });
-        // For testing going to the next level.
-        this.input.keyboard.on('keydown-T', () => {
-            this.player.body.setVelocityX(1000);
-        });
-        // For testing the player position.
-        this.input.keyboard.on('keydown-P', () => {
-            console.log(this.player.getCenter());
-        });
-        // For testing the player position.
-        this.input.keyboard.on('keydown-O', () => {
-            this.player.setPosition(5159, 570)
-        });
-        // For testing, get player side.
-        this.input.keyboard.on('keydown-I', () => {
-            console.log(this.player.getSpritePosition('left'));
-        });
-
         // Start the HUD scene for the game. It will run at the same
         // time as the game.
         this.scene.launch(SCENE_KEYS.hud, {gameScene: this});
