@@ -7,6 +7,7 @@ export default class Button extends Phaser.GameObjects.Container {
         this.config = config;
 
         this.scene = config.scene;
+        
         this.setX(config.x);
         this.setY(config.y);
         

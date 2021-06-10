@@ -91,13 +91,14 @@ export default class TitleScene extends Phaser.Scene {
             text: 'Credits',
             targetScene: SCENE_KEYS.credits
         });
-
-        this.gamemodeCheckbox = new Checkbox(this, width / 2, height / 2, 'Speedrun Mode');
-        let s = this.gamemodeCheckbox.getBounds();
-        let r = this.add.rectangle(s.x, s.y, s.width, s.height, 0xffff00, 0.3);
-        r.setOrigin(0, 0);
-        let c = this.add.rectangle(width / 2, height / 2, 50, 50, 0xff00ff, 0.5);
-        c.setOrigin(0.5, 0.5);
+        // scene, x, y, text
+        this.gamemodeCheckbox = new Checkbox({
+            scene: this,
+            x: width / 2,
+            y: height / 2 + TITLE_SCENE.speedrunCheckbox.offset.y,
+            text: 'Speedrun Mode',
+            center: true
+        });
     }
 
     resize() {
@@ -116,12 +117,7 @@ export default class TitleScene extends Phaser.Scene {
             this.logo.getBottomRight().x + TITLE_SCENE.splashText.offset.x,
             this.logo.getBottomRight().y + TITLE_SCENE.splashText.offset.y + FONT[this.font].offset.y
         );
-        this.gamemodeCheckbox.setPosition(width / 2, height / 2);
-        // this.gamemodeButton.setPosition(width / 2, height / 2 + TITLE_SCENE.gamemodeButton.offset.y);
-        // this.gamemodeText.setPosition(
-        //     this.gamemodeButton.x + this.gamemodeButton.button.width + TITLE_SCENE.gamemodeText.offset.x,
-        //     this.gamemodeButton.y + FONT[this.font].offset.y
-        // );
+        this.gamemodeCheckbox.setCenter(width / 2, height / 2 + TITLE_SCENE.speedrunCheckbox.offset.y);
         this.gameButton.setPosition(width / 2, height / 2);
         this.quitButton.setPosition(width / 2, height + TITLE_SCENE.quitButton.offset.y);
         this.charactersButton.setPosition(width / 2 + TITLE_SCENE.charactersButton.offset.x, height / 2,);
