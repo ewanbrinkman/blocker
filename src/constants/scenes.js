@@ -66,17 +66,6 @@ export const TITLE_SCENE = {
             y: 10
         }
     },
-    gamemodeButton: {
-        offset: {
-            x: 70,
-            y: 70
-        }
-    },
-    gamemodeText: {
-        offset: {
-            x: 0
-        }
-    },
     backgroundSpeed: 50
 }
 

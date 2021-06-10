@@ -12,3 +12,11 @@ export const FONT = {
         }
     }
 }
+
+export const CHECKBOX = {
+    text: {
+        offset: {
+            x: 0
+        }
+    }
+}

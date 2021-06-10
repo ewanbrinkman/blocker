@@ -1,4 +1,5 @@
 import Button from '../objects/Button.js';
+import Checkbox from '../objects/Checkbox.js';
 import { COLORS, FONT } from '../constants/style.js';
 import { SCENE_KEYS, TITLE_SCENE } from '../constants/scenes.js';
 
@@ -91,40 +92,12 @@ export default class TitleScene extends Phaser.Scene {
             targetScene: SCENE_KEYS.credits
         });
 
-        this.gamemodeButton = new Button({
-            scene: this,
-            x: TITLE_SCENE.gamemodeButton.offset.x,
-            y: TITLE_SCENE.gamemodeButton.offset.y,
-            imageUnselected: 'emptyBox',
-            imageSelected: 'greenboxCheckmark',
-            selectionFunction: (updateTargetVariable) => {
-                // The function is called when the selection button is
-                // pressed. The returned value is if the button is
-                // currently selected.
-                if (this.registry.gamemode === 'normal') {
-                    if (updateTargetVariable) {
-                        this.registry.gamemode = 'speedrun';
-                        return true;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    if (updateTargetVariable) {
-                        this.registry.gamemode = 'normal';
-                        return false;
-                    } else {
-                        return true;
-                    }
-                }
-            }
-        });
-
-        this.gamemodeText = this.add.text(
-            this.gamemodeButton.x + this.gamemodeButton.button.width + TITLE_SCENE.gamemodeText.offset.x,
-            this.gamemodeButton.y + FONT[this.font].offset.y,
-            'Speedrun Mode',
-            { font: '48px ' + this.font, fill: COLORS.text});
-        this.gamemodeText.setOrigin(0, 0.5);
+        this.gamemodeCheckbox = new Checkbox(this, width / 2, height / 2, 'Speedrun Mode');
+        let s = this.gamemodeCheckbox.getBounds();
+        let r = this.add.rectangle(s.x, s.y, s.width, s.height, 0xffff00, 0.3);
+        r.setOrigin(0, 0);
+        let c = this.add.rectangle(width / 2, height / 2, 50, 50, 0xff00ff, 0.5);
+        c.setOrigin(0.5, 0.5);
     }
 
     resize() {
@@ -143,11 +116,12 @@ export default class TitleScene extends Phaser.Scene {
             this.logo.getBottomRight().x + TITLE_SCENE.splashText.offset.x,
             this.logo.getBottomRight().y + TITLE_SCENE.splashText.offset.y + FONT[this.font].offset.y
         );
-        this.gamemodeButton.setPosition(TITLE_SCENE.gamemodeButton.offset.x, TITLE_SCENE.gamemodeButton.offset.y);
-        this.gamemodeText.setPosition(
-            this.gamemodeButton.x + this.gamemodeButton.button.width + TITLE_SCENE.gamemodeText.offset.x,
-            this.gamemodeButton.y + FONT[this.font].offset.y
-        );
+        this.gamemodeCheckbox.setPosition(width / 2, height / 2);
+        // this.gamemodeButton.setPosition(width / 2, height / 2 + TITLE_SCENE.gamemodeButton.offset.y);
+        // this.gamemodeText.setPosition(
+        //     this.gamemodeButton.x + this.gamemodeButton.button.width + TITLE_SCENE.gamemodeText.offset.x,
+        //     this.gamemodeButton.y + FONT[this.font].offset.y
+        // );
         this.gameButton.setPosition(width / 2, height / 2);
         this.quitButton.setPosition(width / 2, height + TITLE_SCENE.quitButton.offset.y);
         this.charactersButton.setPosition(width / 2 + TITLE_SCENE.charactersButton.offset.x, height / 2,);
