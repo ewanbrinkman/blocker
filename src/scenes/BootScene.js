@@ -13,7 +13,7 @@ export default class BootScene extends Phaser.Scene {
         // Logo and background image.
         this.load.image('logo', 'assets/images/ui/logo.png');
         this.load.image('backgroundPreloader', 'assets/images/backgrounds/preloader/backgroundPreloader.png');
-        // Music.
+        // The background music for the menus.
         this.load.audio('intro', 'assets/sounds/music/Intro.mp3');
     }
 

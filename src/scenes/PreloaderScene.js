@@ -9,11 +9,20 @@ export default class PreloaderScene extends Phaser.Scene {
 
     preload() {
         if (!this.registry.music) {
-            // Start playing the background music.
+            // The background music.
             this.registry.music = this.sound.add('intro', {
                 loop: true
             });
-            this.registry.music.play();
+
+            // Play the music right away if it is not locked. If it is,
+            // wait for it to be unlocked.
+            if (!this.sound.locked) {
+                this.registry.music.play();
+            } else {
+                this.sound.once(Phaser.Sound.Events.UNLOCKED, () => {
+                    this.registry.music.play();
+                });
+            }
         }
 
         // Reposition objects when the screen is resized.
@@ -148,6 +157,9 @@ export default class PreloaderScene extends Phaser.Scene {
         this.load.image('backgroundOptions', 'assets/images/backgrounds/options/backgroundOptions.png');
         this.load.image('backgroundCredits', 'assets/images/backgrounds/credits/backgroundCredits.png');
         this.load.image('backgroundGameOver', 'assets/images/backgrounds/gameover/backgroundGameOver.png');
+
+        // The game background music.
+        this.load.audio('grasslands', 'assets/sounds/music/Grasslands.mp3');
     }
 
     create() {

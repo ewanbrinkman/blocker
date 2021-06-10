@@ -15,6 +15,12 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
+        this.registry.music.stop();
+        this.registry.music = this.sound.add('grasslands', {
+            loop: true
+        });
+        this.registry.music.play();
+
         this.levelActive = false;
 
         // Reset the data needed for when playing the game.
@@ -298,6 +304,11 @@ export default class GameScene extends Phaser.Scene {
     }
 
     gameOver() {
+        this.registry.music.stop();
+        this.registry.music = this.sound.add('intro', {
+            loop: true
+        });
+        this.registry.music.play();
         // Get the total time.
         this.registry.game.totalTimeElapsed = this.endTimer.getElapsedSeconds().toFixed(LEVELS.normal.timeDigitsResults);
         // Stop the HUD scene from running.
