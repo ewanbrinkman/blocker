@@ -11,7 +11,8 @@ export default class PreloaderScene extends Phaser.Scene {
         if (!this.registry.music) {
             // The background music.
             this.registry.music = this.sound.add('intro', {
-                loop: true
+                loop: true,
+                volume: 0.05
             });
 
             // Play the music right away if it is not locked. If it is,

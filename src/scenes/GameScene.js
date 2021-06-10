@@ -17,7 +17,8 @@ export default class GameScene extends Phaser.Scene {
     create() {
         this.registry.music.stop();
         this.registry.music = this.sound.add('grasslands', {
-            loop: true
+            loop: true,
+            volume: 0.1
         });
         this.registry.music.play();
 
@@ -306,7 +307,8 @@ export default class GameScene extends Phaser.Scene {
     gameOver() {
         this.registry.music.stop();
         this.registry.music = this.sound.add('intro', {
-            loop: true
+            loop: true,
+            volume: 0.05
         });
         this.registry.music.play();
         // Get the total time.
