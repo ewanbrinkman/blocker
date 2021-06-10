@@ -8,6 +8,14 @@ export default class PreloaderScene extends Phaser.Scene {
     }
 
     preload() {
+        if (!this.registry.music) {
+            // Start playing the background music.
+            this.registry.music = this.sound.add('intro', {
+                loop: true
+            });
+            this.registry.music.play();
+        }
+
         // Reposition objects when the screen is resized.
         this.scale.on('resize', this.resize, this);
 

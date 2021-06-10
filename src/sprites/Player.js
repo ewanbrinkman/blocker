@@ -213,23 +213,14 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     respawn() {
-        // To counter gravity pushing the player into the wall below.
-        let movementOffset = {
-            x: 0,
-            y: 0
-        };
-        if (this.body.deltaX()) {
-            // Due to player movement.
-            movementOffset.x = this.body.deltaX();
-        }
-        if (this.body.deltaY() > 0) {
-            // Due to gravity.
-            movementOffset.y = this.body.deltaY();
-        }
+        // Subtract movement change to counter gravity pushing the
+        // player into the wall below, as well as making sure the
+        // player simply lines up nicely in the middle of the spawn
+        // point.
         // Teleport back to the spawn point.
         this.setPosition(
-            this.spawnPoint.x - movementOffset.x,
-            this.spawnPoint.y - movementOffset.y);
+            this.spawnPoint.x - this.body.deltaX(),
+            this.spawnPoint.y - this.body.deltaY());
 
         // Reset their velocity so they don't keep their velocity from
         // before they respawn.

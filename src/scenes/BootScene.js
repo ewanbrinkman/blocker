@@ -9,8 +9,12 @@ export default class BootScene extends Phaser.Scene {
     }
 
     preload() {
+        // Load assets used in the preloader scene.
+        // Logo and background image.
         this.load.image('logo', 'assets/images/ui/logo.png');
         this.load.image('backgroundPreloader', 'assets/images/backgrounds/preloader/backgroundPreloader.png');
+        // Music.
+        this.load.audio('intro', 'assets/sounds/music/Intro.mp3');
     }
 
     create() {
@@ -41,6 +45,8 @@ export default class BootScene extends Phaser.Scene {
             possibleLevels: [],
             completedLevelsCount: 0
         }
+        // For keeping track of background music.
+        this.registry.music = null;
 
         // Start the loading screen.
         this.scene.start(SCENE_KEYS.preloader);
