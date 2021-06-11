@@ -58,6 +58,8 @@ export default class Button extends Phaser.GameObjects.Container {
         }
 
         this.button.on('pointerdown', () => {
+            this.scene.registry.sounds.buttonPress.play();
+
             // If there is a target scene set, start that scene. It
             // doesn't matter of any sceneData was actually passed in
             // or not. If this.sceneData is "undefined", it won't cause
@@ -77,6 +79,10 @@ export default class Button extends Phaser.GameObjects.Container {
         });
 
         this.button.on('pointerover', () => {
+            if (!config.silentOver) {
+                this.scene.registry.sounds.buttonOver.play();
+            }
+
             // It doesn't matter if no frame was passed into the config.
             if (config.imageDown) {
                 this.button.setTexture(this.config.imageDown, this.config.frameDown);

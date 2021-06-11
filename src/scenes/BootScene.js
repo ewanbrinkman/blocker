@@ -15,9 +15,16 @@ export default class BootScene extends Phaser.Scene {
         this.load.image('backgroundPreloader', 'assets/images/backgrounds/preloader/backgroundPreloader.png');
         // The background music for the menus.
         this.load.audio('intro', 'assets/sounds/music/Intro.mp3');
+        // Load UI sounds.
+        this.load.audio('maximize', 'assets/sounds/ui/maximize.ogg');
+        this.load.audio('minimize', 'assets/sounds/ui/minimize.ogg');
     }
 
     create() {
+        this.registry.sounds = {
+            maximize: this.sound.add('maximize', {volume: 1}),
+            minimize: this.sound.add('minimize', {volume: 1})
+        };
         // Since the boot scene is only ever started once (at the very
         // start), set up any registry variables here.
         // Create the player object in the registry.

@@ -45,6 +45,7 @@ export default class CreditsScene extends Phaser.Scene {
         this.addCreditsText('body', 'User Interface Images: Kenney');
         this.addCreditsText('body', 'Font: Kenney');
         this.addCreditsText('body', 'Background Music: CodeManu');
+        this.addCreditsText('body', 'User Interface Sounds: Kenney');
         // Links.
         this.addCreditsText('header', 'Links');
         this.addCreditsText('body', 'Kenney:');

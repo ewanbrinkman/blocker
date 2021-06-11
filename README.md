@@ -12,6 +12,6 @@ https://ewanbrinkman.github.io/blocker/
 
 ## Asset Credits
 
-The tile, player, and user interface images, as well as the font, are generously provided by [Kenney](https://www.kenney.nl/).
+The tile images, player images, user interface images and sounds, and the font, are generously provided by [Kenney](https://www.kenney.nl/).
 
-Similarly, the background music was made by [CodeManu](https://opengameart.org/content/platformer-game-music-pack).
+Likewise, the background music was made by [CodeManu](https://opengameart.org/content/platformer-game-music-pack).

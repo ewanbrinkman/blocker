@@ -235,12 +235,14 @@ export default class Player extends Phaser.GameObjects.Sprite {
     collideWorldSides() {
         // Use the sprite position in the if statements. Using the body
         // won't work when a level switches and the map gets smaller.
+        // Add or subtract 3 from the player position in the if
+        // statements, so that the player isn't right agaisnt an edge.
         if (this.getSpritePosition('right') < 0) {
             let [ newX, newY ] = this.getPlayerCenter(this.scene.map.widthInPixels, 0);
-            this.setX(newX + this.body.width / 2 - 2);
+            this.setX(newX + this.body.width / 2 - 3);
         } else if (this.getSpritePosition('left') > this.scene.map.widthInPixels) {
             let [ newX, newY ] = this.getPlayerCenter(0, 0);
-            this.setX(newX - this.body.width / 2 + 2);  
+            this.setX(newX - this.body.width / 2 + 3);  
         }
         // Respawn if the player fell out of the map.
         if (this.body.position.y > this.scene.map.heightInPixels) {

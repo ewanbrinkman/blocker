@@ -16,6 +16,7 @@ export default class Checkbox extends Phaser.GameObjects.Container {
             scene: this.scene,
             x: 0,
             y: 0,
+            silentOver: true, // Don't make a sound when the mouse goes over the button.
             imageUnselected: 'emptyBox',
             imageSelected: 'greenboxCheckmark',
             selectionFunction: (updateTargetVariable) => {

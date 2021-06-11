@@ -161,9 +161,17 @@ export default class PreloaderScene extends Phaser.Scene {
 
         // The game background music.
         this.load.audio('grasslands', 'assets/sounds/music/Grasslands.mp3');
+
+        // Load UI sounds.
+        this.load.audio('buttonOver', 'assets/sounds/ui/buttonOver.ogg');
+        this.load.audio('buttonPress', 'assets/sounds/ui/buttonPress.ogg');
     }
 
     create() {
+        // Add the loaded sounds to the registry.
+        this.registry.sounds.buttonOver = this.sound.add('buttonOver', {volume: 1});
+        this.registry.sounds.buttonPress = this.sound.add('buttonPress', {volume: 1});
+
         // Now that all assets are loaded, any key can be pressed
         // to start the game.
         this.input.keyboard.on('keydown', () => {
