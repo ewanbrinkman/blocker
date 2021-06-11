@@ -235,15 +235,51 @@ export default class Player extends Phaser.GameObjects.Sprite {
     collideWorldSides() {
         // Use the sprite position. Using the body won't work when a
         // level switches and the map gets smaller.
-        if (this.getSpritePosition('left') < 0) {
-            let [ newX, newY ] = this.getPlayerCenter(0, 0);
-            this.setX(newX + this.displayWidth / 2);  
-            this.body.setVelocityX(0);  
-        } else if (this.getSpritePosition('right') > this.scene.map.widthInPixels) {
+        // if (this.getSpritePosition('left') < -this.body.width / 2) {
+        //     // let [ newX, newY ] = this.getPlayerCenter(0, 0);
+        //     // this.setX(newX + this.displayWidth / 2);  
+        //     // this.body.setVelocityX(0);
+        //     let [ newX, newY ] = this.getPlayerCenter(this.scene.map.widthInPixels, 0);
+        //     this.setX(newX);  
+        //     // this.body.setVelocityX(0);  
+        // if (this.getSpritePosition('right') < 0) {
+        //     // let [ newX, newY ] = this.getPlayerCenter(0, 0);
+        //     // this.setX(newX + this.displayWidth / 2);  
+        //     // this.body.setVelocityX(0);
+        //     let [ newX, newY ] = this.getPlayerCenter(this.scene.map.widthInPixels, 0);
+        //     this.setX(newX + this.body.width / 2);  
+        //     // this.body.setVelocityX(0);  
+        // } else if (this.getSpritePosition('left') > this.scene.map.widthInPixels) {
+        //     // let [ newX, newY ] = this.getPlayerCenter(this.scene.map.widthInPixels, 0);
+        //     // this.setX(newX - this.displayWidth / 2);  
+        //     // this.body.setVelocityX(0);  
+        //     let [ newX, newY ] = this.getPlayerCenter(0, 0);
+        //     this.setX(newX + this.body.width / 2);  
+        //     // this.body.setVelocityX(0);
+        // }
+        if (this.getSpritePosition('right') < 0) {
+            // let [ newX, newY ] = this.getPlayerCenter(0, 0);
+            // this.setX(newX + this.displayWidth / 2);  
+            // this.body.setVelocityX(0);
             let [ newX, newY ] = this.getPlayerCenter(this.scene.map.widthInPixels, 0);
-            this.setX(newX - this.displayWidth / 2);  
-            this.body.setVelocityX(0);  
+            this.setX(newX + this.body.width / 2 - 1);
+            // this.body.setVelocityX(0);  
+        } else if (this.getSpritePosition('left') > this.scene.map.widthInPixels) {
+            // let [ newX, newY ] = this.getPlayerCenter(this.scene.map.widthInPixels, 0);
+            // this.setX(newX - this.displayWidth / 2);  
+            // this.body.setVelocityX(0);  
+            let [ newX, newY ] = this.getPlayerCenter(0, 0);
+            this.setX(newX - this.body.width / 2 + 1);  
+            // this.body.setVelocityX(0);
         }
+        // } else if (this.getSpritePosition('right') > this.scene.map.widthInPixels + this.body.width / 2) {
+        //     // let [ newX, newY ] = this.getPlayerCenter(this.scene.map.widthInPixels, 0);
+        //     // this.setX(newX - this.displayWidth / 2);  
+        //     // this.body.setVelocityX(0);  
+        //     let [ newX, newY ] = this.getPlayerCenter(0, 0);
+        //     this.setX(newX);  
+        //     // this.body.setVelocityX(0);
+        // }
         // Respawn if the player fell out of the map.
         if (this.body.position.y > this.scene.map.heightInPixels) {
             this.respawn();

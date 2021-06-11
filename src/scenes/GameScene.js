@@ -22,8 +22,6 @@ export default class GameScene extends Phaser.Scene {
         });
         this.registry.music.play();
 
-        this.levelActive = false;
-
         // Reset the data needed for when playing the game.
         this.registry.game = {
             lastLevel: null,
@@ -91,14 +89,14 @@ export default class GameScene extends Phaser.Scene {
         // time as the game.
         this.scene.launch(SCENE_KEYS.hud, {gameScene: this});
 
-        this.levelActive = true;
+        this.input.keyboard.on('keydown-ESC', () => {
+            this.nextLevel();
+        });
     }
 
     update(time, delta) {
-        if (this.levelActive) {
-            // Update the player.
-            this.player.update(this.keys, time, delta);
-        }
+        // Update the player.
+        this.player.update(this.keys, time, delta);
     }
 
     refillLevels() {
@@ -130,7 +128,6 @@ export default class GameScene extends Phaser.Scene {
     }
 
     nextLevel() {
-        this.levelActive = false;
         this.scene.pause(SCENE_KEYS.game);
         this.physics.world.pause();
 
@@ -177,8 +174,6 @@ export default class GameScene extends Phaser.Scene {
 
         this.scene.resume(SCENE_KEYS.game);
         this.physics.world.resume();
-
-        this.levelActive = true;
     }
 
     destroyLevel() {
