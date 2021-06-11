@@ -1,10 +1,8 @@
 export const BASE_PLAYER = {
     playerType: 'rabbit',
     scale: 0.25,
-    // acceleration: 1000,
     acceleration: 1000,
-    // jumpVelocity: 560, // Two blocks high.
-    jumpVelocity: 430, // One block high.
+    jumpVelocity: 430, // One block high jump.
     wallJumpVelocity: {
         x: 800,
         y: 560

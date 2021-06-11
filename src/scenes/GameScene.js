@@ -106,7 +106,7 @@ export default class GameScene extends Phaser.Scene {
     randomLevel(omitLevel) {
         let possibleLevels = [...this.registry.game.possibleLevels];
         // Make sure the new level wasn't just completed.
-        if (omitLevel) {
+        if (omitLevel && this.registry.game.possibleLevels.length > 1) {
             possibleLevels = possibleLevels.filter((element) => (element !== omitLevel));
         }
         // Choose a random level.
@@ -128,9 +128,6 @@ export default class GameScene extends Phaser.Scene {
     }
 
     nextLevel() {
-        this.scene.pause(SCENE_KEYS.game);
-        this.physics.world.pause();
-
         // Add a little bit of time to the timer.
         this.endTimer.delay += LEVELS.normal.completeTime * 1000;
 
@@ -171,9 +168,6 @@ export default class GameScene extends Phaser.Scene {
         // Render on top.
         this.frictionParticles.setDepth(2);
         this.player.frictionParticles = new FrictionParticles(this, this.player);
-
-        this.scene.resume(SCENE_KEYS.game);
-        this.physics.world.resume();
     }
 
     destroyLevel() {
@@ -262,10 +256,6 @@ export default class GameScene extends Phaser.Scene {
         // 32px radius at the corners.
         this.graphics.strokeRect(0 - strokeWidth / 2, 0 - strokeWidth / 2,
             this.map.widthInPixels + strokeWidth, this.map.heightInPixels + strokeWidth);
-    }
-
-    rotateRectangle(x, y, width, height, radians) {
-
     }
 
     addCustomCollisions(group, layer) {

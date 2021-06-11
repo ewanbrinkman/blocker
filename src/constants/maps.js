@@ -1,6 +1,6 @@
 export const MAPS = {
     titleAmount: 3,
-    levelAmountStart: 5,
+    levelAmountStart: 1,
     levelAmountEnd: 5
 }
 
