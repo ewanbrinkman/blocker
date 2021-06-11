@@ -31,7 +31,7 @@ export default class BootScene extends Phaser.Scene {
         }
         // Create a list of all level files.
         this.registry.levels = []
-        for (let i = 1; i <= (MAPS.levelAmount); i++) {
+        for (let i = MAPS.levelAmountStart; i <= (MAPS.levelAmountEnd); i++) {
             this.registry.levels.push('level' + i);
         }
         // Choose a random splash text.

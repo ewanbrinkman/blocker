@@ -264,6 +264,10 @@ export default class GameScene extends Phaser.Scene {
             this.map.widthInPixels + strokeWidth, this.map.heightInPixels + strokeWidth);
     }
 
+    rotateRectangle(x, y, width, height, radians) {
+
+    }
+
     addCustomCollisions(group, layer) {
         // Get the data in Tiled of the tiles that have custom
         // collisions set.
@@ -284,6 +288,14 @@ export default class GameScene extends Phaser.Scene {
                         // Create a static sprite for collisions.
                         let staticSprite = group.create(wall.x + tile.x * TILES.width,
                             wall.y + tile.y * TILES.height);
+
+                        // If the wall is flipped along the y axis. The
+                        // walls also have a rotation and flipX
+                        // property.
+                        if (tile.rotation === Math.PI) {
+                            let distanceY = TILES.height - (wall.y + wall.height);
+                            staticSprite.setY(distanceY + tile.y * TILES.height);
+                        }
 
                         staticSprite.setOrigin(0, 0);
                         staticSprite.displayWidth = wall.width;
