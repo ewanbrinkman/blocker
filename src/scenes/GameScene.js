@@ -128,6 +128,8 @@ export default class GameScene extends Phaser.Scene {
     }
 
     nextLevel() {
+        this.registry.sounds.complete.play();
+
         // Add a little bit of time to the timer.
         this.endTimer.delay += LEVELS.normal.completeTime * 1000;
 

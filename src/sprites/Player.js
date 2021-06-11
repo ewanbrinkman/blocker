@@ -126,6 +126,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         if (keys.cursors.space.isDown || keys.cursors.up.isDown) {
             if (this.body.onFloor()) {
                 // Jump off the ground.
+                this.scene.registry.sounds.jump.play();
                 this.body.setVelocityY(-this.jumpVelocity);
             }
         }
@@ -172,6 +173,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
     wallJump() {
         // The player must be on a wall without touching the ground.
         if (!this.body.onFloor() && this.body.onWall()) {
+            this.scene.registry.sounds.jump.play();
              // Wall jump, set the x velocity in the correct direction.
              if (this.body.blocked.right) {
                 this.body.setVelocityX(-this.wallJumpVelocity.x);
@@ -180,7 +182,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
                 this.body.setVelocityX(this.wallJumpVelocity.x);
                 this.frictionParticles.explodeWallJumpParticles('left');
             }
-
             this.body.setVelocityY(-this.wallJumpVelocity.y);
         }
     }
@@ -213,6 +214,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     respawn() {
+        this.scene.registry.sounds.lose.play();
+
         // Subtract movement change to counter gravity pushing the
         // player into the wall below, as well as making sure the
         // player simply lines up nicely in the middle of the spawn

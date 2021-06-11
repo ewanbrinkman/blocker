@@ -15,3 +15,5 @@ https://ewanbrinkman.github.io/blocker/
 The tile images, player images, user interface images and sounds, and the font, are generously provided by [Kenney](https://www.kenney.nl/).
 
 Likewise, the background music was made by [CodeManu](https://opengameart.org/content/platformer-game-music-pack).
+
+Also, the game sounds were made by [phoenix1291](https://opengameart.org/content/sound-effects-mini-pack15).
