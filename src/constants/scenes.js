@@ -111,7 +111,7 @@ export const CHARACTERS_SCENE = {
 }
 
 export const HUD_SCENE = {
-    timeLeftText: {
+    timeText: {
         offset: {
             x: 20,
             y: 20

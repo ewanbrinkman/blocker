@@ -27,7 +27,10 @@ export default class GameScene extends Phaser.Scene {
             lastLevel: null,
             totalTimeElapsed: 0,
             possibleLevels: [],
-            completedLevelsCount: 0
+            completedLevelsCount: 0,
+            speedrun: {
+                startTime: 0,
+            }
         }
 
         // The chosen starting position of a level.
@@ -78,24 +81,36 @@ export default class GameScene extends Phaser.Scene {
         this.keys.cursors = this.input.keyboard.createCursorKeys();;
 
         // The game timer.
-        this.endTimer = this.time.addEvent({
-            delay: LEVELS.normal.startTime * 1000,
-            callback: this.gameOver,
-            args: [],
-            callbackScope: this,
-        });
+        if (this.registry.gamemode === 'normal') {
+            this.endTimer = this.time.addEvent({
+                delay: LEVELS.normal.startTime * 1000,
+                callback: this.gameOver,
+                args: [],
+                callbackScope: this,
+            });
+        }
 
         // Start the HUD scene for the game. It will run at the same
         // time as the game.
         this.scene.launch(SCENE_KEYS.hud, {gameScene: this});
 
+        // Only start the time once. Keep track if it has been started
+        // yet or not.
+        this.timeStarted = false;
+
         // Used for testing levels.
         // this.input.keyboard.on('keydown-ESC', () => {
         //     this.nextLevel();
         // });
+
     }
 
     update(time, delta) {
+        // Start the timer if it hasn't started yet.
+        if (!this.timeStarted) {
+            this.registry.game.speedrun.startTime = time;
+            this.timeStarted = true;
+        }
         // Update the player.
         this.player.update(this.keys, time, delta);
     }
@@ -124,7 +139,11 @@ export default class GameScene extends Phaser.Scene {
 
         // If all levels have been completed, refill the uncompleted levels list.
         if (this.registry.game.possibleLevels.length === 0) {
-            this.refillLevels();
+            if (this.registry.gamemode === 'normal') {
+                this.refillLevels();
+            } else {
+                this.gameOver();
+            }
         }
     }
 
@@ -132,7 +151,9 @@ export default class GameScene extends Phaser.Scene {
         this.registry.sounds.complete.play();
 
         // Add a little bit of time to the timer.
-        this.endTimer.delay += LEVELS.normal.completeTime * 1000;
+        if (this.registry.gamemode === 'normal') {
+            this.endTimer.delay += LEVELS.normal.completeTime * 1000;
+        }
 
         // In the future, might want to add an option for the scene
         // data to pass in current player effects. That way, effects
@@ -321,7 +342,11 @@ export default class GameScene extends Phaser.Scene {
         });
         this.registry.music.play();
         // Get the total time.
-        this.registry.game.totalTimeElapsed = this.endTimer.getElapsedSeconds().toFixed(LEVELS.normal.timeDigitsResults);
+        if (this.registry.gamemode === 'normal') {
+            this.registry.game.totalTimeElapsed = this.endTimer.getElapsedSeconds();
+        } else {
+            this.registry.game.totalTimeElapsed = (this.time.now - this.registry.game.speedrun.startTime) / 1000;
+        }
         // Stop the HUD scene from running.
         this.scene.stop(SCENE_KEYS.hud);
         // Switch to the game over screen.

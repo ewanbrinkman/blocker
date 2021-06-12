@@ -54,7 +54,7 @@ export default class GameScene extends Phaser.Scene {
         this.elapsedTimeText = this.add.text(
             width / 2,
             height / 2 + FONT[this.font].offset.y,
-            'Total Time: ' + this.registry.game.totalTimeElapsed + ' seconds',
+            'Total Time: ' + this.registry.game.totalTimeElapsed.toFixed(LEVELS.normal.timeDigitsResults) + ' seconds',
             { font: '48px ' + this.font, fill: COLORS.text});
         this.elapsedTimeText.setOrigin(0.5, 0.5);
 
