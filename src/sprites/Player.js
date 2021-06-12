@@ -147,6 +147,67 @@ export default class Player extends Phaser.GameObjects.Sprite {
         if (Phaser.Input.Keyboard.JustDown(keys.r)) {
             this.respawn();
         }
+
+        if (Phaser.Input.Keyboard.JustDown(keys.cursors.down)) {
+            // console.log(this.scene.physics.collide(this, this.scene.collidersLayer));
+            // console.log(this.scene.physics.overlap(this, this.scene.collidersLayer));
+            // let a = {}
+            // this.body.getBounds(a);
+            // console.log(a);
+            console.log(this.besideNormalTile());
+        }
+    }
+
+    besideNormalTile() {
+        // A normal tile here means a tile without any custom collision
+        // box.
+        let tile = this.scene.map.getTileAtWorldXY(this.body.left - 1, this.body.top, false, this.scene.cameras.main, this.scene.collidersLayer);
+        
+        // If no tile was found, the body could be at an edge and
+        // is touching a tile on the other side of its body.
+        if (!tile) {
+            tile = this.scene.map.getTileAtWorldXY(this.body.left - 1, this.body.bottom - 1, false, this.scene.cameras.main, this.scene.collidersLayer);
+        }
+
+        let side ;
+        if (tile) {
+            side = 'left';
+        }
+
+        if (!tile) {
+            tile = this.scene.map.getTileAtWorldXY(this.body.right + 1, this.body.top, false, this.scene.cameras.main, this.scene.collidersLayer);
+        }
+
+        if (!tile) {
+            tile = this.scene.map.getTileAtWorldXY(this.body.right + 1, this.body.bottom - 1, false, this.scene.cameras.main, this.scene.collidersLayer);
+        }
+
+        if (side !== 'left' && tile) {
+            side = 'right';
+        }
+
+        // If the player is beside a tile with a custom collision
+        // box, the player will have to test for overlapping that
+        // tile's static sprite instead.
+        // if (tile && !this.scene.customCollisionTilesIndexes.includes(parseInt(tile.index))) {
+        //     return {
+        //         tile: tile,
+        //         side: side,
+
+        //     };
+        // }
+
+        // If a tile was found, check if it has custom collisions.
+        let custom;
+        if (tile) {
+            custom = this.scene.customCollisionTilesIndexes.includes(parseInt(tile.index));
+        }
+
+        return {
+            tile: tile,
+            side: side,
+            custom: custom
+        }
     }
 
     movingFast() {
@@ -172,13 +233,17 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     wallJump() {
         // The player must be on a wall without touching the ground.
-        if (!this.body.onFloor() && this.body.onWall()) {
+        // if (!this.body.onFloor() && this.body.onWall()) {
+        let side = this.besideNormalTile();
+        if (!this.body.onFloor() && side) {
             this.scene.registry.sounds.jump.play();
-             // Wall jump, set the x velocity in the correct direction.
-             if (this.body.blocked.right) {
+            // Wall jump, set the x velocity in the correct direction.
+            // if (this.body.blocked.right) {
+            if (side === 'right') {
                 this.body.setVelocityX(-this.wallJumpVelocity.x);
                 this.frictionParticles.explodeWallJumpParticles('right');
-            } else if (this.body.blocked.left) {
+            // } else if (this.body.blocked.left) {
+            } else if (side === 'left') {
                 this.body.setVelocityX(this.wallJumpVelocity.x);
                 this.frictionParticles.explodeWallJumpParticles('left');
             }
@@ -244,6 +309,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // statements, so that the player isn't right agaisnt an edge.
         if (this.getSpritePosition('right') < 0) {
             let [ newX, newY ] = this.getPlayerCenter(this.scene.map.widthInPixels, 0);
+            // let tile = this.scene.map.getTileAtWorldXY(newX, this.body.y);
+            console.log(tile);
             this.setX(newX + this.body.width / 2 - 3);
         } else if (this.getSpritePosition('left') > this.scene.map.widthInPixels) {
             let [ newX, newY ] = this.getPlayerCenter(0, 0);
