@@ -89,9 +89,9 @@ export default class GameScene extends Phaser.Scene {
         // time as the game.
         this.scene.launch(SCENE_KEYS.hud, {gameScene: this});
 
-        // this.input.keyboard.on('keydown-ESC', () => {
-        //     this.nextLevel();
-        // });
+        this.input.keyboard.on('keydown-ESC', () => {
+            this.nextLevel();
+        });
     }
 
     update(time, delta) {

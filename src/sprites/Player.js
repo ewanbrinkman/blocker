@@ -147,45 +147,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
         if (Phaser.Input.Keyboard.JustDown(keys.r)) {
             this.respawn();
         }
-
-        if (Phaser.Input.Keyboard.JustDown(keys.cursors.down)) {
-            // console.log(this.scene.physics.collide(this, this.scene.collidersLayer));
-            // console.log(this.scene.physics.overlap(this, this.scene.collidersLayer));
-            // let a = {}
-            // this.body.getBounds(a);
-            // console.log(a);
-            // console.log(this.scene.physics.overlap(this, this.scene.walls));
-
-            // console.log(this.besideTile());
-
-            console.log(this.besideCustomWall());
-
-
-            // SHIFT THE RECTANGLE
-            // SHIFT THE RECTANGLE
-
-            // SHIFT THE RECTANGLE
-
-            // SHIFT THE RECTANGLE
-
-            // SHIFT THE RECTANGLE
-
-
-            // let playerBodyRectangle = this.scene.add.rectangle(
-            //     bodyBounds.x,
-            //     bodyBounds.y,
-            //     bodyBounds.right - bodyBounds.x,
-            //     bodyBounds.bottom - bodyBounds.y,
-            //     0xff00ff
-            // );
-            // playerBodyRectangle.setOrigin(0, 0);
-
-            // let r = this.scene.add.rectangle(4 * 70, 14 * 70, 50, 50, 0xffff00, 0.5);
-            // r.setOrigin(0, 0);
-
-            // let test = this.scene.physics.overlapRect(4 * 70, 14 * 70, 50, 50);
-            // console.log(test);
-        }
     }
 
     besideCustomWall() {
@@ -199,14 +160,14 @@ export default class Player extends Phaser.GameObjects.Sprite {
             bodyBounds.bottom - bodyBounds.y
         );
 
-        let onWall = false;
+        let besideCustomWall = false;
         bodyOverlaps.forEach(body => {
             if (this.scene.walls.children.entries.includes(body.gameObject)) {
-                onWall = true;
+                besideCustomWall = true;
             }
         });
         
-        return onWall;
+        return besideCustomWall;
     }
 
     besideTile() {
@@ -246,28 +207,22 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // Test if the player is allowed to do a wall jump. If the tile
         // has custom collisions, the player may or may not be able to.
         let wallJumpAllowed;
-        if (custom) {
-            // Check if the player's body overlaps with a sprite in the
-            // scene's walls static sprite group.
-            // Create a rectangle for the tile's custom collisions.
+        // if (custom) {
+        //     if (this.besideCustomWall()) {
+        //         wallJumpAllowed = true;
+        //     } else {
+        //         wallJumpAllowed = false;
+        //     }
+        // } else if (tile) {
+        //     // If there are no custom collisions, the entire tile is OK
+        //     // to wall jump off of.
+        //     wallJumpAllowed = true;
+        // }
 
-
-            // Create a rectangle for the player's body. Shift it
-            // depending on the wall side.
-            // if (side === 'left') {
-
-            // } else {
-                
-            // }
-            if (this.besideCustomWall()) {
-                wallJumpAllowed = true;
-            } else {
-                wallJumpAllowed = false;
-            }
-        } else if (tile) {
-            // If there are no custom collisions, the entire tile is OK
-            // to wall jump off of.
+        if (tile && !custom || custom && this.besideCustomWall()) {
             wallJumpAllowed = true;
+        } else {
+            wallJumpAllowed = false;
         }
 
         return {
