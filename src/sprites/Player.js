@@ -154,8 +154,59 @@ export default class Player extends Phaser.GameObjects.Sprite {
             // let a = {}
             // this.body.getBounds(a);
             // console.log(a);
-            console.log(this.besideTile());
+            // console.log(this.scene.physics.overlap(this, this.scene.walls));
+
+            // console.log(this.besideTile());
+
+            console.log(this.besideCustomWall());
+
+
+            // SHIFT THE RECTANGLE
+            // SHIFT THE RECTANGLE
+
+            // SHIFT THE RECTANGLE
+
+            // SHIFT THE RECTANGLE
+
+            // SHIFT THE RECTANGLE
+
+
+            // let playerBodyRectangle = this.scene.add.rectangle(
+            //     bodyBounds.x,
+            //     bodyBounds.y,
+            //     bodyBounds.right - bodyBounds.x,
+            //     bodyBounds.bottom - bodyBounds.y,
+            //     0xff00ff
+            // );
+            // playerBodyRectangle.setOrigin(0, 0);
+
+            // let r = this.scene.add.rectangle(4 * 70, 14 * 70, 50, 50, 0xffff00, 0.5);
+            // r.setOrigin(0, 0);
+
+            // let test = this.scene.physics.overlapRect(4 * 70, 14 * 70, 50, 50);
+            // console.log(test);
         }
+    }
+
+    besideCustomWall() {
+        let bodyBounds = {}
+        bodyBounds = this.body.getBounds(bodyBounds);
+
+        let bodyOverlaps = this.scene.physics.overlapRect(
+            bodyBounds.x,
+            bodyBounds.y,
+            bodyBounds.right - bodyBounds.x,
+            bodyBounds.bottom - bodyBounds.y
+        );
+
+        let onWall = false;
+        bodyOverlaps.forEach(body => {
+            if (this.scene.walls.children.entries.includes(body.gameObject)) {
+                onWall = true;
+            }
+        });
+        
+        return onWall;
     }
 
     besideTile() {
@@ -186,27 +237,44 @@ export default class Player extends Phaser.GameObjects.Sprite {
             side = 'right';
         }
 
-        // If the player is beside a tile with a custom collision
-        // box, the player will have to test for overlapping that
-        // tile's static sprite instead.
-        // if (tile && !this.scene.customCollisionTilesIndexes.includes(parseInt(tile.index))) {
-        //     return {
-        //         tile: tile,
-        //         side: side,
-
-        //     };
-        // }
-
         // If a tile was found, check if it has custom collisions.
         let custom;
         if (tile) {
             custom = this.scene.customCollisionTilesIndexes.includes(parseInt(tile.index));
         }
 
+        // Test if the player is allowed to do a wall jump. If the tile
+        // has custom collisions, the player may or may not be able to.
+        let wallJumpAllowed;
+        if (custom) {
+            // Check if the player's body overlaps with a sprite in the
+            // scene's walls static sprite group.
+            // Create a rectangle for the tile's custom collisions.
+
+
+            // Create a rectangle for the player's body. Shift it
+            // depending on the wall side.
+            // if (side === 'left') {
+
+            // } else {
+                
+            // }
+            if (this.besideCustomWall()) {
+                wallJumpAllowed = true;
+            } else {
+                wallJumpAllowed = false;
+            }
+        } else if (tile) {
+            // If there are no custom collisions, the entire tile is OK
+            // to wall jump off of.
+            wallJumpAllowed = true;
+        }
+
         return {
             tile: tile,
             side: side,
-            custom: custom
+            custom: custom,
+            wallJumpAllowed: wallJumpAllowed
         }
     }
 
@@ -232,20 +300,19 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     wallJump() {
-        // The player must be on a wall without touching the ground.
-        // if (!this.body.onFloor() && this.body.onWall()) {
+        // Get information on any tile beside the player.
         let data = this.besideTile();
-        if (!this.body.onFloor() && data.tile) {
+
+        // The player must be on a wall without touching the ground.
+        if (!this.body.onFloor() && data.wallJumpAllowed) {
             this.scene.registry.sounds.jump.play();
             // Wall jump, set the x velocity in the correct direction.
-            // if (this.body.blocked.right) {
             if (data.side === 'right') {
                 this.body.setVelocityX(-this.wallJumpVelocity.x);
-                this.frictionParticles.explodeWallJumpParticles('right');
-            // } else if (this.body.blocked.left) {
+                this.frictionParticles.explodeWallJumpParticles(data.side, data.tile);
             } else if (data.side === 'left') {
                 this.body.setVelocityX(this.wallJumpVelocity.x);
-                this.frictionParticles.explodeWallJumpParticles('left');
+                this.frictionParticles.explodeWallJumpParticles(data.side, data.tile);
             }
             this.body.setVelocityY(-this.wallJumpVelocity.y);
         }
@@ -310,7 +377,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         if (this.getSpritePosition('right') < 0) {
             let [ newX, newY ] = this.getPlayerCenter(this.scene.map.widthInPixels, 0);
             // let tile = this.scene.map.getTileAtWorldXY(newX, this.body.y);
-            console.log(tile);
+            // console.log(tile);
             this.setX(newX + this.body.width / 2 - 3);
         } else if (this.getSpritePosition('left') > this.scene.map.widthInPixels) {
             let [ newX, newY ] = this.getPlayerCenter(0, 0);

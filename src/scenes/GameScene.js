@@ -220,8 +220,10 @@ export default class GameScene extends Phaser.Scene {
 
         this.customCollisionTilesIndexes = [];
 
+        // Don't use static sprites for the walls in order to do
+        // collision detection for wall jumping.
+        this.walls = this.physics.add.group();
         // Create custom collision boxes as static sprites.
-        this.walls = this.physics.add.staticGroup();
         this.exitDoors = this.physics.add.staticGroup();
 
         this.addCustomCollisions(this.walls, this.collidersLayer);
@@ -278,7 +280,7 @@ export default class GameScene extends Phaser.Scene {
                     // Create the collision boxes for this tile.
                     walls.forEach((wall) => {
                         // Create a static sprite for collisions.
-                        let staticSprite = group.create(wall.x + tile.x * TILES.width,
+                        let sprite = group.create(wall.x + tile.x * TILES.width,
                             wall.y + tile.y * TILES.height);
 
                         // If the wall is flipped along the y axis. The
@@ -286,17 +288,24 @@ export default class GameScene extends Phaser.Scene {
                         // property.
                         if (tile.rotation === Math.PI) {
                             let distanceY = TILES.height - (wall.y + wall.height);
-                            staticSprite.setY(distanceY + tile.y * TILES.height);
+                            sprite.setY(distanceY + tile.y * TILES.height);
                         }
 
-                        staticSprite.setOrigin(0, 0);
-                        staticSprite.displayWidth = wall.width;
-                        staticSprite.displayHeight = wall.height;
-                        staticSprite.visible = false;
+                        sprite.setOrigin(0, 0);
+                        sprite.displayWidth = wall.width;
+                        sprite.displayHeight = wall.height;
+                        sprite.visible = false;
                         
-                        // Update the body after changing it. A static
-                        // body won't update automatically.
-                        staticSprite.refreshBody();
+                        if (group.type === 'StaticPhysicsGroup') {
+                            // If the sprite is static, the body won't
+                            // update automatically.
+                            sprite.refreshBody();
+                        } else {
+                            // If the sprite is not static, make it so
+                            // it can't move.
+                            sprite.body.allowGravity = false;
+                            sprite.body.immovable = true;
+                        }
                     });
                 }
             }, undefined, undefined, undefined, undefined, undefined, undefined, layer);

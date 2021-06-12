@@ -8,7 +8,7 @@ export default {
             gravity: {
                 y: 1000
             },
-            debug: false,
+            debug: true,
         }
     },
     scale: {

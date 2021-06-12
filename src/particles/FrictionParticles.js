@@ -131,23 +131,6 @@ export default class FrictionParticles {
         } else if (particleType === 'wall' || particleType === 'wallJump') {
             // If the player is beside a tile on the wall.
             tile = this.player.besideTile().tile;
-
-            // if (this.player.body.blocked.right) {
-            //     tileX = this.player.body.right + 1;
-            // } else {
-            //     tileX = this.player.body.left - 1;
-            // }
-            // tileY = this.player.body.top;
-
-            // tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.collidersLayer);
-
-            // // If no tile was found, the body could be at an edge and
-            // // is touching a tile on the other side of its body.
-            // if (!tile) {
-            //     // Test for a tile on the other side of the body.
-            //     tileY = this.player.body.bottom;
-            //     tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.collidersLayer);
-            // }
         }
 
         // Update the image for the particles, if a tile was found.
@@ -156,10 +139,10 @@ export default class FrictionParticles {
         }
     }
 
-    explodeWallJumpParticles(wallSide) {
+    explodeWallJumpParticles(wallSide, tile) {
         // Make sure the particle image matches the surface the player
         // is jumping off of.
-        this.updateParticleImage('wallJump');
+        this.particleTypes['wallJump'].setFrame(tile.index - 1);
         
         if (wallSide === 'right') {
             this.wallJump.setAngle({ min: 90, max: 270 });
