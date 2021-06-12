@@ -150,9 +150,13 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     besideCustomWall() {
+        // Get the bounds of the player's hitbox.
         let bodyBounds = {}
         bodyBounds = this.body.getBounds(bodyBounds);
 
+        // OverlapRect will test if the rectangle overlaps with any
+        // bodies. This is why the scene's walls group is not a static
+        // group.
         let bodyOverlaps = this.scene.physics.overlapRect(
             bodyBounds.x,
             bodyBounds.y,
@@ -161,6 +165,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
         );
 
         let besideCustomWall = false;
+        // Check to see if there is actually an overlapping body from
+        // the walls group.
         bodyOverlaps.forEach(body => {
             if (this.scene.walls.children.entries.includes(body.gameObject)) {
                 besideCustomWall = true;
@@ -182,10 +188,12 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
 
         let side ;
+        // If a tile was found at this point, is is on the left.
         if (tile) {
             side = 'left';
         }
 
+        // If not tile has been found yet, test the right side now.
         if (!tile) {
             tile = this.scene.map.getTileAtWorldXY(this.body.right + 1, this.body.top, false, this.scene.cameras.main, this.scene.collidersLayer);
         }
@@ -194,6 +202,9 @@ export default class Player extends Phaser.GameObjects.Sprite {
             tile = this.scene.map.getTileAtWorldXY(this.body.right + 1, this.body.bottom - 1, false, this.scene.cameras.main, this.scene.collidersLayer);
         }
 
+        // If a tile was found at this point, it is on the right. Only
+        // change the side variable if it hasn't been set to left
+        // already.
         if (side !== 'left' && tile) {
             side = 'right';
         }
@@ -207,18 +218,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // Test if the player is allowed to do a wall jump. If the tile
         // has custom collisions, the player may or may not be able to.
         let wallJumpAllowed;
-        // if (custom) {
-        //     if (this.besideCustomWall()) {
-        //         wallJumpAllowed = true;
-        //     } else {
-        //         wallJumpAllowed = false;
-        //     }
-        // } else if (tile) {
-        //     // If there are no custom collisions, the entire tile is OK
-        //     // to wall jump off of.
-        //     wallJumpAllowed = true;
-        // }
-
         if (tile && !custom || custom && this.besideCustomWall()) {
             wallJumpAllowed = true;
         } else {
@@ -288,6 +287,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     doorExit() {
+        // When the player touches an exit door, switch to the next level.
         this.scene.nextLevel();
     }
 
