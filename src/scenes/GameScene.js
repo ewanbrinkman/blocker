@@ -4,6 +4,7 @@ import { COLORS } from '../constants/style.js';
 import { TILES } from '../constants/maps.js';
 import { SCENE_KEYS } from '../constants/scenes.js';
 import { LEVELS } from '../constants/levels.js';
+import { PLAYER_SQUARE } from '../constants/player.js';
 
 // Start position.
 const startX = 3 * TILES.width + 0.5 * TILES.width;
@@ -97,6 +98,7 @@ export default class GameScene extends Phaser.Scene {
         // Only start the time once. Keep track if it has been started
         // yet or not.
         this.timeStarted = false;
+        this.lastLevel = false;
 
         // Used for testing levels.
         // this.input.keyboard.on('keydown-ESC', () => {
@@ -121,6 +123,7 @@ export default class GameScene extends Phaser.Scene {
 
     randomLevel(omitLevel) {
         let possibleLevels = [...this.registry.game.possibleLevels];
+
         // Make sure the new level wasn't just completed.
         if (omitLevel && this.registry.game.possibleLevels.length > 1) {
             possibleLevels = possibleLevels.filter((element) => (element !== omitLevel));
@@ -142,56 +145,60 @@ export default class GameScene extends Phaser.Scene {
             if (this.registry.gamemode === 'normal') {
                 this.refillLevels();
             } else {
-                this.gameOver();
+                this.lastLevel = true;
             }
         }
     }
 
     nextLevel() {
-        this.registry.sounds.complete.play();
-
-        // Add a little bit of time to the timer.
-        if (this.registry.gamemode === 'normal') {
-            this.endTimer.delay += LEVELS.normal.completeTime * 1000;
-        }
-
         // In the future, might want to add an option for the scene
         // data to pass in current player effects. That way, effects
         // can continue throughout levels.
+        
+        this.registry.sounds.complete.play();
         this.registry.game.completedLevelsCount ++;
 
-        // Destroy the current level.
-        this.destroyLevel();
-
-        // Choose a random level. Make sure the last level that was
-        // just completed isn't chosen again.
-        this.randomLevel(this.registry.game.lastLevel);
-        // Create the level.
-        this.createLevel();
-
-        // Update the player's collisions.
-        this.player.addCollisions();
-
-        // Move the player to the starting position of the level.
-        let [spawnPointX, spawnPointY] = this.player.getPlayerCenter(this.spawnPoint.x, this.spawnPoint.y);
-        this.spawnPoint = {
-            x: spawnPointX,
-            y: spawnPointY
+        if (this.lastLevel) {
+            this.gameOver();
+        } else {
+            // Add a little bit of time to the timer.
+            if (this.registry.gamemode === 'normal') {
+                this.endTimer.delay += LEVELS.normal.completeTime * 1000;
+            }
+    
+            // Destroy the current level.
+            this.destroyLevel();
+    
+            // Choose a random level. Make sure the last level that was
+            // just completed isn't chosen again.
+            this.randomLevel(this.registry.game.lastLevel);
+            // Create the level.
+            this.createLevel();
+    
+            // Update the player's collisions.
+            this.player.addCollisions();
+    
+            // Move the player to the starting position of the level.
+            let [spawnPointX, spawnPointY] = this.player.getPlayerCenter(this.spawnPoint.x, this.spawnPoint.y);
+            this.spawnPoint = {
+                x: spawnPointX,
+                y: spawnPointY
+            }
+    
+            this.player.spawnPoint.x = this.spawnPoint.x;
+            this.player.spawnPoint.y = this.spawnPoint.y;
+            this.player.respawn(false);
+    
+            // Recreate the friction particle emitter. This prevents it
+            // from putting friction particles in the wrong place after a
+            // new level starts.
+            this.frictionParticles.destroy();
+            // Particle when moving agaisnt surfaces.
+            this.frictionParticles = this.add.particles('tiles');
+            // Render on top.
+            this.frictionParticles.setDepth(2);
+            this.player.frictionParticles = new FrictionParticles(this, this.player);
         }
-
-        this.player.spawnPoint.x = this.spawnPoint.x;
-        this.player.spawnPoint.y = this.spawnPoint.y;
-        this.player.respawn(false);
-
-        // Recreate the friction particle emitter. This prevents it
-        // from putting friction particles in the wrong place after a
-        // new level starts.
-        this.frictionParticles.destroy();
-        // Particle when moving agaisnt surfaces.
-        this.frictionParticles = this.add.particles('tiles');
-        // Render on top.
-        this.frictionParticles.setDepth(2);
-        this.player.frictionParticles = new FrictionParticles(this, this.player);
     }
 
     destroyLevel() {
