@@ -129,22 +129,25 @@ export default class FrictionParticles {
                 tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.collidersLayer);
             }
         } else if (particleType === 'wall' || particleType === 'wallJump') {
-            if (this.player.body.blocked.right) {
-                tileX = this.player.body.right + 1;
-            } else {
-                tileX = this.player.body.left - 1;
-            }
-            tileY = this.player.body.top;
+            // If the player is beside a tile on the wall.
+            tile = this.player.besideTile().tile;
 
-            tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.collidersLayer);
+            // if (this.player.body.blocked.right) {
+            //     tileX = this.player.body.right + 1;
+            // } else {
+            //     tileX = this.player.body.left - 1;
+            // }
+            // tileY = this.player.body.top;
 
-            // If no tile was found, the body could be at an edge and
-            // is touching a tile on the other side of its body.
-            if (!tile) {
-                // Test for a tile on the other side of the body.
-                tileY = this.player.body.bottom;
-                tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.collidersLayer);
-            }
+            // tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.collidersLayer);
+
+            // // If no tile was found, the body could be at an edge and
+            // // is touching a tile on the other side of its body.
+            // if (!tile) {
+            //     // Test for a tile on the other side of the body.
+            //     tileY = this.player.body.bottom;
+            //     tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.collidersLayer);
+            // }
         }
 
         // Update the image for the particles, if a tile was found.

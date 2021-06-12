@@ -154,11 +154,11 @@ export default class Player extends Phaser.GameObjects.Sprite {
             // let a = {}
             // this.body.getBounds(a);
             // console.log(a);
-            console.log(this.besideNormalTile());
+            console.log(this.besideTile());
         }
     }
 
-    besideNormalTile() {
+    besideTile() {
         // A normal tile here means a tile without any custom collision
         // box.
         let tile = this.scene.map.getTileAtWorldXY(this.body.left - 1, this.body.top, false, this.scene.cameras.main, this.scene.collidersLayer);
@@ -234,16 +234,16 @@ export default class Player extends Phaser.GameObjects.Sprite {
     wallJump() {
         // The player must be on a wall without touching the ground.
         // if (!this.body.onFloor() && this.body.onWall()) {
-        let side = this.besideNormalTile();
-        if (!this.body.onFloor() && side) {
+        let data = this.besideTile();
+        if (!this.body.onFloor() && data.tile) {
             this.scene.registry.sounds.jump.play();
             // Wall jump, set the x velocity in the correct direction.
             // if (this.body.blocked.right) {
-            if (side === 'right') {
+            if (data.side === 'right') {
                 this.body.setVelocityX(-this.wallJumpVelocity.x);
                 this.frictionParticles.explodeWallJumpParticles('right');
             // } else if (this.body.blocked.left) {
-            } else if (side === 'left') {
+            } else if (data.side === 'left') {
                 this.body.setVelocityX(this.wallJumpVelocity.x);
                 this.frictionParticles.explodeWallJumpParticles('left');
             }
