@@ -213,8 +213,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.scene.overlaps['exitDoors'] = this.scene.physics.add.overlap(this.scene.exitDoors, this, this.doorExit, undefined, this);
     }
 
-    respawn() {
-        this.scene.registry.sounds.lose.play();
+    respawn(sound = true) {
+        if (sound) {
+            this.scene.registry.sounds.lose.play();
+        }
 
         // Subtract movement change to counter gravity pushing the
         // player into the wall below, as well as making sure the

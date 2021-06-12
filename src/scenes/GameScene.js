@@ -159,7 +159,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.player.spawnPoint.x = this.spawnPoint.x;
         this.player.spawnPoint.y = this.spawnPoint.y;
-        this.player.respawn();
+        this.player.respawn(false);
 
         // Recreate the friction particle emitter. This prevents it
         // from putting friction particles in the wrong place after a
