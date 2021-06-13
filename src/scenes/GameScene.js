@@ -98,12 +98,14 @@ export default class GameScene extends Phaser.Scene {
         // Only start the time once. Keep track if it has been started
         // yet or not.
         this.timeStarted = false;
-        this.lastLevel = false;
+
+        // If the game has ended yet. Once it has, a new level can't be started.
+        this.gameEnded = false;
 
         // Used for testing levels.
-        // this.input.keyboard.on('keydown-ESC', () => {
-        //     this.nextLevel();
-        // });
+        this.input.keyboard.on('keydown-ESC', () => {
+            this.nextLevel();
+        });
 
     }
 
@@ -122,6 +124,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     randomLevel(omitLevel) {
+        // If all levels have been completed, refill the uncompleted levels list.
         let possibleLevels = [...this.registry.game.possibleLevels];
 
         // Make sure the new level wasn't just completed.
@@ -139,66 +142,66 @@ export default class GameScene extends Phaser.Scene {
         // next level. This will only matter if the list of levels was
         // just refilled.
         this.registry.game.lastLevel = this.currentLevel;
+    }
 
-        // If all levels have been completed, refill the uncompleted levels list.
+    nextLevel() {
+        if (this.gameEnded) {
+            return;
+        }
+
+        this.registry.sounds.complete.play();
+        this.registry.game.completedLevelsCount ++;
+
         if (this.registry.game.possibleLevels.length === 0) {
             if (this.registry.gamemode === 'normal') {
                 this.refillLevels();
             } else {
-                this.lastLevel = true;
+                this.gameOver();
+                return;
             }
         }
-    }
 
-    nextLevel() {
         // In the future, might want to add an option for the scene
         // data to pass in current player effects. That way, effects
         // can continue throughout levels.
-        
-        this.registry.sounds.complete.play();
-        this.registry.game.completedLevelsCount ++;
 
-        if (this.lastLevel) {
-            this.gameOver();
-        } else {
-            // Add a little bit of time to the timer.
-            if (this.registry.gamemode === 'normal') {
-                this.endTimer.delay += LEVELS.normal.completeTime * 1000;
-            }
-    
-            // Destroy the current level.
-            this.destroyLevel();
-    
-            // Choose a random level. Make sure the last level that was
-            // just completed isn't chosen again.
-            this.randomLevel(this.registry.game.lastLevel);
-            // Create the level.
-            this.createLevel();
-    
-            // Update the player's collisions.
-            this.player.addCollisions();
-    
-            // Move the player to the starting position of the level.
-            let [spawnPointX, spawnPointY] = this.player.getPlayerCenter(this.spawnPoint.x, this.spawnPoint.y);
-            this.spawnPoint = {
-                x: spawnPointX,
-                y: spawnPointY
-            }
-    
-            this.player.spawnPoint.x = this.spawnPoint.x;
-            this.player.spawnPoint.y = this.spawnPoint.y;
-            this.player.respawn(false);
-    
-            // Recreate the friction particle emitter. This prevents it
-            // from putting friction particles in the wrong place after a
-            // new level starts.
-            this.frictionParticles.destroy();
-            // Particle when moving agaisnt surfaces.
-            this.frictionParticles = this.add.particles('tiles');
-            // Render on top.
-            this.frictionParticles.setDepth(2);
-            this.player.frictionParticles = new FrictionParticles(this, this.player);
+        // Add a little bit of time to the timer.
+        if (this.registry.gamemode === 'normal') {
+            this.endTimer.delay += LEVELS.normal.completeTime * 1000;
         }
+
+        // Destroy the current level.
+        this.destroyLevel();
+
+        // Choose a random level. Make sure the last level that was
+        // just completed isn't chosen again.
+        this.randomLevel(this.registry.game.lastLevel);
+        // Create the level.
+        this.createLevel();
+
+        // Update the player's collisions.
+        this.player.addCollisions();
+
+        // Move the player to the starting position of the level.
+        let [spawnPointX, spawnPointY] = this.player.getPlayerCenter(this.spawnPoint.x, this.spawnPoint.y);
+        this.spawnPoint = {
+            x: spawnPointX,
+            y: spawnPointY
+        }
+
+        this.player.spawnPoint.x = this.spawnPoint.x;
+        this.player.spawnPoint.y = this.spawnPoint.y;
+        this.player.respawn(false);
+
+        // Recreate the friction particle emitter. This prevents it
+        // from putting friction particles in the wrong place after a
+        // new level starts.
+        this.frictionParticles.destroy();
+        // Particle when moving agaisnt surfaces.
+        this.frictionParticles = this.add.particles('tiles');
+        // Render on top.
+        this.frictionParticles.setDepth(2);
+        this.player.frictionParticles = new FrictionParticles(this, this.player);
     }
 
     destroyLevel() {
@@ -342,6 +345,8 @@ export default class GameScene extends Phaser.Scene {
     }
 
     gameOver() {
+        this.gameEnded = true;
+
         this.registry.music.stop();
         this.registry.music = this.sound.add('intro', {
             loop: true,
