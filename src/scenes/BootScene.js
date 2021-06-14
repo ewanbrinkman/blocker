@@ -16,8 +16,8 @@ export default class BootScene extends Phaser.Scene {
         // The background music for the menus.
         this.load.audio('intro', 'assets/sounds/music/Intro.mp3');
         // Load UI sounds.
-        this.load.audio('maximize', 'assets/sounds/ui/maximize.ogg');
-        this.load.audio('minimize', 'assets/sounds/ui/minimize.ogg');
+        this.load.audio('maximize', ['assets/sounds/ui/maximize.ogg', 'assets/sounds/ui/maximize.mp3']);
+        this.load.audio('minimize', ['assets/sounds/ui/minimize.ogg', 'assets/sounds/ui/minimize.mp3']);
     }
 
     create() {

@@ -163,13 +163,13 @@ export default class PreloaderScene extends Phaser.Scene {
         this.load.audio('grasslands', 'assets/sounds/music/Grasslands.mp3');
 
         // Load UI sounds.
-        this.load.audio('buttonOver', 'assets/sounds/ui/buttonOver.ogg');
-        this.load.audio('buttonPress', 'assets/sounds/ui/buttonPress.ogg');
+        this.load.audio('buttonOver', ['assets/sounds/ui/buttonOver.ogg', 'assets/sounds/ui/buttonOver.mp3']);
+        this.load.audio('buttonPress', ['assets/sounds/ui/buttonPress.ogg', 'assets/sounds/ui/buttonPress.mp3']);
         // Load game sounds.
-        this.load.audio('complete', 'assets/sounds/game/complete.ogg');
-        this.load.audio('hit', 'assets/sounds/game/hit.ogg');
-        this.load.audio('jump', 'assets/sounds/game/jump.ogg');
-        this.load.audio('lose', 'assets/sounds/game/lose.ogg');
+        this.load.audio('complete', ['assets/sounds/game/complete.ogg', 'assets/sounds/game/complete.mp3']);
+        this.load.audio('hit', ['assets/sounds/game/hit.ogg', 'assets/sounds/game/hit.mp3']);
+        this.load.audio('jump', ['assets/sounds/game/jump.ogg', 'assets/sounds/game/jump.mp3']);
+        this.load.audio('lose', ['assets/sounds/game/lose.ogg', 'assets/sounds/game/lose.mp3']);
     }
 
     create() {
