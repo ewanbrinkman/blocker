@@ -103,9 +103,9 @@ export default class GameScene extends Phaser.Scene {
         this.gameEnded = false;
 
         // Used for testing levels.
-        this.input.keyboard.on('keydown-ESC', () => {
-            this.nextLevel();
-        });
+        // this.input.keyboard.on('keydown-ESC', () => {
+        //     this.nextLevel();
+        // });
     }
 
     update(time, delta) {
