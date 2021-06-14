@@ -103,10 +103,9 @@ export default class GameScene extends Phaser.Scene {
         this.gameEnded = false;
 
         // Used for testing levels.
-        this.input.keyboard.on('keydown-ESC', () => {
-            this.nextLevel();
-        });
-
+        // this.input.keyboard.on('keydown-ESC', () => {
+        //     this.nextLevel();
+        // });
     }
 
     update(time, delta) {
@@ -240,9 +239,42 @@ export default class GameScene extends Phaser.Scene {
 
         // Get a list of all starting door coordinates (the bottom part
         // of the door).
-        let startDoorBottoms = this.doorsStartLayer.filterTiles((tile) => (tile.index === 58))
-        // Choose a random starting door to start at.
-        let startDoorBottom = Phaser.Math.RND.pick(startDoorBottoms);
+        let startDoorBottoms = this.doorsStartLayer.filterTiles(tile => tile.index === 58);
+
+        // Get a list of all layers.
+        let layerNames = [];
+        this.map.layers.forEach((layerData) => {
+            layerNames.push(layerData.name)
+        });
+
+        // The map might have a preset start door for speedruns to
+        // avoid randomness.
+        let speedrunStartDoorBottoms;
+        if (layerNames.includes('Doors/SpeedrunStart')) {
+            this.doorsSpeedrunStartLayer = this.map.createLayer('Doors/SpeedrunStart', this.tiles, 0, 0);
+            speedrunStartDoorBottoms = this.doorsSpeedrunStartLayer.filterTiles(tile => tile.index === 58);
+
+            // If there are any speedrun start doors, add them to the start doors list.
+            startDoorBottoms = startDoorBottoms.concat(speedrunStartDoorBottoms);
+        }
+
+        let startDoorBottom;
+        // Choose the player's starting door.
+        if (this.registry.gamemode === 'normal') {
+            // Choose a random starting door to start at.
+            startDoorBottom = Phaser.Math.RND.pick(startDoorBottoms);
+        } else if (this.registry.gamemode === 'speedrun') {
+            try {
+                // Choose a random speedrun starting door to start at.
+                // There should only be one per level if the speedrun start
+                // doors layer exists.
+                startDoorBottom = Phaser.Math.RND.pick(speedrunStartDoorBottoms);
+            } catch {
+                // Always choose the first door in the list if no
+                // speedrun start door was set.
+                startDoorBottom = startDoorBottoms[0];
+            }
+        }
 
         // Add half a tile size to the coordinates to get the center.
         this.spawnPoint = {
