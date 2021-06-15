@@ -73,14 +73,6 @@ export default class GameScene extends Phaser.Scene {
         // Make the camera follow the player.
         this.cameras.main.startFollow(this.player);
 
-        // Create keys other than the cursor keys. Keys and their uses:
-        // r: respawn the player.
-        this.keys = this.input.keyboard.addKeys({
-            r: Phaser.Input.Keyboard.KeyCodes.R,
-        });
-        // Create the cursor keys for player movement.
-        this.keys.cursors = this.input.keyboard.createCursorKeys();;
-
         // The game timer.
         if (this.registry.gamemode === 'normal') {
             this.endTimer = this.time.addEvent({
@@ -102,20 +94,78 @@ export default class GameScene extends Phaser.Scene {
         // If the game has ended yet. Once it has, a new level can't be started.
         this.gameEnded = false;
 
-        // Used for testing levels.
-        // this.input.keyboard.on('keydown-ESC', () => {
-        //     this.nextLevel();
-        // });
+        // Quit to the title scene (main menu).
+        this.input.keyboard.on('keydown-ESC', () => {
+            this.gameOver();
+        });
+
+        this.keys = {
+            r: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R)
+        }
+        // Create the keys for player movement.
+        this.keys.cursors = this.input.keyboard.createCursorKeys();;
+        this.keys.wasd = this.input.keyboard.addKeys({
+            up: Phaser.Input.Keyboard.KeyCodes.W,
+            left: Phaser.Input.Keyboard.KeyCodes.A,
+            down: Phaser.Input.Keyboard.KeyCodes.S,
+            right: Phaser.Input.Keyboard.KeyCodes.D,
+        });
+
+        // Place keys for the same purpose in a list together.
+        this.keyGroups = {
+            up: [this.keys.cursors.up, this.keys.wasd.up, this.keys.cursors.space],
+            left: [this.keys.cursors.left, this.keys.wasd.left],
+            down: [this.keys.cursors.down, this.keys.wasd.down],
+            right: [this.keys.cursors.right, this.keys.wasd.right],
+            respawn: [this.keys.r]
+        }
+
+        // The types of key input the game needs.
+        this.keyInputTypes = ['isDown', 'justDown'];
     }
 
-    update(time, delta) {
+    update() {
         // Start the timer if it hasn't started yet.
         if (!this.timeStarted) {
-            this.registry.game.speedrun.startTime = time;
+            this.registry.game.speedrun.startTime = this.time.now;
             this.timeStarted = true;
         }
+
+        // Get which keys are pressed and just pressed.
+        this.currentInput = this.getActiveKeys();
+
         // Update the player.
-        this.player.update(this.keys, time, delta);
+        this.player.update(this.currentInput);
+    }
+
+    isActive(keys, inputType) {
+        let activeKeys;
+
+        // Get a list of all keys that pass the filter (if the key is
+        // down or just got pressed).
+        if (inputType === 'isDown') {
+            activeKeys = keys.filter(key => key.isDown);
+        } else if (inputType === 'justDown') {
+            activeKeys = keys.filter(key => Phaser.Input.Keyboard.JustDown(key));
+        }
+
+        // If no keys are active, the length of the list will be 0,
+        // which will return false.
+        return Boolean(activeKeys.length);
+    }
+
+    getActiveKeys() {
+        // Get current key inputs.
+        let currentInput = {}
+        // Get all input types (isDown, justDown).
+        this.keyInputTypes.forEach(keyInputType => {
+            currentInput[keyInputType] = {}
+            Object.keys(this.keyGroups).forEach(keyGroupType => {
+                currentInput[keyInputType][keyGroupType] = this.isActive(this.keyGroups[keyGroupType], keyInputType);
+            });
+        });
+
+        return currentInput;
     }
 
     refillLevels() {

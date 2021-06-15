@@ -90,7 +90,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.setDepth(1);
     }
 
-    update(keys, time, delta) {
+    update(input) {
         // Friction particles when moving.
         if (this.body.onFloor() && (Math.abs(this.body.velocity.x) > this.baseMaxVelocity.x * this.frictionParticles.minVelocityFloor)) {
             this.movingFast();
@@ -115,23 +115,21 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // Friction increases as the player's velocity increases.
         // Multiply the velocity be a negative number to make friction
         // go in the opposite direction of movement.
-        if (keys.cursors.left.isDown) {
+        if (input.isDown.left) {
             this.body.setAccelerationX(-this.acceleration + this.body.velocity.x * -this.friction);
-        } else if (keys.cursors.right.isDown) {
+        } else if (input.isDown.right) {
             this.body.setAccelerationX(this.acceleration + this.body.velocity.x * -this.friction);
         } else {
             this.body.setAccelerationX(0);
         }
 
-        if (keys.cursors.space.isDown || keys.cursors.up.isDown) {
-            if (this.body.onFloor()) {
-                // Jump off the ground.
-                this.scene.registry.sounds.jump.play();
-                this.body.setVelocityY(-this.jumpVelocity);
-            }
+        if (input.isDown.up && this.body.onFloor()) {
+            // Jump off the ground.
+            this.scene.registry.sounds.jump.play();
+            this.body.setVelocityY(-this.jumpVelocity);
         }
 
-        if (Phaser.Input.Keyboard.JustDown(keys.cursors.up) || Phaser.Input.Keyboard.JustDown(keys.cursors.space)) {
+        if (input.justDown.up) {
             // The player will try to do a wall jump.
             this.wallJump();
         }
@@ -144,7 +142,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
             y: this.body.velocity.y
         }
 
-        if (Phaser.Input.Keyboard.JustDown(keys.r)) {
+        if (input.justDown.respawn) {
             this.respawn();
         }
     }
@@ -161,7 +159,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
             bodyBounds.x,
             bodyBounds.y,
             bodyBounds.right - bodyBounds.x,
-            bodyBounds.bottom - bodyBounds.y
+            bodyBounds.bottom - bodyBounds.y - 1 // Subtract 1 to prevent wall jumping from underneath a custom collison box.
         );
 
         let besideCustomWall = false;
