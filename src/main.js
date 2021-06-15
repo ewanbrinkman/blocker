@@ -1,5 +1,5 @@
 import config from './config.js';
-import { HUD_SCENE, SCENE_KEYS } from './constants/scenes.js';
+import { SCENE_KEYS } from './constants/scenes.js';
 import BootScene from './scenes/BootScene.js';
 import CreditsScene from './scenes/CreditsScene.js';
 import GameScene from './scenes/GameScene.js';
@@ -8,6 +8,9 @@ import CharactersScene from './scenes/CharactersScene.js';
 import PreloaderScene from './scenes/PreloaderScene.js';
 import TitleScene from './scenes/TitleScene.js';
 import GameOverScene from './scenes/GameOverScene.js';
+
+// Make sure the font is loaded, this is needed for certain browsers.
+document.fonts.load('10pt "Pixel"');
 
 class Game extends Phaser.Game {
     constructor() {
