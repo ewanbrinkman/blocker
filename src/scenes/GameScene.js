@@ -158,10 +158,10 @@ export default class GameScene extends Phaser.Scene {
         // Get current key inputs.
         let currentInput = {}
         // Get all input types (isDown, justDown).
-        this.keyInputTypes.forEach(keyInputType => {
-            currentInput[keyInputType] = {}
-            Object.keys(this.keyGroups).forEach(keyGroupType => {
-                currentInput[keyInputType][keyGroupType] = this.isActive(this.keyGroups[keyGroupType], keyInputType);
+        Object.keys(this.keyGroups).forEach(keyGroupType => {
+            currentInput[keyGroupType] = {}
+            this.keyInputTypes.forEach(keyInputType => {
+                currentInput[keyGroupType][keyInputType] = this.isActive(this.keyGroups[keyGroupType], keyInputType);
             });
         });
 

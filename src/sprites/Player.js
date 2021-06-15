@@ -115,21 +115,21 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // Friction increases as the player's velocity increases.
         // Multiply the velocity be a negative number to make friction
         // go in the opposite direction of movement.
-        if (input.isDown.left) {
+        if (input.left.isDown) {
             this.body.setAccelerationX(-this.acceleration + this.body.velocity.x * -this.friction);
-        } else if (input.isDown.right) {
+        } else if (input.right.isDown) {
             this.body.setAccelerationX(this.acceleration + this.body.velocity.x * -this.friction);
         } else {
             this.body.setAccelerationX(0);
         }
 
-        if (input.isDown.up && this.body.onFloor()) {
+        if (input.up.isDown && this.body.onFloor()) {
             // Jump off the ground.
             this.scene.registry.sounds.jump.play();
             this.body.setVelocityY(-this.jumpVelocity);
         }
 
-        if (input.justDown.up) {
+        if (input.up.justDown) {
             // The player will try to do a wall jump.
             this.wallJump();
         }
@@ -142,7 +142,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
             y: this.body.velocity.y
         }
 
-        if (input.justDown.respawn) {
+        if (input.respawn.justDown) {
             this.respawn();
         }
     }
@@ -155,11 +155,13 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // OverlapRect will test if the rectangle overlaps with any
         // bodies. This is why the scene's walls group is not a static
         // group.
+        // Add and subtract one from the y position so wall jumps
+        // cannot be done underneath a wall.
         let bodyOverlaps = this.scene.physics.overlapRect(
             bodyBounds.x,
-            bodyBounds.y,
+            bodyBounds.y + 1,
             bodyBounds.right - bodyBounds.x,
-            bodyBounds.bottom - bodyBounds.y - 1 // Subtract 1 to prevent wall jumping from underneath a custom collison box.
+            bodyBounds.bottom - bodyBounds.y - 1 
         );
 
         let besideCustomWall = false;
