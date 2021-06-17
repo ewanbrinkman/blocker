@@ -169,11 +169,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     refillLevels() {
-        if (this.registry.difficulty === 'normal') {
-            this.registry.game.possibleLevels = [...this.registry.levels]; 
-        } else if (this.registry.difficulty === 'hard') {
-            this.registry.game.possibleLevels = [...this.registry.challenges]; 
-        }
+        this.registry.game.possibleLevels = [...this.registry.levels[this.registry.difficulty]]; 
     }
 
     randomLevel(omitLevel) {

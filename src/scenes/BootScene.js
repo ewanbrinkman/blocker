@@ -37,14 +37,16 @@ export default class BootScene extends Phaser.Scene {
             this.registry.titleBackgrounds.push('backgroundTitle' + i);
         }
         // Create a list of all levels.
-        this.registry.levels = []
-        for (let i = MAPS.levels.start; i <= (MAPS.levels.end); i++) {
-            this.registry.levels.push('level' + i);
+        this.registry.levels = {
+            normal: [],
+            hard: []
+        }
+        for (let i = MAPS.levels.normal.start; i <= (MAPS.levels.normal.end); i++) {
+            this.registry.levels.normal.push('normal' + i);
         }
         // Create a list of all challenges.
-        this.registry.challenges = []
-        for (let i = MAPS.challenges.start; i <= (MAPS.challenges.end); i++) {
-            this.registry.challenges.push('challenge' + i);
+        for (let i = MAPS.levels.hard.start; i <= (MAPS.levels.hard.end); i++) {
+            this.registry.levels.hard.push('hard' + i);
         }
         // Choose a random splash text.
         this.registry.splash = Phaser.Math.RND.pick(SPLASHES);
