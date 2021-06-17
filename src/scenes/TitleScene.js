@@ -91,13 +91,59 @@ export default class TitleScene extends Phaser.Scene {
             text: 'Credits',
             targetScene: SCENE_KEYS.credits
         });
-        // scene, x, y, text
         this.gamemodeCheckbox = new Checkbox({
             scene: this,
             x: width / 2,
             y: height / 2 + TITLE_SCENE.speedrunCheckbox.offset.y,
             text: 'Speedrun Mode',
-            center: true
+            center: true,
+            selectionFunction: (updateTargetVariable) => {
+                // The function is called when the selection button is
+                // pressed. The returned value is if the button is
+                // currently selected.
+                if (this.registry.gamemode === 'normal') {
+                    if (updateTargetVariable) {
+                        this.registry.gamemode = 'speedrun';
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    if (updateTargetVariable) {
+                        this.registry.gamemode = 'normal';
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+        });
+        this.challengeCheckbox = new Checkbox({
+            scene: this,
+            x: width / 2,
+            y: height / 2 + TITLE_SCENE.speedrunCheckbox.offset.y * 2,
+            text: 'EXTREME MASTER DIFFICULTY',
+            center: true,
+            selectionFunction: (updateTargetVariable) => {
+                // The function is called when the selection button is
+                // pressed. The returned value is if the button is
+                // currently selected.
+                if (this.registry.difficulty === 'normal') {
+                    if (updateTargetVariable) {
+                        this.registry.difficulty = 'hard';
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    if (updateTargetVariable) {
+                        this.registry.difficulty = 'normal';
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
         });
     }
 
@@ -118,6 +164,7 @@ export default class TitleScene extends Phaser.Scene {
             this.logo.getBottomRight().y + TITLE_SCENE.splashText.offset.y + FONT[this.font].offset.y
         );
         this.gamemodeCheckbox.setCenter(width / 2, height / 2 + TITLE_SCENE.speedrunCheckbox.offset.y);
+        this.challengeCheckbox.setCenter(width / 2, height / 2 + TITLE_SCENE.speedrunCheckbox.offset.y * 2);
         this.gameButton.setPosition(width / 2, height / 2);
         this.quitButton.setPosition(width / 2, height + TITLE_SCENE.quitButton.offset.y);
         this.charactersButton.setPosition(width / 2 + TITLE_SCENE.charactersButton.offset.x, height / 2,);

@@ -68,7 +68,8 @@ export const TITLE_SCENE = {
     },
     speedrunCheckbox: {
         offset: {
-            y: 100
+            // y: 100
+            y: 80
         }
     },
     backgroundSpeed: 50

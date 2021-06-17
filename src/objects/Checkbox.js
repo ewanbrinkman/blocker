@@ -19,26 +19,7 @@ export default class Checkbox extends Phaser.GameObjects.Container {
             silentOver: true, // Don't make a sound when the mouse goes over the button.
             imageUnselected: 'emptyBox',
             imageSelected: 'greenboxCheckmark',
-            selectionFunction: (updateTargetVariable) => {
-                // The function is called when the selection button is
-                // pressed. The returned value is if the button is
-                // currently selected.
-                if (this.scene.registry.gamemode === 'normal') {
-                    if (updateTargetVariable) {
-                        this.scene.registry.gamemode = 'speedrun';
-                        return true;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    if (updateTargetVariable) {
-                        this.scene.registry.gamemode = 'normal';
-                        return false;
-                    } else {
-                        return true;
-                    }
-                }
-            }
+            selectionFunction: config.selectionFunction
         });
 
         this.text = this.scene.add.text(

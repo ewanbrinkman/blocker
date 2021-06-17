@@ -88,7 +88,6 @@ export default class FrictionParticles {
 
     startParticles(particleType) {
         if (particleType === 'floor') {
-            this.floor.on = true;
             // Set the position and direction of the particles based on player velocity.
             if (this.player.body.velocity.x > 0) {
                 this.floor.setAngle({ min: 180, max: 240 });
@@ -97,8 +96,8 @@ export default class FrictionParticles {
                 this.floor.setAngle({ min: -40, max: 0 });
                 this.floor.followOffset.x = this.player.displayWidth / 2 - PLAYER_SQUARE[this.player.playerType].right * this.player.scale;
             }
+            this.floor.on = true;
         } else if (particleType === 'wall') {
-            this.wall.on = true;
             // Set the position and direction of the particles based on player velocity.
             if (this.player.body.blocked.right) {
                 this.wall.setAngle({ min: -90, max: -130 });
@@ -107,6 +106,7 @@ export default class FrictionParticles {
                 this.wall.setAngle({ min: -50, max: -90 });
                 this.wall.followOffset.x = -this.player.displayWidth / 2 + PLAYER_SQUARE[this.player.playerType].left * this.player.scale;
             }
+            this.wall.on = true;
         }
     }
 
@@ -128,7 +128,7 @@ export default class FrictionParticles {
                 tileX = this.player.body.right;
                 tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.collidersLayer);
             }
-        } else if (particleType === 'wall' || particleType === 'wallJump') {
+        } else if (particleType === 'wall') {
             // If the player is beside a tile on the wall.
             tile = this.player.besideTile().tile;
         }
@@ -162,11 +162,13 @@ export default class FrictionParticles {
 
         let amount;
 
+        // The amount of particles depends on how hard the player hit
+        // the floor.
         if (this.player.lastVelocity.y < 520) {
             // 2 blocks.
             amount = 2;
         } else if (this.player.lastVelocity.y < 640) {
-            // 3 blocks (player jump velocity floor hit is 540).
+            // 3 blocks.
             amount = 3;
         } else if (this.player.lastVelocity.y < 740) {
             // 4 blocks.
@@ -188,6 +190,7 @@ export default class FrictionParticles {
     }
 
     killAllParticles() {
+        // Do Object.values() instead here?
         // Stop all particles that are currently playing.
         for (let particleType in this.particleTypes) {
             // this.particleTypes[particleType].stop();

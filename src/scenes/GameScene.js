@@ -169,11 +169,14 @@ export default class GameScene extends Phaser.Scene {
     }
 
     refillLevels() {
-        this.registry.game.possibleLevels = [...this.registry.levels]; 
+        if (this.registry.difficulty === 'normal') {
+            this.registry.game.possibleLevels = [...this.registry.levels]; 
+        } else if (this.registry.difficulty === 'hard') {
+            this.registry.game.possibleLevels = [...this.registry.challenges]; 
+        }
     }
 
     randomLevel(omitLevel) {
-        // If all levels have been completed, refill the uncompleted levels list.
         let possibleLevels = [...this.registry.game.possibleLevels];
 
         // Make sure the new level wasn't just completed.
@@ -201,6 +204,7 @@ export default class GameScene extends Phaser.Scene {
         this.registry.sounds.complete.play();
         this.registry.game.completedLevelsCount ++;
 
+        // If all levels have been completed, refill the uncompleted levels list.
         if (this.registry.game.possibleLevels.length === 0) {
             if (this.registry.gamemode === 'normal') {
                 this.refillLevels();

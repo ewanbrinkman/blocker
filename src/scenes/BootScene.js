@@ -36,15 +36,22 @@ export default class BootScene extends Phaser.Scene {
         for (let i = 1; i <= (MAPS.titleAmount); i++) {
             this.registry.titleBackgrounds.push('backgroundTitle' + i);
         }
-        // Create a list of all level files.
+        // Create a list of all levels.
         this.registry.levels = []
-        for (let i = MAPS.levelAmountStart; i <= (MAPS.levelAmountEnd); i++) {
+        for (let i = MAPS.levels.start; i <= (MAPS.levels.end); i++) {
             this.registry.levels.push('level' + i);
+        }
+        // Create a list of all challenges.
+        this.registry.challenges = []
+        for (let i = MAPS.challenges.start; i <= (MAPS.challenges.end); i++) {
+            this.registry.challenges.push('challenge' + i);
         }
         // Choose a random splash text.
         this.registry.splash = Phaser.Math.RND.pick(SPLASHES);
         // The current game mode.
-        this.registry.gamemode = 'speedrun';
+        this.registry.gamemode = 'normal';
+        // The game difficulty.
+        this.registry.difficulty = 'normal';
         // Data needed for when playing the game.
         this.registry.game = {
             lastLevel: null,

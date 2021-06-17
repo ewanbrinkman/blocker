@@ -1,5 +1,6 @@
 import FrictionParticles from '../particles/FrictionParticles.js';
 import { getSquareCenter, getBodyOffset } from '../utils.js';
+import { getTileLeft } from '../utils/tiles.js';
 import { BASE_PLAYER, PLAYER_SQUARE } from '../constants/player.js';
 
 export default class Player extends Phaser.GameObjects.Sprite {
@@ -177,6 +178,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     besideTile() {
+        // console.log(getTileLeft(this, this.scene, this.scene.collidersLayer));
         // A normal tile here means a tile without any custom collision
         // box.
         let tile = this.scene.map.getTileAtWorldXY(this.body.left - 1, this.body.top, false, this.scene.cameras.main, this.scene.collidersLayer);
@@ -184,7 +186,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // If no tile was found, the body could be at an edge and
         // is touching a tile on the other side of its body.
         if (!tile) {
-            tile = this.scene.map.getTileAtWorldXY(this.body.left - 1, this.body.bottom - 1, false, this.scene.cameras.main, this.scene.collidersLayer);
+            tile = this.scene.map.getTileAtWorldXY(this.body.left - 1, this.body.bottom, false, this.scene.cameras.main, this.scene.collidersLayer);
         }
 
         let side ;
@@ -199,7 +201,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
 
         if (!tile) {
-            tile = this.scene.map.getTileAtWorldXY(this.body.right + 1, this.body.bottom - 1, false, this.scene.cameras.main, this.scene.collidersLayer);
+            tile = this.scene.map.getTileAtWorldXY(this.body.right + 1, this.body.bottom, false, this.scene.cameras.main, this.scene.collidersLayer);
         }
 
         // If a tile was found at this point, it is on the right. Only

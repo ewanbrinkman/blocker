@@ -135,9 +135,13 @@ export default class PreloaderScene extends Phaser.Scene {
         // To extrude a tileset using tile-extruder on the command line:
         // tile-extruder --tileWidth 70 --tileHeight 70 --spacing 2 --input ./tiles.png --output ./tiles-extruded.png
         // To load into tiled, use a margin of 1px (1px plus the original 0px) and a spacing of 4px (2px plus the original 2px).
-        // Load maps made with Tiled in JSON format.
+        // Load levels made with Tiled in JSON format.
         this.registry.levels.forEach((filename) => {
             this.load.tilemapTiledJSON(filename, 'assets/maps/levels/' + filename + '.json');
+        });
+        // Load challenges made with Tiled in JSON format.
+        this.registry.challenges.forEach((filename) => {
+            this.load.tilemapTiledJSON(filename, 'assets/maps/challenges/' + filename + '.json');
         });
         // Tiles in spritesheet.
         this.load.spritesheet('tiles', 'assets/images/spritesheets/tiles.png', {frameWidth: TILES.width, frameHeight: TILES.height, margin: 1, spacing: 4});
