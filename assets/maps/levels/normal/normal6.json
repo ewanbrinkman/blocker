@@ -4,7 +4,7 @@
      "export":
         {
          "format":"json",
-         "target":"level6.json"
+         "target":"normal6.json"
         }
     },
  "height":20,
@@ -78,7 +78,7 @@
         {
          "columns":12,
          "firstgid":1,
-         "image":"..\/..\/images\/spritesheets\/tiles.png",
+         "image":"..\/..\/..\/images\/spritesheets\/tiles.png",
          "imageheight":960,
          "imagewidth":886,
          "margin":1,

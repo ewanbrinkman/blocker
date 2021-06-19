@@ -1,22 +1,83 @@
-export function getTileLeft(sprite, scene, layer, tilePosition) {
-    let tileX = sprite.body.left - 1;
-    let tileY;
+function getTile(sprite, scene, layer, side1, side2, offset = {x: 0, y: 0}) {
+    // The position to look for a tile at.
+    let tileX = sprite.body[side1] + offset.x;
+    let tileY = sprite.body[side2] + offset.y;
 
-    if (tilePosition === 'top') {
-        tileY = sprite.body.top;
-    } else if (tilePosition === 'bottom') {
-        tileY = sprite.body.bottom;
-    } else if (tilePosition === 'middle') {
-        tileY = sprite.body.top - sprite.body.halfHeight;
-    }
-
-    let tiles = scene.map.getTileAtWorldXY(tileX, sprite.body.top + 1, false, scene.cameras.main, layer);
+    // Look for a tile at the given position.
+    let tile = scene.map.getTileAtWorldXY(tileX, tileY, false, scene.cameras.main, layer);
     
-    // If no tile was found, the body could be at an edge and
-    // is touching a tile on the other side of its body.
-    if (!tile) {
-        tile = scene.map.getTileAtWorldXY(tileX, sprite.body.bottom - 1, false, scene.cameras.main, layer);
+    return tile;
+}
+
+function besideCustomTile(sprite, scene, group, tile, offset = {left: 0, top: 0, right: 0, bottom: 0}) {
+    // Get the bounds of the player's hitbox.
+    let bodyBounds = {}
+    bodyBounds = sprite.body.getBounds(bodyBounds);
+
+    // OverlapRect will test if the rectangle overlaps with any
+    // bodies. The bodies must not be in a static group.
+    let bodyOverlaps = scene.physics.overlapRect(
+        bodyBounds.x + offset.left,
+        bodyBounds.y + offset.top,
+        bodyBounds.right - bodyBounds.x + offset.right, // The width.
+        bodyBounds.bottom - bodyBounds.y + offset.bottom // The height.
+    );
+
+    // Check to see if there is actually an overlapping body from
+    // the target group.
+    let besideCustomTile = false;
+    bodyOverlaps.forEach(body => {
+        if (group.children.entries.includes(body.gameObject)) {
+            // The body must be part of the tile given. This makes sure
+            // the sprite has collided with a body on the given tile,
+            // and not some nearby tile.
+            let bodyTile = scene.map.worldToTileXY(body.position.x, body.position.y);
+            if (bodyTile.x === tile.x && bodyTile.y === tile.y) {
+                besideCustomTile = true;
+            }
+        }
+    });
+    
+    return besideCustomTile;
+}
+
+export function getSideTile(sprite, scene, layer, custom = null, offsetY = true) {
+    // The four corners to test for a tile.
+    // Add an option for no y offset for wall friction particles.
+    let corners = [
+        {side1: 'left', side2: 'top', offset: {x: -1, y: offsetY ? 1: 0}},
+        {side1: 'left', side2: 'bottom', offset: {x: -1, y: offsetY ? -1: 0}},
+        {side1: 'right', side2: 'top', offset: {x: 1, y: offsetY ? 1 : 0}},
+        {side1: 'right', side2: 'bottom', offset: {x: 1, y: offsetY ? -1 : 0}},
+    ]
+
+    // Search for a tile. If one is found, stop searching.
+    let tile;
+    // Save which corner the tile was found at.
+    let corner;
+    for (corner in corners) {
+        tile = getTile(sprite, scene, layer, corners[corner].side1,
+            corners[corner].side2, corners[corner].offset);
+        if (tile) {
+            if (!custom || !custom.indexes.includes(parseInt(tile.index))) {
+                // Don't test for custom collisions or the tile doesn't
+                // have custom collisions.
+                break;
+            } else if (besideCustomTile(sprite, scene, custom.group, tile, {left: 0, top: 1, right: 0, bottom: -1})) {
+                // If actually touching the custom collision box tile or not. Add
+                // and subtract one from the y position for besideCustomTile so
+                // being underneath a tile doesn't count. This function gets side
+                // tiles.
+                break;
+            } else {
+                // Not beside/touching the tile.
+                tile = null;
+            }
+        }
     }
 
-    return tile;
+    return {
+        tile: tile,
+        side: tile ? corners[corner].side1 : null
+    };
 }

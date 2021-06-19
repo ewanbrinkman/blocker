@@ -1,4 +1,5 @@
 import { PLAYER_SQUARE } from '../constants/player.js';
+import { getSideTile } from '../utils/tiles.js';
 
 export default class FrictionParticles {
     constructor(scene, player) {
@@ -130,7 +131,7 @@ export default class FrictionParticles {
             }
         } else if (particleType === 'wall') {
             // If the player is beside a tile on the wall.
-            tile = this.player.besideTile().tile;
+            tile = getSideTile(this.player, this.scene, this.scene.collidersLayer, undefined, false).tile;
         }
 
         // Update the image for the particles, if a tile was found.

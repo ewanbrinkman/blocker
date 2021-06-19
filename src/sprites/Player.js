@@ -1,6 +1,6 @@
 import FrictionParticles from '../particles/FrictionParticles.js';
 import { getSquareCenter, getBodyOffset } from '../utils.js';
-import { getTileLeft } from '../utils/tiles.js';
+import { getSideTile } from '../utils/tiles.js';
 import { BASE_PLAYER, PLAYER_SQUARE } from '../constants/player.js';
 
 export default class Player extends Phaser.GameObjects.Sprite {
@@ -148,92 +148,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
     }
 
-    besideCustomWall() {
-        // Get the bounds of the player's hitbox.
-        let bodyBounds = {}
-        bodyBounds = this.body.getBounds(bodyBounds);
-
-        // OverlapRect will test if the rectangle overlaps with any
-        // bodies. This is why the scene's walls group is not a static
-        // group.
-        // Add and subtract one from the y position so wall jumps
-        // cannot be done underneath a wall.
-        let bodyOverlaps = this.scene.physics.overlapRect(
-            bodyBounds.x,
-            bodyBounds.y + 1,
-            bodyBounds.right - bodyBounds.x,
-            bodyBounds.bottom - bodyBounds.y - 1 
-        );
-
-        let besideCustomWall = false;
-        // Check to see if there is actually an overlapping body from
-        // the walls group.
-        bodyOverlaps.forEach(body => {
-            if (this.scene.walls.children.entries.includes(body.gameObject)) {
-                besideCustomWall = true;
-            }
-        });
-        
-        return besideCustomWall;
-    }
-
-    besideTile() {
-        // console.log(getTileLeft(this, this.scene, this.scene.collidersLayer));
-        // A normal tile here means a tile without any custom collision
-        // box.
-        let tile = this.scene.map.getTileAtWorldXY(this.body.left - 1, this.body.top, false, this.scene.cameras.main, this.scene.collidersLayer);
-        
-        // If no tile was found, the body could be at an edge and
-        // is touching a tile on the other side of its body.
-        if (!tile) {
-            tile = this.scene.map.getTileAtWorldXY(this.body.left - 1, this.body.bottom, false, this.scene.cameras.main, this.scene.collidersLayer);
-        }
-
-        let side ;
-        // If a tile was found at this point, is is on the left.
-        if (tile) {
-            side = 'left';
-        }
-
-        // If not tile has been found yet, test the right side now.
-        if (!tile) {
-            tile = this.scene.map.getTileAtWorldXY(this.body.right + 1, this.body.top, false, this.scene.cameras.main, this.scene.collidersLayer);
-        }
-
-        if (!tile) {
-            tile = this.scene.map.getTileAtWorldXY(this.body.right + 1, this.body.bottom, false, this.scene.cameras.main, this.scene.collidersLayer);
-        }
-
-        // If a tile was found at this point, it is on the right. Only
-        // change the side variable if it hasn't been set to left
-        // already.
-        if (side !== 'left' && tile) {
-            side = 'right';
-        }
-
-        // If a tile was found, check if it has custom collisions.
-        let custom;
-        if (tile) {
-            custom = this.scene.customCollisionTilesIndexes.includes(parseInt(tile.index));
-        }
-
-        // Test if the player is allowed to do a wall jump. If the tile
-        // has custom collisions, the player may or may not be able to.
-        let wallJumpAllowed;
-        if (tile && !custom || custom && this.besideCustomWall()) {
-            wallJumpAllowed = true;
-        } else {
-            wallJumpAllowed = false;
-        }
-
-        return {
-            tile: tile,
-            side: side,
-            custom: custom,
-            wallJumpAllowed: wallJumpAllowed
-        }
-    }
-
     movingFast() {
         // Make sure the image is correct.
         this.frictionParticles.updateParticleImage('floor');
@@ -257,18 +171,18 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     wallJump() {
         // Get information on any tile beside the player.
-        let data = this.besideTile();
+        let tileData = getSideTile(this, this.scene, this.scene.collidersLayer, {group: this.scene.walls, indexes: this.scene.customCollisionTilesIndexes});
 
         // The player must be on a wall without touching the ground.
-        if (!this.body.onFloor() && data.wallJumpAllowed) {
+        if (!this.body.onFloor() && tileData.tile) {
             this.scene.registry.sounds.jump.play();
             // Wall jump, set the x velocity in the correct direction.
-            if (data.side === 'right') {
+            if (tileData.side === 'right') {
                 this.body.setVelocityX(-this.wallJumpVelocity.x);
-                this.frictionParticles.explodeWallJumpParticles(data.side, data.tile);
-            } else if (data.side === 'left') {
+                this.frictionParticles.explodeWallJumpParticles(tileData.side, tileData.tile);
+            } else if (tileData.side === 'left') {
                 this.body.setVelocityX(this.wallJumpVelocity.x);
-                this.frictionParticles.explodeWallJumpParticles(data.side, data.tile);
+                this.frictionParticles.explodeWallJumpParticles(tileData.side, tileData.tile);
             }
             this.body.setVelocityY(-this.wallJumpVelocity.y);
         }

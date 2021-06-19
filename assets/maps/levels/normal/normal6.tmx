@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="29" height="20" tilewidth="70" tileheight="70" infinite="0" nextlayerid="8" nextobjectid="8">
  <editorsettings>
-  <export target="level6.json" format="json"/>
+  <export target="normal6.json" format="json"/>
  </editorsettings>
  <tileset firstgid="1" name="tiles" tilewidth="70" tileheight="70" spacing="4" margin="1" tilecount="156" columns="12">
-  <image source="../../images/spritesheets/tiles.png" trans="ff00ff" width="886" height="960"/>
+  <image source="../../../images/spritesheets/tiles.png" trans="ff00ff" width="886" height="960"/>
   <tile id="2">
    <objectgroup draworder="index" id="2">
     <object id="1" x="0" y="0" width="70" height="40"/>
