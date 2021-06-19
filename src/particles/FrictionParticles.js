@@ -1,5 +1,5 @@
 import { PLAYER_SQUARE } from '../constants/player.js';
-import { getSideTile } from '../utils/tiles.js';
+import { getTileSide, getTileBottom } from '../utils/tiles.js';
 
 export default class FrictionParticles {
     constructor(scene, player) {
@@ -114,24 +114,15 @@ export default class FrictionParticles {
     updateParticleImage(particleType) {
         // Make the image of the particles match the tile the player is
         // on or agaisnt.
-        let tileX, tileY, tile;
+        let tile;
 
+        // Different particle types get the tile image from different
+        // locations.
         if (particleType === 'floor' || particleType === 'floorHit') {
-            tileX = this.player.body.left;
-            tileY = this.player.body.bottom + 1;
-
-            tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.collidersLayer);
-
-            // If no tile was found, the body could be at an edge and
-            // is touching a tile on the other side of its body.
-            if (!tile) {
-                // Test for a tile on the other side of the body.
-                tileX = this.player.body.right;
-                tile = this.scene.map.getTileAtWorldXY(tileX, tileY, false, this.scene.cameras.main, this.scene.collidersLayer);
-            }
+            tile = getTileBottom(this.player, this.scene, this.scene.collidersLayer).tile;
         } else if (particleType === 'wall') {
             // If the player is beside a tile on the wall.
-            tile = getSideTile(this.player, this.scene, this.scene.collidersLayer, undefined, false).tile;
+            tile = getTileSide(this.player, this.scene, this.scene.collidersLayer, undefined, false).tile;
         }
 
         // Update the image for the particles, if a tile was found.
@@ -140,7 +131,7 @@ export default class FrictionParticles {
         }
     }
 
-    explodeWallJumpParticles(wallSide, tile) {
+    explodeWallJumpParticles(tile, wallSide) {
         // Make sure the particle image matches the surface the player
         // is jumping off of.
         this.particleTypes['wallJump'].setFrame(tile.index - 1);
@@ -191,11 +182,9 @@ export default class FrictionParticles {
     }
 
     killAllParticles() {
-        // Do Object.values() instead here?
         // Stop all particles that are currently playing.
-        for (let particleType in this.particleTypes) {
-            // this.particleTypes[particleType].stop();
-            this.particleTypes[particleType].killAll();
-        }
+        Object.values(this.particleTypes).forEach(particleEmitter => {
+            particleEmitter.killAll();
+        });
     }
 }

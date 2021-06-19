@@ -1,6 +1,6 @@
 import FrictionParticles from '../particles/FrictionParticles.js';
 import { getSquareCenter, getBodyOffset } from '../utils.js';
-import { getSideTile } from '../utils/tiles.js';
+import { getTileSide } from '../utils/tiles.js';
 import { BASE_PLAYER, PLAYER_SQUARE } from '../constants/player.js';
 
 export default class Player extends Phaser.GameObjects.Sprite {
@@ -92,35 +92,23 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     update(input) {
-        // Friction particles when moving.
-        if (this.body.onFloor() && (Math.abs(this.body.velocity.x) > this.baseMaxVelocity.x * this.frictionParticles.minVelocityFloor)) {
-            this.movingFast();
-        } else {
-            this.frictionParticles.floor.on = false;
-        }
-
-        // If the player hits the floor moving fast enough, some impact
-        // particles appear and bounce along the floor.
-        if (this.body.onFloor() && (this.lastVelocity.y > 500)) {
-            this.frictionParticles.explodeFloorHitParticles();
-        }
-
-        // If the player is moving into a wall (moving left or right)
-        // and moving down, make them slide slower down the wall.
-        if (this.body.onWall() && this.body.velocity.y > 0) {
-            this.wallSlide();
-        } else {
-            this.frictionParticles.wall.on = false;
-        }
+        // Update the friction particles used by the player. The
+        // particle explosion from wall jumping is done in the wall
+        // jumping function.
+        this.updateFrictionParticles();
 
         // Friction increases as the player's velocity increases.
         // Multiply the velocity be a negative number to make friction
         // go in the opposite direction of movement.
         if (input.left.isDown) {
+            // Move left.
             this.body.setAccelerationX(-this.acceleration + this.body.velocity.x * -this.friction);
         } else if (input.right.isDown) {
+            // Move right.
             this.body.setAccelerationX(this.acceleration + this.body.velocity.x * -this.friction);
         } else {
+            // Stop accelerating if no left or right key is being held
+            // down.
             this.body.setAccelerationX(0);
         }
 
@@ -144,16 +132,35 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
 
         if (input.respawn.justDown) {
+            // Respawn the player back at its set respawn point.
             this.respawn();
         }
     }
 
-    movingFast() {
-        // Make sure the image is correct.
-        this.frictionParticles.updateParticleImage('floor');
-        // Start the friction particles on the floor.
-        if (!this.frictionParticles.floor.on) {
-            this.frictionParticles.startParticles('floor');
+    updateFrictionParticles() {
+        // Friction particles when moving.
+        if (this.body.onFloor() && (Math.abs(this.body.velocity.x) > this.baseMaxVelocity.x * this.frictionParticles.minVelocityFloor)) {
+            // Make sure the image is correct every update.
+            this.frictionParticles.updateParticleImage('floor');
+            if (!this.frictionParticles.floor.on) {
+                this.frictionParticles.startParticles('floor');
+            }
+        } else {
+            this.frictionParticles.floor.on = false;
+        }
+
+        // If the player hits the floor moving fast enough, some impact
+        // particles appear and bounce along the floor.
+        if (this.body.onFloor() && (this.lastVelocity.y > 500)) {
+            this.frictionParticles.explodeFloorHitParticles();
+        }
+
+        // If the player is moving into a wall (moving left or right)
+        // and moving down, make them slide slower down the wall.
+        if (this.body.onWall() && this.body.velocity.y > 0) {
+            this.wallSlide();
+        } else {
+            this.frictionParticles.wall.on = false;
         }
     }
 
@@ -171,7 +178,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     wallJump() {
         // Get information on any tile beside the player.
-        let tileData = getSideTile(this, this.scene, this.scene.collidersLayer, {group: this.scene.walls, indexes: this.scene.customCollisionTilesIndexes});
+        let tileData = getTileSide(this, this.scene, this.scene.collidersLayer, {group: this.scene.walls, indexes: this.scene.customCollisionTilesIndexes});
 
         // The player must be on a wall without touching the ground.
         if (!this.body.onFloor() && tileData.tile) {
@@ -179,10 +186,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
             // Wall jump, set the x velocity in the correct direction.
             if (tileData.side === 'right') {
                 this.body.setVelocityX(-this.wallJumpVelocity.x);
-                this.frictionParticles.explodeWallJumpParticles(tileData.side, tileData.tile);
+                this.frictionParticles.explodeWallJumpParticles(tileData.tile, tileData.side);
             } else if (tileData.side === 'left') {
                 this.body.setVelocityX(this.wallJumpVelocity.x);
-                this.frictionParticles.explodeWallJumpParticles(tileData.side, tileData.tile);
+                this.frictionParticles.explodeWallJumpParticles(tileData.tile, tileData.side);
             }
             this.body.setVelocityY(-this.wallJumpVelocity.y);
         }
@@ -216,6 +223,26 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.scene.overlaps['exitDoors'] = this.scene.physics.add.overlap(this.scene.exitDoors, this, this.doorExit, undefined, this);
     }
 
+    collideWorldSides() {
+        // Use the sprite position in the if statements. Using the body
+        // won't work when a level switches and the map gets smaller.
+        // Add or subtract 3 from the player position in the if
+        // statements, so that the player isn't right agaisnt an edge.
+        if (this.getSpritePosition('right') < 0) {
+            let [ newX, newY ] = this.getPlayerCenter(this.scene.map.widthInPixels, 0);
+            // let tile = this.scene.map.getTileAtWorldXY(newX, this.body.y);
+            // console.log(tile);
+            this.setX(newX + this.body.width / 2 - 3);
+        } else if (this.getSpritePosition('left') > this.scene.map.widthInPixels) {
+            let [ newX, newY ] = this.getPlayerCenter(0, 0);
+            this.setX(newX - this.body.width / 2 + 3);  
+        }
+        // Respawn if the player fell out of the map.
+        if (this.body.position.y > this.scene.map.heightInPixels) {
+            this.respawn();
+        }
+    }
+
     respawn(sound = true) {
         if (sound) {
             this.scene.registry.sounds.lose.play();
@@ -237,26 +264,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // particles.
         this.lastVelocity = {
             y: 0
-        }
-    }
-
-    collideWorldSides() {
-        // Use the sprite position in the if statements. Using the body
-        // won't work when a level switches and the map gets smaller.
-        // Add or subtract 3 from the player position in the if
-        // statements, so that the player isn't right agaisnt an edge.
-        if (this.getSpritePosition('right') < 0) {
-            let [ newX, newY ] = this.getPlayerCenter(this.scene.map.widthInPixels, 0);
-            // let tile = this.scene.map.getTileAtWorldXY(newX, this.body.y);
-            // console.log(tile);
-            this.setX(newX + this.body.width / 2 - 3);
-        } else if (this.getSpritePosition('left') > this.scene.map.widthInPixels) {
-            let [ newX, newY ] = this.getPlayerCenter(0, 0);
-            this.setX(newX - this.body.width / 2 + 3);  
-        }
-        // Respawn if the player fell out of the map.
-        if (this.body.position.y > this.scene.map.heightInPixels) {
-            this.respawn();
         }
     }
 }

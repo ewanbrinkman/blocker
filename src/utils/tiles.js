@@ -1,7 +1,7 @@
-function getTile(sprite, scene, layer, side1, side2, offset = {x: 0, y: 0}) {
+function getTile(sprite, scene, layer, sideX, sideY, offset = {x: 0, y: 0}) {
     // The position to look for a tile at.
-    let tileX = sprite.body[side1] + offset.x;
-    let tileY = sprite.body[side2] + offset.y;
+    let tileX = sprite.body[sideX] + offset.x;
+    let tileY = sprite.body[sideY] + offset.y;
 
     // Look for a tile at the given position.
     let tile = scene.map.getTileAtWorldXY(tileX, tileY, false, scene.cameras.main, layer);
@@ -41,14 +41,15 @@ function besideCustomTile(sprite, scene, group, tile, offset = {left: 0, top: 0,
     return besideCustomTile;
 }
 
-export function getSideTile(sprite, scene, layer, custom = null, offsetY = true) {
+export function getTileSide(sprite, scene, layer, custom = null, offsetY = true) {
     // The four corners to test for a tile.
-    // Add an option for no y offset for wall friction particles.
+    // No y offset is used for the friction particles to make sure the
+    // image is correct.
     let corners = [
-        {side1: 'left', side2: 'top', offset: {x: -1, y: offsetY ? 1: 0}},
-        {side1: 'left', side2: 'bottom', offset: {x: -1, y: offsetY ? -1: 0}},
-        {side1: 'right', side2: 'top', offset: {x: 1, y: offsetY ? 1 : 0}},
-        {side1: 'right', side2: 'bottom', offset: {x: 1, y: offsetY ? -1 : 0}},
+        {sideX: 'left', sideY: 'top', offset: {x: -1, y: offsetY ? 1: 0}},
+        {sideX: 'left', sideY: 'bottom', offset: {x: -1, y: offsetY ? -1: 0}},
+        {sideX: 'right', sideY: 'top', offset: {x: 1, y: offsetY ? 1 : 0}},
+        {sideX: 'right', sideY: 'bottom', offset: {x: 1, y: offsetY ? -1 : 0}},
     ]
 
     // Search for a tile. If one is found, stop searching.
@@ -56,8 +57,8 @@ export function getSideTile(sprite, scene, layer, custom = null, offsetY = true)
     // Save which corner the tile was found at.
     let corner;
     for (corner in corners) {
-        tile = getTile(sprite, scene, layer, corners[corner].side1,
-            corners[corner].side2, corners[corner].offset);
+        tile = getTile(sprite, scene, layer, corners[corner].sideX,
+            corners[corner].sideY, corners[corner].offset);
         if (tile) {
             if (!custom || !custom.indexes.includes(parseInt(tile.index))) {
                 // Don't test for custom collisions or the tile doesn't
@@ -78,6 +79,31 @@ export function getSideTile(sprite, scene, layer, custom = null, offsetY = true)
 
     return {
         tile: tile,
-        side: tile ? corners[corner].side1 : null
-    };
+        side: tile ? corners[corner].sideX : null
+    }
+}
+
+export function getTileBottom(sprite, scene, layer) {
+    // The two corners to test for a tile.
+    let corners = [
+        {sideX: 'left', sideY: 'bottom', offset: {x: 0, y: 1}},
+        {sideX: 'right', sideY: 'bottom', offset: {x: 0, y: 1}}
+    ]
+
+    // Search for a tile. If one is found, stop searching.
+    let tile;
+    // Save which corner the tile was found at.
+    let corner;
+    for (corner in corners) {
+        tile = getTile(sprite, scene, layer, corners[corner].sideX,
+            corners[corner].sideY, corners[corner].offset);
+        if (tile) {
+            break;
+        }
+    }
+    
+    return {
+        tile: tile,
+        side: tile ? corners[corner].sideX : null
+    }
 }
