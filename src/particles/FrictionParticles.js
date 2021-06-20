@@ -89,6 +89,7 @@ export default class FrictionParticles {
 
     startParticles(particleType) {
         if (particleType === 'floor') {
+            this.floor.followOffset.y = this.player.displayHeight / 2 - PLAYER_SQUARE[this.player.playerType].bottom * this.player.scale
             // Set the position and direction of the particles based on player velocity.
             if (this.player.body.velocity.x > 0) {
                 this.floor.setAngle({ min: 180, max: 240 });

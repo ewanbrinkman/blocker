@@ -4,7 +4,7 @@ import { COLORS } from '../constants/style.js';
 import { TILES } from '../constants/maps.js';
 import { SCENE_KEYS } from '../constants/scenes.js';
 import { LEVELS } from '../constants/levels.js';
-import { PLAYER_SQUARE } from '../constants/player.js';
+import { BASE_PLAYER, PLAYER_SQUARE } from '../constants/player.js';
 
 // Start position.
 const startX = 3 * TILES.width + 0.5 * TILES.width;
@@ -63,8 +63,11 @@ export default class GameScene extends Phaser.Scene {
         // Create the player.
         this.player = new Player({
             scene: this,
-            x: this.spawnPoint.x,
-            y: this.spawnPoint.y,
+            position: {
+                x: this.spawnPoint.x,
+                y: this.spawnPoint.y
+            },
+            scale: BASE_PLAYER.scale,
             texture: 'players',
             frame: this.registry.player.playerType,
             playerType: this.registry.player.playerType,
@@ -100,7 +103,8 @@ export default class GameScene extends Phaser.Scene {
         });
 
         this.keys = {
-            r: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R)
+            r: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R),
+            t: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T)
         }
         // Create the keys for player movement.
         this.keys.cursors = this.input.keyboard.createCursorKeys();;
@@ -117,7 +121,8 @@ export default class GameScene extends Phaser.Scene {
             left: [this.keys.cursors.left, this.keys.wasd.left],
             down: [this.keys.cursors.down, this.keys.wasd.down],
             right: [this.keys.cursors.right, this.keys.wasd.right],
-            respawn: [this.keys.r]
+            respawn: [this.keys.r],
+            test: [this.keys.t]
         }
 
         // The types of key input the game needs.
@@ -230,13 +235,6 @@ export default class GameScene extends Phaser.Scene {
 
         // Update the player's collisions.
         this.player.addCollisions();
-
-        // Move the player to the starting position of the level.
-        let [spawnPointX, spawnPointY] = this.player.getPlayerCenter(this.spawnPoint.x, this.spawnPoint.y);
-        this.spawnPoint = {
-            x: spawnPointX,
-            y: spawnPointY
-        }
 
         this.player.spawnPoint.x = this.spawnPoint.x;
         this.player.spawnPoint.y = this.spawnPoint.y;

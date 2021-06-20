@@ -1,33 +1,39 @@
 import FrictionParticles from '../particles/FrictionParticles.js';
 import { getSquareCenter, getBodyOffset } from '../utils.js';
 import { getTileSide } from '../utils/tiles.js';
+import { getBodySide, applyBodyOffsetX, applyBodyOffset} from '../utils/body.js';
 import { BASE_PLAYER, PLAYER_SQUARE } from '../constants/player.js';
 
 export default class Player extends Phaser.GameObjects.Sprite {
     constructor(config) {
         // Adjust position, since when first creating the sprite it is
         // the center of the image. The player should spawn so that the
-        // center of its square is the given coordinate.
-        let [ squareCenterStartX, squareCenterStartY ] = getSquareCenter(
-            config.x, config.y, config.playerType, BASE_PLAYER.scale, true);
+        // center of its body is the given coordinate.
+        // Since "this" can't be used yet, pass in an object (instead
+        // of "this" for the sprite) with everything needed.
+        let position = applyBodyOffset({
+            scale: config.scale,
+            entity: 'player',
+            type: config.playerType
+        }, config.position);
 
-        super(config.scene, squareCenterStartX, squareCenterStartY, 
+        super(config.scene, position.x, position.y, 
             config.texture, config.frame);
         
         // Save the scene the player is in.
         this.scene = config.scene;
 
         // Start position.
-        this.spawnPoint = {
-            x: squareCenterStartX,
-            y: squareCenterStartY
-        }
+        this.spawnPoint = config.position;
         
         // Add the player to the scene.
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
+        this.entity = 'player';
         // Which animal type the player is.
+        this.type = config.playerType;
+
         this.playerType = config.playerType;
         // Player movement settings.
         this.acceleration = BASE_PLAYER.acceleration;
@@ -59,7 +65,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.body.setBounce(this.bounce);
         
         // Change the player's hitbox size.
-        this.scale = BASE_PLAYER.scale;
+        this.scale = config.scale;
         this.body.setSize(PLAYER_SQUARE.size, PLAYER_SQUARE.size);
         // Adjust the hitbox location to overlap with the square body section of
         // the animal.
@@ -131,6 +137,18 @@ export default class Player extends Phaser.GameObjects.Sprite {
             y: this.body.velocity.y
         }
 
+        // For testing.
+        if (input.test.justDown) {
+            // Change the player size.
+            if (this.scale === BASE_PLAYER.scale) {
+                this.scale = 0.1;
+            } else {
+                this.scale = BASE_PLAYER.scale;
+            }
+            // this.scene.cameras.main.zoom = 1 + (BASE_PLAYER.scale - this.scale) * 3;
+            this.setScale(this.scale);
+        }
+
         if (input.respawn.justDown) {
             // Respawn the player back at its set respawn point.
             this.respawn();
@@ -153,6 +171,12 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // particles appear and bounce along the floor.
         if (this.body.onFloor() && (this.lastVelocity.y > 500)) {
             this.frictionParticles.explodeFloorHitParticles();
+
+            // Play an impact sound if the impact velocity is large
+            // enough.
+            if (this.lastVelocity.y > 640) {
+                this.scene.registry.sounds.hit.play();
+            }
         }
 
         // If the player is moving into a wall (moving left or right)
@@ -195,20 +219,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
     }
 
-    getPlayerCenter(x, y, onBottom = true) {
-        return getSquareCenter(x, y, this.playerType, this.scale, onBottom);
-    }
-
-    getSpritePosition(side) {
-        if (side === 'left') {
-            let [x, y] = getSquareCenter(this.getTopLeft().x, 0, this.playerType, this.scale, false);
-            return x;
-        } else if (side === 'right') {
-            let [x, y] = getSquareCenter(this.getTopRight().x, 0, this.playerType, this.scale, false);
-            return x;
-        }
-    }
-
     doorExit() {
         // When the player touches an exit door, switch to the next level.
         this.scene.nextLevel();
@@ -228,17 +238,15 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // won't work when a level switches and the map gets smaller.
         // Add or subtract 3 from the player position in the if
         // statements, so that the player isn't right agaisnt an edge.
-        if (this.getSpritePosition('right') < 0) {
-            let [ newX, newY ] = this.getPlayerCenter(this.scene.map.widthInPixels, 0);
+        if (getBodySide(this, 'right') < 0) {
+            this.setX(applyBodyOffsetX(this, this.scene.map.widthInPixels + this.body.width / 2 - 3));
             // let tile = this.scene.map.getTileAtWorldXY(newX, this.body.y);
             // console.log(tile);
-            this.setX(newX + this.body.width / 2 - 3);
-        } else if (this.getSpritePosition('left') > this.scene.map.widthInPixels) {
-            let [ newX, newY ] = this.getPlayerCenter(0, 0);
-            this.setX(newX - this.body.width / 2 + 3);  
+        } else if (getBodySide(this, 'left') > this.scene.map.widthInPixels) {
+            this.setX(applyBodyOffsetX(this, -this.body.width / 2 + 3));
         }
         // Respawn if the player fell out of the map.
-        if (this.body.position.y > this.scene.map.heightInPixels) {
+        if (getBodySide(this, 'top') > this.scene.map.heightInPixels) {
             this.respawn();
         }
     }
@@ -248,14 +256,16 @@ export default class Player extends Phaser.GameObjects.Sprite {
             this.scene.registry.sounds.lose.play();
         }
 
+        let position = applyBodyOffset(this, this.spawnPoint);
+
         // Subtract movement change to counter gravity pushing the
         // player into the wall below, as well as making sure the
         // player simply lines up nicely in the middle of the spawn
         // point.
         // Teleport back to the spawn point.
         this.setPosition(
-            this.spawnPoint.x - this.body.deltaX(),
-            this.spawnPoint.y - this.body.deltaY());
+            position.x - this.body.deltaX(),
+            position.y - this.body.deltaY());
 
         // Reset their velocity so they don't keep their velocity from
         // before they respawn.
