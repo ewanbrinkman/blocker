@@ -1,5 +1,5 @@
 import Button from '../objects/Button.js';
-import { getSquareCenter } from '../utils.js';
+import { applyBodyOffset } from '../utils/body.js';
 import { PLAYER_TYPES, BASE_PLAYER } from '../constants/player.js';
 import { SCENE_KEYS, CHARACTERS_SCENE } from '../constants/scenes.js';
 import { COLORS, FONT } from '../constants/style.js';
@@ -67,8 +67,11 @@ export default class CharacterScene extends Phaser.Scene {
                 y: CHARACTERS_SCENE.playerButton.offsetStart.y + CHARACTERS_SCENE.playerButton.offsetBetween.y * row
             }
 
-            let [ positionX, positionY ] = getSquareCenter(
-                position.x, position.y, playerType, BASE_PLAYER.scale * 1.25, false);
+            position = applyBodyOffset({
+                scale: BASE_PLAYER.scale * 1.25,
+                entity: 'player',
+                type: playerType
+            }, position);
             
             let imageUp;
             if (playerType === this.registry.player.playerType) {
@@ -79,8 +82,8 @@ export default class CharacterScene extends Phaser.Scene {
 
             this.playerButtons[playerType] = new Button({
                 scene: this,
-                x: positionX,
-                y: positionY,
+                x: position.x,
+                y: position.y,
                 imageUp: imageUp,
                 frameUp: playerType,
                 imageDown: 'selectedPlayers',
@@ -121,11 +124,14 @@ export default class CharacterScene extends Phaser.Scene {
                 x: (0.1 + (index * 0.2) - (row)) * width,
                 y: CHARACTERS_SCENE.playerButton.offsetStart.y + CHARACTERS_SCENE.playerButton.offsetBetween.y * row
             }
+        
+            position = applyBodyOffset({
+                scale: BASE_PLAYER.scale * 1.25,
+                entity: 'player',
+                type: playerType
+            }, position);
 
-            let [ positionX, positionY ] = getSquareCenter(
-                position.x, position.y, playerType, BASE_PLAYER.scale * 1.25, false);
-
-            this.playerButtons[playerType].setPosition(positionX, positionY);
+            this.playerButtons[playerType].setPosition(position.x, position.y);
         });
     }
 };

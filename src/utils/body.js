@@ -1,7 +1,8 @@
 import { BODY_OFFSETS } from '../constants/bodies.js';
 
-function getBodyOffset(sprite, side) {
-    return BODY_OFFSETS[sprite.entity][sprite.type][side];
+export function getBodyOffset(sprite, side, scale = true) {
+    // Don't apply the sprite's scale if the "scale" argument is false.
+    return BODY_OFFSETS[sprite.entity][sprite.type][side] * (scale ? sprite.scale: 1);
 }
 
 export function getBodySide(sprite, side) {
@@ -18,7 +19,7 @@ export function getBodySide(sprite, side) {
 
     // The distance from the player image to the body on the given
     // side.
-    let offset = getBodyOffset(sprite, side) * sprite.scale;
+    let offset = getBodyOffset(sprite, side);
 
     // Subtract instead for these sides.
     if (side === 'right' || side === 'bottom') {
@@ -33,11 +34,11 @@ export function getBodySide(sprite, side) {
 }
 
 export function applyBodyOffsetX(sprite, x) {
-    return x + (getBodyOffset(sprite, 'right') - getBodyOffset(sprite, 'left')) / 2 * sprite.scale;
+    return x + (getBodyOffset(sprite, 'right') - getBodyOffset(sprite, 'left')) / 2;
 }
 
 export function applyBodyOffsetY(sprite, y) {
-    return y + (getBodyOffset(sprite, 'bottom') - getBodyOffset(sprite, 'top')) / 2 * sprite.scale;
+    return y + (getBodyOffset(sprite, 'bottom') - getBodyOffset(sprite, 'top')) / 2;
 }
 
 export function applyBodyOffset(sprite, position) {

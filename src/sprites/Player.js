@@ -1,8 +1,8 @@
 import FrictionParticles from '../particles/FrictionParticles.js';
-import { getSquareCenter, getBodyOffset } from '../utils.js';
 import { getTileSide } from '../utils/tiles.js';
-import { getBodySide, applyBodyOffsetX, applyBodyOffset} from '../utils/body.js';
+import { getBodyOffset, getBodySide, applyBodyOffsetX, applyBodyOffset} from '../utils/body.js';
 import { BASE_PLAYER, PLAYER_SQUARE } from '../constants/player.js';
+import { TILES } from '../constants/maps.js';
 
 export default class Player extends Phaser.GameObjects.Sprite {
     constructor(config) {
@@ -68,9 +68,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.scale = config.scale;
         this.body.setSize(PLAYER_SQUARE.size, PLAYER_SQUARE.size);
         // Adjust the hitbox location to overlap with the square body section of
-        // the animal.
-        const [ bodyOffsetX, bodyOffsetY ] = getBodyOffset(this.playerType);
-        this.body.setOffset(bodyOffsetX, bodyOffsetY);
+        // the animal. Don't apply the sprite's scale when doing so.
+        this.body.setOffset(getBodyOffset(this, 'left', false), getBodyOffset(this, 'top', false));
         // Change the player size.
         this.setScale(this.scale);
 
@@ -251,8 +250,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
     }
 
-    respawn(sound = true) {
-        if (sound) {
+    respawn(death = true) {
+        // Don't play the death sound if the player is just teleporting
+        // to the door at the start of a new level.
+        if (death) {
             this.scene.registry.sounds.lose.play();
         }
 
@@ -265,7 +266,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         // Teleport back to the spawn point.
         this.setPosition(
             position.x - this.body.deltaX(),
-            position.y - this.body.deltaY());
+            position.y - this.body.deltaY() - TILES.height / 2);
 
         // Reset their velocity so they don't keep their velocity from
         // before they respawn.

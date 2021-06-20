@@ -72,6 +72,7 @@ export default class GameScene extends Phaser.Scene {
             frame: this.registry.player.playerType,
             playerType: this.registry.player.playerType,
         });
+        this.player.respawn(false);
 
         // Make the camera follow the player.
         this.cameras.main.startFollow(this.player);
